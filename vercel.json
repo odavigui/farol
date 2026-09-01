@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/app", "destination": "/app.html" },
+    { "source": "/entrar", "destination": "/app.html" },
+    { "source": "/r/:token", "destination": "/relatorio.html" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "cache-control", "value": "no-store" },
+        { "key": "x-content-type-options", "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "x-content-type-options", "value": "nosniff" },
+        { "key": "referrer-policy", "value": "same-origin" },
+        { "key": "x-frame-options", "value": "SAMEORIGIN" }
+      ]
+    }
+  ]
+}

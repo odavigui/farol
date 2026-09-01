@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia de publicação — Farol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#F4F6FB; --panel:#FFFFFF; --panel-2:#E9EDF7; --panel-3:#DCE2F0;
+  --ink:#0B1020; --ink-2:#454C63; --ink-3:#767D93; --ink-4:#A3AABE;
+  --line:#D8DEEE; --line-2:#BFC7DE;
+  --acc:#1435C8; --acc-ink:#1435C8; --acc-soft:#DDE3FA; --acc-line:#B3C1F2; --on-acc:#FFFFFF;
+  --warn:#B06A00; --warn-soft:#FBEEDA; --warn-line:#EBD3A4;
+  --crit:#C0202E; --crit-soft:#FBE0E2;
+  --ok:#0E8A5F; --ok-soft:#DCF2E8;
+  --sh:0 1px 2px rgba(14,20,23,.05), 0 14px 34px -26px rgba(14,20,23,.4);
+  --cmd-bg:#0B1020; --cmd-fg:#E9EFF1; --cmd-bd:transparent;
+  --cmd-btn-bg:rgba(255,255,255,.12); --cmd-btn-fg:#FFFFFF; --cmd-btn-bd:rgba(255,255,255,.22);
+  --fd:"Chivo","Helvetica Neue",Arial,sans-serif;
+  --fb:"Public Sans","Helvetica Neue",Arial,sans-serif;
+  --fm:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#080B16; --panel:#101627; --panel-2:#141B2E; --panel-3:#1D2540;
+    --ink:#E9ECF7; --ink-2:#A2A9C2; --ink-3:#767D93; --ink-4:#5A617A;
+    --line:#1B2238; --line-2:#2C3557;
+    --acc:#8FA6FF; --acc-ink:#A9BAFF; --acc-soft:#141E4D; --acc-line:#26326B; --on-acc:#080B16;
+    --warn:#D9A03C; --warn-soft:#2A2110; --warn-line:#4A3A17;
+    --crit:#F0574F; --crit-soft:#2E1214;
+    --ok:#3FBF8C; --ok-soft:#0C2A20;
+    --cmd-bg:#141B2E; --cmd-fg:#E9ECF7; --cmd-bd:#2C3557;
+    --cmd-btn-bg:#1D2540; --cmd-btn-fg:#A2A9C2; --cmd-btn-bd:#2C3557;
+    --sh:0 1px 2px rgba(0,0,0,.5), 0 14px 34px -26px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080B16; --panel:#101627; --panel-2:#141B2E; --panel-3:#1D2540;
+  --ink:#E9ECF7; --ink-2:#A2A9C2; --ink-3:#767D93; --ink-4:#5A617A;
+  --line:#1B2238; --line-2:#2C3557;
+  --acc:#8FA6FF; --acc-ink:#A9BAFF; --acc-soft:#141E4D; --acc-line:#26326B; --on-acc:#080B16;
+  --warn:#D9A03C; --warn-soft:#2A2110; --warn-line:#4A3A17;
+  --crit:#F0574F; --crit-soft:#2E1214;
+  --ok:#3FBF8C; --ok-soft:#0C2A20;
+  --cmd-bg:#141B2E; --cmd-fg:#E9ECF7; --cmd-bd:#2C3557;
+  --cmd-btn-bg:#1D2540; --cmd-btn-fg:#A2A9C2; --cmd-btn-bd:#2C3557;
+  --sh:0 1px 2px rgba(0,0,0,.5), 0 14px 34px -26px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--fb); font-size:16.5px; line-height:1.62; -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--fd); margin:0; letter-spacing:-.028em; line-height:1.15; text-wrap:balance; font-weight:800}
+p{margin:0}
+a{color:var(--acc-ink)}
+:focus-visible{outline:2px solid var(--acc); outline-offset:3px; border-radius:6px}
+.mono{font-family:var(--fm)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.wrap{max-width:840px; margin:0 auto; padding:0 22px 90px}
+
+/* topo */
+.topo{
+  position:sticky; top:0; z-index:40; background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(12px); border-bottom:1px solid var(--line); margin-bottom:8px;
+}
+.topo-in{max-width:840px; margin:0 auto; padding:11px 22px; display:flex; align-items:center; gap:14px}
+.topo .nm{font-family:var(--fd); font-weight:900; font-size:15px; letter-spacing:-.03em}
+.prog{flex:1; height:7px; background:var(--panel-3); border-radius:5px; overflow:hidden; min-width:60px}
+.prog i{display:block; height:100%; width:0; background:var(--acc); border-radius:5px; transition:width .3s}
+.prog-n{font-family:var(--fm); font-size:12px; color:var(--ink-2); white-space:nowrap; font-variant-numeric:tabular-nums}
+
+header.cabeca{padding:44px 0 26px}
+header.cabeca .eyebrow{font-family:var(--fm); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--acc-ink); font-weight:600; display:block; margin-bottom:14px}
+header.cabeca h1{font-size:clamp(31px,5.2vw,46px); font-weight:900; letter-spacing:-.04em}
+header.cabeca p{color:var(--ink-2); font-size:18px; margin-top:16px; max-width:60ch}
+
+/* partes */
+.parte{margin-top:44px}
+.parte-h{display:flex; align-items:center; gap:13px; padding-bottom:13px; border-bottom:2px solid var(--ink); margin-bottom:22px}
+.parte-n{
+  width:30px; height:30px; border-radius:9px; background:var(--ink); color:var(--bg);
+  display:grid; place-items:center; font-family:var(--fd); font-weight:900; font-size:14px; flex:none;
+}
+.parte-h h2{font-size:clamp(21px,3vw,27px)}
+.parte-h .tempo{margin-left:auto; font-family:var(--fm); font-size:11.5px; color:var(--ink-3); white-space:nowrap}
+
+/* passos */
+.passo{
+  background:var(--panel); border:1px solid var(--line); border-radius:13px; box-shadow:var(--sh);
+  padding:20px 22px; margin-bottom:13px; display:grid; grid-template-columns:26px 1fr; gap:15px;
+}
+@media(max-width:560px){.passo{grid-template-columns:1fr; gap:10px; padding:18px}}
+.passo.feito{opacity:.62}
+.passo.feito .pt{text-decoration:line-through; text-decoration-color:var(--ink-4)}
+.chk{width:22px; height:22px; margin:2px 0 0; accent-color:var(--acc); cursor:pointer; flex:none}
+.pb{display:flex; flex-direction:column; gap:11px; min-width:0}
+.pt{font-family:var(--fd); font-weight:800; font-size:18px; letter-spacing:-.02em}
+.pd{font-size:15.5px; color:var(--ink-2)}
+.pd b{color:var(--ink); font-weight:600}
+.pd code{font-family:var(--fm); font-size:.87em; background:var(--panel-2); border:1px solid var(--line); border-radius:5px; padding:1px 6px}
+
+/* comando */
+.cmd{position:relative; background:var(--cmd-bg); border:1px solid var(--cmd-bd); border-radius:9px; overflow:hidden}
+.cmd pre{
+  margin:0; padding:14px 74px 14px 16px; overflow-x:auto; color:var(--cmd-fg);
+  font-family:var(--fm); font-size:13.5px; line-height:1.7;
+}
+.cmd button{
+  position:absolute; top:9px; right:9px; font-family:var(--fm); font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; background:var(--cmd-btn-bg); color:var(--cmd-btn-fg); border:1px solid var(--cmd-btn-bd);
+  border-radius:6px; padding:5px 10px; cursor:pointer;
+}
+.cmd button:hover{filter:brightness(1.35)}
+.cmd button.ok{background:var(--ok); border-color:var(--ok); color:#fff}
+
+/* avisos */
+.nota{
+  border-left:3px solid var(--acc); background:var(--acc-soft); border-radius:0 9px 9px 0;
+  padding:13px 16px; font-size:14.5px; color:var(--ink-2);
+}
+.nota b{color:var(--ink)}
+.nota.alerta{border-left-color:var(--warn); background:var(--warn-soft)}
+.nota.perigo{border-left-color:var(--crit); background:var(--crit-soft)}
+.nota .tit{
+  display:block; font-family:var(--fm); font-size:10px; letter-spacing:.13em; text-transform:uppercase;
+  font-weight:600; margin-bottom:5px; color:var(--acc-ink);
+}
+.nota.alerta .tit{color:var(--warn)}
+.nota.perigo .tit{color:var(--crit)}
+
+/* onde clicar */
+.trilha{display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:14px}
+.trilha span{
+  font-family:var(--fm); font-size:12.5px; background:var(--panel-2); border:1px solid var(--line-2);
+  border-radius:6px; padding:3px 9px; white-space:nowrap;
+}
+.trilha i{color:var(--ink-3); font-style:normal}
+
+/* tabelas */
+.tw{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--panel)}
+table{border-collapse:collapse; width:100%; min-width:480px; font-size:14.5px}
+th,td{padding:11px 14px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top}
+thead th{font-family:var(--fm); font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3); font-weight:600; background:var(--panel-2)}
+tbody tr:last-child td{border-bottom:0}
+td .mono{font-size:13px}
+
+/* checklist final */
+.final{background:var(--panel); border:1px solid var(--line); border-radius:13px; padding:22px; box-shadow:var(--sh)}
+.final label{display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line); font-size:15.5px; cursor:pointer}
+.final label:last-child{border-bottom:0}
+.final input{width:19px; height:19px; margin:2px 0 0; accent-color:var(--acc); flex:none; cursor:pointer}
+
+footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--line); font-size:14px; color:var(--ink-3)}
+
+@media print{
+  .topo,.cmd button{display:none}
+  body{background:#fff; color:#111; font-size:11pt}
+  .passo,.final,.tw{box-shadow:none; break-inside:avoid; page-break-inside:avoid; border:1px solid #ccc}
+  .cmd{background:#f4f4f4}
+  .cmd pre{color:#111}
+  .parte{break-before:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div class="topo-in">
+    <span class="nm">Guia de publicação</span>
+    <span class="prog"><i id="barra"></i></span>
+    <span class="prog-n" id="contador">0 / 16</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="cabeca">
+  <span class="eyebrow">Farol · Supabase + Vercel</span>
+  <h1>Do zip ao site no ar</h1>
+  <p>Dezessete passos, na ordem. Marque conforme for fazendo — a barra no topo mostra onde você está, e a marcação fica salva se você fechar a página.</p>
+</header>
+
+<div class="nota" style="margin-bottom:8px">
+  <span class="tit">Antes de começar</span>
+  Você vai precisar de três coisas: <b>Node.js 22.5 ou mais novo</b> instalado (<a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a>), uma <b>conta no Supabase</b> e uma <b>conta na Vercel</b>. Reserve uns 40 minutos. O pagamento fica para depois — só na Parte 4, quando você for cobrar de alguém.
+</div>
+
+<!-- ================= PARTE 1 ================= -->
+<section class="parte">
+  <div class="parte-h">
+    <span class="parte-n">1</span>
+    <h2>Supabase — o banco de dados</h2>
+    <span class="tempo">~10 min</span>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="1">
+    <div class="pb">
+      <span class="pt">Crie um projeto no Supabase</span>
+      <p class="pd">Em <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">supabase.com/dashboard</a>, clique em <b>New project</b>. Escolha a região <b>South America (São Paulo)</b> — o banco perto dos seus usuários deixa tudo mais rápido.</p>
+      <div class="nota alerta">
+        <span class="tit">Guarde a senha</span>
+        O Supabase pede uma senha para o banco na criação. Anote num lugar seguro — ela não aparece de novo, e recuperar depois dá trabalho.
+      </div>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="2">
+    <div class="pb">
+      <span class="pt">Crie as tabelas</span>
+      <p class="pd">Abra o <b>SQL Editor</b> no menu lateral, clique em <b>New query</b>, e cole o conteúdo inteiro do arquivo <code>banco/esquema.sql</code> que está no zip. Clique em <b>Run</b>.</p>
+      <div class="trilha">
+        <span>SQL Editor</span><i>→</i><span>New query</span><i>→</i><span>colar</span><i>→</i><span>Run</span>
+      </div>
+      <p class="pd">Deve aparecer <b>Success. No rows returned</b>. Isso é o esperado: o script cria estrutura, não devolve dados. Pode rodar de novo quantas vezes quiser, nada é duplicado.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="3">
+    <div class="pb">
+      <span class="pt">Confirme que as tabelas apareceram</span>
+      <p class="pd">Vá em <b>Table Editor</b>. Você deve ver oito tabelas: <span class="mono">contas</span>, <span class="mono">sessoes</span>, <span class="mono">clientes</span>, <span class="mono">publicacoes</span>, <span class="mono">resultados</span>, <span class="mono">conexoes</span>, <span class="mono">tentativas_login</span> e <span class="mono">eventos_pagamento</span>.</p>
+      <p class="pd">Todas vão aparecer com um cadeado ou aviso de <b>RLS enabled</b>. Está certo — é proposital, e a Parte 5 explica o porquê.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="4">
+    <div class="pb">
+      <span class="pt">Copie as duas chaves</span>
+      <p class="pd">Vá em <b>Project Settings → API</b>. Você precisa de dois valores:</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>O que copiar</th><th>Onde está</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">SUPABASE_URL</td><td>Project URL — algo como <span class="mono">https://abcdefgh.supabase.co</span></td></tr>
+            <tr><td class="mono">SUPABASE_SERVICE_ROLE_KEY</td><td><b>service_role</b> — a chave secreta, que vem escondida atrás de um botão "Reveal"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="nota perigo">
+        <span class="tit">A chave errada custa caro</span>
+        Existem duas chaves na mesma tela: <b>anon</b> e <b>service_role</b>. Você precisa da <b>service_role</b>. Ela ignora todas as regras de segurança do banco — por isso só pode existir no servidor. Nunca coloque em arquivo dentro de <code>public/</code>, nunca em variável com prefixo público, nunca mande por WhatsApp ou e-mail.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTE 2 ================= -->
+<section class="parte">
+  <div class="parte-h">
+    <span class="parte-n">2</span>
+    <h2>Testar antes de publicar</h2>
+    <span class="tempo">~5 min</span>
+  </div>
+
+  <div class="nota" style="margin-bottom:13px">
+    <span class="tit">Por que esta parte existe</span>
+    Toda a lógica do sistema eu testei. A conexão com o <b>seu</b> Supabase é a única parte que eu não pude testar sem as suas chaves. Estes três passos fecham essa lacuna em cinco minutos — e é muito mais barato descobrir um problema agora do que depois de publicar.
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="5">
+    <div class="pb">
+      <span class="pt">Descompacte o projeto e abra o terminal nele</span>
+      <p class="pd">Descompacte o zip numa pasta. Abra o terminal e entre na pasta <code>farol</code>. Confira a versão do Node:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>node --version</pre></div>
+      <p class="pd">Precisa ser <b>v22.5.0 ou maior</b>. Se for menor, atualize em <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> antes de seguir.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="6">
+    <div class="pb">
+      <span class="pt">Crie o arquivo de configuração</span>
+      <p class="pd">Copie <code>.env.exemplo</code> para <code>.env.local</code> e preencha as duas chaves do passo 4:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>cp .env.exemplo .env.local</pre></div>
+      <p class="pd">Abra <code>.env.local</code> num editor de texto e preencha:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>SUPABASE_URL=https://seuprojeto.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=cole_aqui_a_chave_service_role</pre></div>
+      <p class="pd">Sem aspas, sem espaço depois do <code>=</code>. O arquivo <code>.env.local</code> já está no <code>.gitignore</code>, então ele não vai parar no GitHub por acidente.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="7">
+    <div class="pb">
+      <span class="pt">Rode o verificador</span>
+      <div class="cmd"><button class="copiar">copiar</button><pre>node verificar.js</pre></div>
+      <p class="pd">São 18 checagens contra o seu banco: criação de conta, senha, sessão, isolamento entre agências, filtro de datas, atualização de resultado mensal e exclusão em cascata. <b>O script apaga tudo o que criou</b> — não deixa lixo, e pode rodar quantas vezes quiser.</p>
+      <p class="pd">O que você quer ver no fim:</p>
+      <div class="cmd"><pre>  18 passaram, 0 falharam
+
+  Está tudo certo. Pode publicar na Vercel.</pre></div>
+      <div class="nota alerta">
+        <span class="tit">Se falhar</span>
+        A causa mais comum é o esquema não ter sido rodado (volte ao passo 2). A segunda é chave errada — conferir se copiou a <b>service_role</b> e não a <b>anon</b>. Se persistir, me mande o texto do erro que eu corrijo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTE 3 ================= -->
+<section class="parte">
+  <div class="parte-h">
+    <span class="parte-n">3</span>
+    <h2>Vercel — colocar no ar</h2>
+    <span class="tempo">~15 min</span>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="8">
+    <div class="pb">
+      <span class="pt">Suba o projeto para o GitHub</span>
+      <p class="pd">Crie um repositório <b>privado</b> no GitHub e envie o projeto:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>git init
+git add .
+git commit -m "primeira versao"
+git branch -M main
+git remote add origin https://github.com/SEU_USUARIO/farol.git
+git push -u origin main</pre></div>
+      <div class="nota perigo">
+        <span class="tit">Repositório privado, sempre</span>
+        Se por qualquer motivo a chave <b>service_role</b> acabar num repositório público, qualquer pessoa lê e apaga o banco inteiro. O <code>.gitignore</code> já protege o <code>.env.local</code>, mas repositório privado é a garantia que não depende de nada dar certo.
+      </div>
+      <p class="pd">Prefere sem GitHub? Dá para publicar direto do terminal com <code>npx vercel</code> — mas com GitHub cada <code>git push</code> vira um deploy automático, e é assim que você vai querer trabalhar daqui em diante.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="9">
+    <div class="pb">
+      <span class="pt">Importe o projeto na Vercel</span>
+      <p class="pd">Em <a href="https://vercel.com/new" target="_blank" rel="noopener">vercel.com/new</a>, escolha <b>Import Git Repository</b> e selecione o repositório que você acabou de criar.</p>
+      <p class="pd"><b>Não mexa em nada nas configurações de build.</b> Framework Preset fica em <b>Other</b>, e os campos de build ficam vazios. Este projeto não tem build — é Node puro, sem dependência nenhuma para instalar. O <code>vercel.json</code> já diz à Vercel o que fazer.</p>
+      <p class="pd"><b>Ainda não clique em Deploy</b> — vá primeiro para o próximo passo, na mesma tela.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="10">
+    <div class="pb">
+      <span class="pt">Cadastre as variáveis de ambiente</span>
+      <p class="pd">Ainda na tela de importação, abra <b>Environment Variables</b> e cadastre as duas do passo 4. Se já tiver clicado em Deploy, elas ficam em <b>Settings → Environment Variables</b> do projeto.</p>
+      <div class="trilha">
+        <span>Settings</span><i>→</i><span>Environment Variables</span><i>→</i><span>Add</span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Nome</th><th>Valor</th><th>Ambientes</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">SUPABASE_URL</td><td>a Project URL</td><td>todos</td></tr>
+            <tr><td class="mono">SUPABASE_SERVICE_ROLE_KEY</td><td>a chave service_role</td><td>todos</td></tr>
+            <tr><td class="mono">NODE_ENV</td><td class="mono">producao</td><td>Production</td></tr>
+            <tr><td class="mono">URL_BASE</td><td>o endereço do seu site, com https</td><td>Production</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pd"><code>NODE_ENV=producao</code> liga duas proteções: o cookie de sessão passa a exigir HTTPS, e o servidor passa a recusar requisições vindas de outros sites.</p>
+      <div class="nota alerta">
+        <span class="tit">A pegadinha que mais trava gente</span>
+        Variável nova <b>só vale no próximo deploy</b>. A Vercel congela a configuração no momento em que o site é construído — é isso que permite voltar a uma versão anterior com segurança. Se você adicionar ou corrigir uma variável depois, precisa clicar em <b>Redeploy</b>; salvar não basta.
+      </div>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="11">
+    <div class="pb">
+      <span class="pt">Deploy e primeiro teste</span>
+      <p class="pd">Clique em <b>Deploy</b> e espere. Vai levar menos de um minuto — não há dependência para instalar.</p>
+      <p class="pd">Quando terminar, abra a URL que a Vercel te deu. Você deve ver a <b>página de vendas</b>. Depois abra <code>/app</code> — deve aparecer a tela de login.</p>
+      <p class="pd">Crie uma conta de verdade pelo <b>Criar conta</b>, cadastre um cliente e lance uma publicação. Se isso funcionar, o sistema inteiro está funcionando: banco, sessão, plano e diagnóstico.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTE 4 ================= -->
+<section class="parte">
+  <div class="parte-h">
+    <span class="parte-n">4</span>
+    <h2>Pagamento — só quando for cobrar</h2>
+    <span class="tempo">depois</span>
+  </div>
+
+  <div class="nota" style="margin-bottom:13px">
+    <span class="tit">Não faça isso agora</span>
+    O sistema funciona sem pagamento — toda conta nova entra com 14 dias de teste. Deixe esta parte para quando você tiver uma agência querendo pagar. Vender primeiro, cobrar depois, é a ordem que economiza semanas.
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="17">
+    <div class="pb">
+      <span class="pt">Ligue o e-mail de recuperação de senha</span>
+      <p class="pd">Sem isto, quem esquece a senha não tem como voltar — e vai te chamar no WhatsApp. O sistema fala direto com o Gmail, não precisa contratar nada.</p>
+      <div class="nota alerta">
+        <span class="tit">A senha da sua conta Google não funciona aqui</span>
+        O Gmail exige uma <b>Senha de app</b>: um código de 16 letras, separado da sua senha, que só existe depois de ligar a verificação em duas etapas. É melhor assim — se um dia o projeto vazar essa senha, ela dá acesso só ao envio de e-mail, e você a revoga num clique sem trocar a sua senha de verdade.
+      </div>
+      <div class="trilha">
+        <span>myaccount.google.com</span><i>→</i><span>Segurança</span><i>→</i><span>Verificação em duas etapas</span><i>→</i><span>Senhas de app</span>
+      </div>
+      <p class="pd">Crie uma senha de app, copie as 16 letras e cadastre estas variáveis na Vercel:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>EMAIL_MODO=smtp
+SMTP_HOST=smtp.gmail.com
+SMTP_PORTA=465
+SMTP_USUARIO=seuendereco@gmail.com
+SMTP_SENHA=as16letrasdasenhadeapp
+EMAIL_DE=seuendereco@gmail.com
+EMAIL_NOME=Farol</pre></div>
+      <p class="pd">Depois de salvar, <b>Redeploy</b> — como no passo 10.</p>
+      <p class="pd">Para testar: na tela de login, clique em <b>Esqueci minha senha</b>, ponha o seu e-mail e veja se a mensagem chega. Confira também a caixa de spam.</p>
+      <div class="nota">
+        <span class="tit">Dois limites do Gmail, para você não ser pego de surpresa</span>
+        Ele entrega umas <b>500 mensagens por dia</b> — sobra para recuperação de senha, não serve para disparo em massa. E mensagem saindo de <code>@gmail.com</code> para quem não te conhece cai em spam com mais facilidade. Quando tiver domínio próprio, troque <code>EMAIL_MODO</code> para <code>http</code> e use Resend ou Brevo com o domínio verificado: a entrega melhora muito e o remetente passa a ser <code>contato@seudominio</code>.
+      </div>
+      <div class="nota alerta">
+        <span class="tit">Por que <code>URL_BASE</code> não é opcional</span>
+        É com ela que o sistema monta o link que vai no e-mail. Sem ela, o link é montado com o cabeçalho <code>Host</code> da requisição — que vem de quem chamou a rota. Alguém poderia fazer sair um e-mail <b>seu</b>, com a sua marca, levando ao site dele.
+      </div>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="12">
+    <div class="pb">
+      <span class="pt">Crie os três planos no meio de pagamento</span>
+      <p class="pd">No Stripe, Mercado Pago ou Pagar.me, crie uma assinatura para cada plano: <b>Essencial R$ 97</b>, <b>Agência R$ 197</b> e <b>Estúdio R$ 397</b>. Anote o id de cada preço.</p>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="13">
+    <div class="pb">
+      <span class="pt">Configure o webhook</span>
+      <p class="pd">Aponte o webhook do provedor para:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>https://SEUDOMINIO/api/pagamento/webhook</pre></div>
+      <p class="pd">Copie o <b>segredo de assinatura</b> que o provedor gera e cadastre na Vercel junto com os ids dos preços:</p>
+      <div class="cmd"><button class="copiar">copiar</button><pre>SEGREDO_WEBHOOK=
+PRECO_ESSENCIAL=
+PRECO_AGENCIA=
+PRECO_ESTUDIO=</pre></div>
+      <p class="pd">Depois de salvar, clique em <b>Redeploy</b> — como no passo 10.</p>
+      <div class="nota">
+        <span class="tit">Por que isso é o coração da cobrança</span>
+        Quem define o plano de uma conta é essa confirmação assinada chegando do provedor. Nunca um parâmetro de URL, nunca um campo do formulário. O <code>?plano=agencia</code> que vem da página de vendas só serve para pré-selecionar o plano na tela — não vale nada sozinho.
+      </div>
+    </div>
+  </div>
+
+  <div class="passo">
+    <input type="checkbox" class="chk" data-p="14">
+    <div class="pb">
+      <span class="pt">Ajuste os três pontos marcados no código</span>
+      <p class="pd">Abra <code>src/pagamento.js</code> e procure por <b>AJUSTAR</b>. São três: o mapa de id de preço para plano, onde o provedor coloca a referência da conta, e os nomes dos eventos.</p>
+      <p class="pd">O arquivo já está escrito no formato do <b>Stripe</b>. Se usar Mercado Pago ou Pagar.me, o desenho é o mesmo — mudam o nome do cabeçalho de assinatura e o formato do payload.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTE 5 ================= -->
+<section class="parte">
+  <div class="parte-h">
+    <span class="parte-n">5</span>
+    <h2>Se der errado</h2>
+    <span class="tempo">consulta</span>
+  </div>
+
+  <div class="tw" style="margin-bottom:13px">
+    <table>
+      <thead><tr><th>Sintoma</th><th>Causa quase sempre</th></tr></thead>
+      <tbody>
+        <tr><td>Página abre mas login dá <b>Erro interno</b></td><td>Variável de ambiente faltando ou errada. Confira em Settings → Environment Variables e clique em <b>Redeploy</b>.</td></tr>
+        <tr><td><span class="mono">relation "contas" does not exist</span></td><td>O <code>esquema.sql</code> não foi rodado, ou foi rodado noutro projeto do Supabase.</td></tr>
+        <tr><td>Tudo dá <b>401</b> depois de entrar</td><td>Falta <code>NODE_ENV=producao</code>, ou o site está sendo aberto por HTTP em vez de HTTPS.</td></tr>
+        <tr><td><span class="mono">permission denied for table</span></td><td>Está usando a chave <b>anon</b> no lugar da <b>service_role</b>.</td></tr>
+        <tr><td>Webhook responde <b>Assinatura inválida</b></td><td>Segredo errado, ou o corpo chegou alterado. A tabela <code>eventos_pagamento</code> guarda o corpo recebido para comparar.</td></tr>
+        <tr><td>Deploy dá erro de build</td><td>Alguma configuração de build foi preenchida. Deixe tudo vazio e Framework Preset em <b>Other</b>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nota">
+    <span class="tit">Onde ver o erro de verdade</span>
+    Na Vercel, abra o projeto e vá em <b>Logs</b> (ou <b>Runtime Logs</b>). Ali aparece o erro exato que a função devolveu. Copiar essa mensagem é o caminho mais rápido para eu resolver.
+  </div>
+</section>
+
+<!-- ================= ANTES DE COBRAR ================= -->
+<section class="parte">
+  <div class="parte-h">
+    <span class="parte-n">6</span>
+    <h2>Antes de cobrar da primeira agência</h2>
+    <span class="tempo">falta fazer</span>
+  </div>
+
+  <p style="color:var(--ink-2); margin-bottom:16px">O sistema funciona e é seguro para testar com agências. Estes três itens ainda não existem, e todos precisam existir antes de você aceitar dinheiro de alguém.</p>
+
+  <div class="final">
+    <label><input type="checkbox" class="chk" data-p="16"><span><b>Política de privacidade e termos de uso publicados.</b> Exigência da LGPD, e também da revisão da Meta quando você for integrar o Instagram.</span></label>
+    <label><input type="checkbox"><span><b>Rota de exclusão de dados</b> a pedido do usuário — outra exigência da LGPD.</span></label>
+    <label><input type="checkbox"><span><b>Backup do Supabase.</b> Confira a política de retenção do seu plano e saiba quantos dias de histórico você tem.</span></label>
+  </div>
+</section>
+
+<footer>
+  Guia de publicação do Farol · Supabase + Vercel · as marcações ficam salvas neste navegador
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var chks = Array.prototype.slice.call(document.querySelectorAll(".chk"));
+  var CHAVE = "guia-farol";
+
+  /* A marcação fica no navegador de quem está seguindo o guia. Se o
+     armazenamento estiver bloqueado, o guia continua funcionando — só não
+     lembra o progresso. */
+  function ler(){
+    try { return JSON.parse(localStorage.getItem(CHAVE) || "{}"); }
+    catch(e){ return {}; }
+  }
+  function gravar(o){
+    try { localStorage.setItem(CHAVE, JSON.stringify(o)); } catch(e){}
+  }
+
+  function atualizar(){
+    var feitos = chks.filter(function(c){ return c.checked; }).length;
+    var pc = chks.length ? (feitos / chks.length) * 100 : 0;
+    document.getElementById("barra").style.width = pc.toFixed(1) + "%";
+    document.getElementById("contador").textContent = feitos + " / " + chks.length;
+    chks.forEach(function(c){
+      var passo = c.closest(".passo");
+      if (passo) passo.classList.toggle("feito", c.checked);
+    });
+  }
+
+  var salvo = ler();
+  chks.forEach(function(c, i){
+    var id = c.dataset.p || ("x" + i);
+    c.dataset.id = id;
+    if (salvo[id]) c.checked = true;
+    c.addEventListener("change", function(){
+      var o = ler();
+      if (c.checked) o[id] = 1; else delete o[id];
+      gravar(o);
+      atualizar();
+    });
+  });
+  atualizar();
+
+  /* copiar comandos */
+  document.addEventListener("click", function(e){
+    var b = e.target.closest(".copiar");
+    if (!b) return;
+    var txt = b.parentNode.querySelector("pre").textContent;
+    var pronto = function(){
+      b.textContent = "copiado"; b.classList.add("ok");
+      setTimeout(function(){ b.textContent = "copiar"; b.classList.remove("ok"); }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(pronto, function(){ alternativa(txt, pronto); });
+    } else alternativa(txt, pronto);
+  });
+  function alternativa(txt, cb){
+    var ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); cb(); } catch(err){}
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+</body>
+</html>

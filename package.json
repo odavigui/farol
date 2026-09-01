@@ -1,0 +1,13 @@
+{
+  "name": "farol",
+  "version": "1.1.0",
+  "description": "Relatorio e diagnostico para agencias de social media",
+  "scripts": {
+    "dev": "node servidor.js",
+    "semear": "node semear.js",
+    "verificar": "node verificar.js"
+  },
+  "engines": { "node": ">=22.5.0" },
+  "dependencies": {},
+  "private": true
+}

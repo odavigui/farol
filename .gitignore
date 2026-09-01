@@ -1,0 +1,9 @@
+dados/
+dados-teste*/
+.env
+.env.local
+*.db
+*.db-wal
+*.db-shm
+node_modules/
+.vercel
