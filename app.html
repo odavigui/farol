@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Prova de Entrega - painel da agencia">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Farol — painel da agência</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=DM+Mono:wght@400;500&family=Karla:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  /* FAROL — concreto e cor. O mar de noite estrutura, o facho destaca. */
+  --bg:#F4F6FB; --panel:#FFFFFF; --panel-2:#F7F9FD; --panel-3:#E9EDF7;
+  --ink:#0B1020; --ink-2:#454C63; --ink-3:#767D93; --ink-4:#A3AABE;
+  --line:#D8DEEE; --line-2:#BFC7DE;
+  --acc:#1435C8; --acc-ink:#1435C8; --acc-soft:#DDE3FA; --acc-line:#B3C1F2; --on-acc:#FFFFFF;
+  --bloco:#1435C8; --sobre-bloco:#FFFFFF;
+  --facho:#FF5B45; --facho-soft:#FFE6E0;
+  --good:#0E8A5F; --good-soft:#DCF2E8;
+  --warn:#B06A00; --warn-soft:#FBEEDA;
+  --crit:#C0202E; --crit-soft:#FBE0E2;
+  --data:#2E5BE0; --data-2:#F2634A; --data-track:#E9EDF7;
+  --shadow:0 1px 2px rgba(20,22,27,.05), 0 14px 32px -24px rgba(20,22,27,.42);
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fb:"Karla","Helvetica Neue",Arial,sans-serif;
+  --fm:"DM Mono","SFMono-Regular",Consolas,monospace;
+  --r:4px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#080B16; --panel:#101627; --panel-2:#141B2E; --panel-3:#1D2540;
+    --ink:#E9ECF7; --ink-2:#A2A9C2; --ink-3:#767D93; --ink-4:#5A617A;
+    --line:#1B2238; --line-2:#2C3557;
+    --acc:#8FA6FF; --acc-ink:#A9BAFF; --acc-soft:#141E4D; --acc-line:#26326B; --on-acc:#080B16;
+    --bloco:#0D2185; --sobre-bloco:#F2F5FF;
+    --facho:#FF7A63; --facho-soft:#2E1410;
+    --good:#3FBF8C; --good-soft:#0C2A20;
+    --warn:#D9A03C; --warn-soft:#2A2110;
+    --crit:#F0574F; --crit-soft:#2E1214;
+    --data:#5580EB; --data-2:#E5673F; --data-track:#1D2540;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 28px -22px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080B16; --panel:#101627; --panel-2:#141B2E; --panel-3:#1D2540;
+  --ink:#E9ECF7; --ink-2:#A2A9C2; --ink-3:#767D93; --ink-4:#5A617A;
+  --line:#1B2238; --line-2:#2C3557;
+  --acc:#8FA6FF; --acc-ink:#A9BAFF; --acc-soft:#141E4D; --acc-line:#26326B; --on-acc:#080B16;
+  --bloco:#0D2185; --sobre-bloco:#F2F5FF;
+  --facho:#FF7A63; --facho-soft:#2E1410;
+  --good:#3FBF8C; --good-soft:#0C2A20;
+  --warn:#D9A03C; --warn-soft:#2A2110;
+  --crit:#F0574F; --crit-soft:#2E1214;
+  --data:#5580EB; --data-2:#E5673F; --data-track:#1D2540;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 28px -22px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--fb); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--fd); margin:0; letter-spacing:-.02em; line-height:1.15; text-wrap:balance}
+p{margin:0}
+button,input,select,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--acc); outline-offset:2px; border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--fm)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+
+/* ================= shell ================= */
+.app{display:grid; grid-template-columns:238px 1fr; min-height:100vh}
+@media(max-width:960px){.app{grid-template-columns:1fr}}
+
+.side{
+  background:var(--panel); border-right:1px solid var(--line); padding:16px 12px;
+  display:flex; flex-direction:column; gap:6px; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+
+.logo{display:flex; align-items:center; gap:9px; padding:6px 10px 16px}
+
+.logo .mark{width:28px; height:28px; border-radius:3px; background:var(--bloco); color:var(--facho); display:grid; place-items:center; flex:none}
+.logo .mark svg{display:block}
+.mk{width:17px; height:17px}
+.logo .nm{font-family:var(--fd); font-weight:900; font-variation-settings:"wdth" 118; font-size:17px; letter-spacing:-.01em; line-height:1.05}
+.logo .nm small{display:block; font-family:var(--fm); font-size:9px; letter-spacing:.13em; color:var(--ink-3); font-weight:400; text-transform:uppercase}
+
+.navgrp{font-family:var(--fm); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-4); padding:12px 10px 5px}
+@media(max-width:960px){.navgrp{display:none}}
+.nav{
+  display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:transparent;
+  border:0; border-radius:8px; padding:9px 10px; cursor:pointer; color:var(--ink-2); font-size:14.5px; font-weight:500;
+  white-space:nowrap; transition:background .13s,color .13s;
+}
+.nav:hover{background:var(--panel-2); color:var(--ink)}
+.nav[aria-current="true"]{background:var(--acc-soft); color:var(--acc-ink); font-weight:700; box-shadow:inset 3px 0 0 var(--facho)}
+.nav .ic{width:17px; height:17px; flex:none; opacity:.85}
+.nav .badge{margin-left:auto; font-family:var(--fm); font-size:10.5px; background:var(--crit); color:#fff; border-radius:20px; padding:1px 7px; font-weight:600}
+
+.main{min-width:0; display:flex; flex-direction:column}
+.top{
+  background:color-mix(in srgb,var(--bg) 88%,transparent); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line); padding:12px 22px; display:flex; align-items:center; gap:12px;
+  position:sticky; top:0; z-index:30; flex-wrap:wrap;
+}
+.content{padding:24px 22px 72px; max-width:1160px; width:100%}
+@media(max-width:640px){.content{padding:18px 14px 60px} .top{padding:10px 14px}}
+
+/* selects & controls */
+.sel{
+  background:var(--panel); border:1px solid var(--line-2); border-radius:8px; padding:7px 30px 7px 11px;
+  font-size:14px; cursor:pointer; appearance:none; color:var(--ink);
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 15px) 51%,calc(100% - 10px) 51%; background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+}
+.roles{display:flex; background:var(--panel-3); border-radius:9px; padding:3px; gap:2px}
+.role{
+  border:0; background:transparent; border-radius:7px; padding:6px 13px; font-size:13.5px; font-weight:600;
+  cursor:pointer; color:var(--ink-3); white-space:nowrap;
+}
+.role[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:var(--shadow)}
+.spacer{margin-left:auto}
+.btn{
+  display:inline-flex; align-items:center; gap:7px; background:var(--facho); color:#0B1020; border:1px solid var(--facho);
+  border-radius:3px; padding:9px 15px; font-size:14.5px; font-weight:700; cursor:pointer;
+  transition:filter .15s, transform .12s;
+}
+.btn:active{transform:translateY(1px)}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent; color:var(--ink-2); border-color:var(--line-2)}
+.btn.ghost:hover{border-color:var(--acc); color:var(--acc-ink); filter:none}
+.btn.sm{padding:6px 11px; font-size:13px}
+
+/* page head */
+.phead{display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-bottom:20px}
+.phead h1{font-size:clamp(24px,3.3vw,33px); font-weight:900; font-variation-settings:"wdth" 110; letter-spacing:-.038em}
+.phead .desc{color:var(--ink-2); font-size:14.5px; margin-top:5px; max-width:64ch}
+.eyebrow{font-family:var(--fm); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-4); display:block; margin-bottom:7px}
+
+/* cards */
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+.card-h{padding:15px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.card-h h3{font-size:15.5px; font-weight:700; letter-spacing:-.015em}
+.card-h .sub{font-size:12.5px; color:var(--ink-3)}
+.card-b{padding:18px}
+.grid{display:grid; gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g21{grid-template-columns:1.35fr .65fr}
+@media(max-width:1000px){.g4{grid-template-columns:repeat(2,1fr)} .g21,.g3{grid-template-columns:1fr}}
+@media(max-width:620px){.g4,.g2{grid-template-columns:1fr}}
+
+/* kpi */
+.kpi{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:15px 16px; display:flex; flex-direction:column; gap:7px; box-shadow:var(--shadow)}
+.kpi .k{font-family:var(--fm); font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3)}
+.kpi .v{font-family:var(--fd); font-weight:900; font-variation-settings:"wdth" 114; font-size:clamp(23px,3vw,30px); letter-spacing:-.045em; line-height:1; font-variant-numeric:tabular-nums}
+.kpi .d{display:flex; align-items:center; gap:6px; font-size:12.5px; font-family:var(--fm); font-variant-numeric:tabular-nums}
+.up{color:var(--good)} .down{color:var(--crit)} .flat{color:var(--ink-3)}
+.kpi .n{font-size:12px; color:var(--ink-3)}
+
+/* pills */
+.pill{
+  display:inline-flex; align-items:center; gap:5px; font-family:var(--fm); font-size:10.5px; font-weight:600;
+  letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:5px; white-space:nowrap;
+}
+.pill.ok{background:var(--good-soft); color:var(--good)}
+.pill.wa{background:var(--warn-soft); color:var(--warn)}
+.pill.cr{background:var(--crit-soft); color:var(--crit)}
+.pill.nu{background:var(--panel-3); color:var(--ink-2)}
+.pill.ac{background:var(--acc-soft); color:var(--acc-ink)}
+.pill::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor; flex:none}
+.pill.nu::before{background:var(--ink-4)}
+
+/* tables */
+.tw{overflow-x:auto}
+table{border-collapse:collapse; width:100%; min-width:640px; font-size:14px}
+th,td{padding:11px 14px; text-align:left; border-bottom:1px solid var(--line); vertical-align:middle}
+thead th{
+  font-family:var(--fm); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  font-weight:600; background:var(--panel-2); white-space:nowrap; position:sticky; top:0;
+}
+thead th.s{cursor:pointer; user-select:none}
+thead th.s:hover{color:var(--acc-ink)}
+thead th .ar{opacity:.45; margin-left:3px}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--panel-2)}
+td.n,th.n{text-align:right; font-family:var(--fm); font-variant-numeric:tabular-nums}
+.rank{font-family:var(--fd); font-weight:900; font-size:15px; color:var(--ink-4); width:30px}
+.rank.top{color:var(--acc)}
+.ttl{font-weight:600; display:block}
+.meta{font-size:12px; color:var(--ink-3); display:flex; gap:8px; flex-wrap:wrap; margin-top:2px}
+
+/* bars in table */
+.minibar{display:flex; align-items:center; gap:9px; justify-content:flex-end}
+.minibar .tr{width:76px; height:7px; background:var(--data-track); border-radius:4px; overflow:hidden; flex:none}
+.minibar .fl{height:100%; background:var(--data); border-radius:4px; display:block}
+
+/* charts */
+.chartbox{position:relative}
+svg.chart{display:block; width:100%; height:auto; overflow:visible}
+.gridline{stroke:var(--line); stroke-width:1; stroke-dasharray:3 4}
+.axl{fill:var(--ink-3); font-family:var(--fm); font-size:10px}
+.dot{fill:var(--panel); stroke:var(--data); stroke-width:2.5}
+.hbar-row{display:flex; align-items:center; gap:12px; padding:9px 0}
+.hbar-lab{width:96px; flex:none; font-size:13.5px; display:flex; flex-direction:column; gap:1px; line-height:1.3}
+.hbar-lab small{color:var(--ink-3); font-size:11px; font-family:var(--fm)}
+.hbar-track{flex:1; min-width:60px; height:22px; background:var(--data-track); border-radius:0 5px 5px 0; position:relative; overflow:hidden}
+.hbar-fill{display:block; height:100%; background:var(--data); border-radius:0 5px 5px 0; transition:width .5s cubic-bezier(.3,.8,.3,1)}
+.hbar-val{width:58px; text-align:right; font-family:var(--fm); font-size:13px; font-variant-numeric:tabular-nums; flex:none}
+
+/* insights */
+.ins{display:flex; gap:14px; padding:17px 18px; border-bottom:1px solid var(--line); align-items:flex-start}
+.ins:last-child{border-bottom:0}
+.ins-ic{width:32px; height:32px; border-radius:9px; display:grid; place-items:center; flex:none; font-family:var(--fd); font-weight:900; font-size:14px}
+.ins-ic.ok{background:var(--good-soft); color:var(--good)}
+.ins-ic.wa{background:var(--warn-soft); color:var(--warn)}
+.ins-ic.cr{background:var(--crit-soft); color:var(--crit)}
+.ins-ic.ac{background:var(--acc-soft); color:var(--acc-ink)}
+.ins-b{display:flex; flex-direction:column; gap:5px; min-width:0}
+.ins-b .t{font-weight:700; font-size:15.5px; font-family:var(--fd); letter-spacing:-.015em}
+.ins-b .d{font-size:14px; color:var(--ink-2)}
+.ins-b .act{font-size:13.5px; background:var(--panel-2); border:1px solid var(--line); border-left:2px solid var(--acc); border-radius:0 7px 7px 0; padding:9px 12px; margin-top:3px}
+.ins-b .act b{font-family:var(--fm); font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--acc-ink); display:block; margin-bottom:2px}
+
+/* client list */
+/* só as LINHAS da lista — o seletor precisa ser de filho direto, senão
+   engole os botões que ficam dentro das linhas e some com eles. */
+.clist > a, .clist > button{
+  display:grid; grid-template-columns:1fr auto auto; gap:14px; align-items:center; width:100%;
+  padding:14px 18px; border:0; border-bottom:1px solid var(--line); background:transparent;
+  cursor:pointer; text-align:left; color:inherit;
+}
+.clist > *:last-child{border-bottom:0}
+.clist > button:hover{background:var(--panel-2)}
+.cav{
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+  font-family:var(--fd); font-weight:900; font-size:14.5px; flex:none;
+  background:hsl(var(--h,190) 38% 92%); color:hsl(var(--h,190) 52% 26%);
+  border:1px solid hsl(var(--h,190) 34% 84%);
+}
+.cname{display:flex; align-items:center; gap:11px; min-width:0}
+.cname .nm{font-weight:600; font-size:15px}
+.cname .sg{font-size:12.5px; color:var(--ink-3)}
+.spark{width:88px; height:26px; flex:none}
+
+/* form */
+.form{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+@media(max-width:700px){.form{grid-template-columns:1fr}}
+.fld{display:flex; flex-direction:column; gap:5px}
+.fld.full{grid-column:1/-1}
+.fld label{font-size:13px; font-weight:600; color:var(--ink-2)}
+.fld input,.fld select,.fld textarea{
+  background:var(--panel-2); border:1px solid var(--line-2); border-radius:8px; padding:9px 11px; font-size:14.5px; width:100%;
+}
+.fld .hint{font-size:11.5px; color:var(--ink-3)}
+.fgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+@media(max-width:760px){.fgrid{grid-template-columns:repeat(2,1fr)}}
+:root[data-theme="dark"] .cav,:root:not([data-theme="light"]) .cav{
+  background:hsl(var(--h,190) 26% 15%); color:hsl(var(--h,190) 58% 68%); border-color:hsl(var(--h,190) 24% 24%);
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]) .cav{
+    background:hsl(var(--h,190) 38% 92%); color:hsl(var(--h,190) 52% 26%); border-color:hsl(var(--h,190) 34% 84%);
+  }
+}
+
+/* transição suave ao trocar de tela — o app deixa de "piscar" */
+.content{animation:fadein .22s ease}
+@keyframes fadein{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+@media (prefers-reduced-motion:reduce){.content{animation:none}}
+
+/* ---- barras mensais (esforço | resultado) ---- */
+.mbars{display:flex; gap:clamp(5px,1.4vw,12px); align-items:flex-end; height:184px}
+.mbar{flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; min-width:0}
+.mbar-v{font-family:var(--fm); font-size:11px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+.mbar-t{flex:1; width:100%; display:flex; align-items:flex-end}
+.mbar-f{display:block; width:100%; border-radius:4px; transition:height .45s cubic-bezier(.3,.8,.3,1)}
+.mbar-l{font-family:var(--fm); font-size:11px; color:var(--ink-3)}
+.mbar:hover .mbar-f{filter:brightness(1.08)}
+.cav-nota{
+  font-size:12.5px; color:var(--ink-3); border-left:2px solid var(--line-2);
+  padding-left:10px; margin-top:2px; font-style:italic;
+}
+
+/* ---- conexões ---- */
+.incl2{display:flex; flex-direction:column; gap:11px; font-size:14.5px}
+.incl2 div{display:flex; gap:11px; align-items:flex-start}
+.tickr{
+  width:19px; height:19px; border-radius:50%; display:grid; place-items:center; flex:none;
+  font-size:11px; font-weight:700; margin-top:2px; font-family:var(--fd);
+}
+.tickr.ok{background:var(--good-soft); color:var(--good)}
+.tickr.wa{background:var(--warn-soft); color:var(--warn)}
+.badge.nb{background:var(--acc); color:var(--on-acc)}
+.autotag{
+  font-family:var(--fm); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--acc-ink); background:var(--acc-soft); border:1px solid var(--acc-line);
+  border-radius:4px; padding:1px 5px;
+}
+
+/* ---- modal ---- */
+.modal{
+  position:fixed; inset:0; z-index:100; background:rgba(8,14,17,.55); backdrop-filter:blur(3px);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal.on{display:flex}
+.mcard{
+  background:var(--panel); border:1px solid var(--line); border-radius:15px; box-shadow:0 30px 80px rgba(0,0,0,.4);
+  width:min(540px,100%); max-height:88vh; overflow-y:auto; position:relative;
+}
+.mbody{padding:26px 26px 22px; display:flex; flex-direction:column; gap:12px}
+.mx{
+  position:absolute; top:12px; right:13px; width:30px; height:30px; border-radius:8px; border:0;
+  background:transparent; color:var(--ink-3); font-size:22px; line-height:1; cursor:pointer;
+}
+.mx:hover{background:var(--panel-3); color:var(--ink)}
+.mtit{font-size:22px; font-weight:800}
+.mtxt{font-size:15px; color:var(--ink-2)}
+.mtxt b{color:var(--ink)}
+.mbox{background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:15px 17px; display:flex; flex-direction:column}
+.mbox-h{font-family:var(--fm); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:7px}
+.mlist{margin:0; padding-left:17px; font-size:14px; color:var(--ink-2); display:flex; flex-direction:column; gap:3px}
+.mlist.neg{color:var(--ink-3)}
+.mkv{display:flex; justify-content:space-between; gap:14px; font-size:14px; padding:7px 0; border-bottom:1px solid var(--line)}
+.mkv:last-child{border-bottom:0}
+.mkv span:first-child{color:var(--ink-3)}
+.mkv span:last-child{font-family:var(--fm); font-size:13px; text-align:right}
+.macts{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:4px}
+
+/* representação da tela externa — não é uma cópia funcional de nada */
+.extbox{border:1px dashed var(--line-2); border-radius:11px; overflow:hidden; background:var(--panel-2)}
+.extbar{
+  display:block; padding:7px 13px; background:var(--panel-3); border-bottom:1px dashed var(--line-2);
+  font-family:var(--fm); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3);
+}
+.extbody{padding:20px 18px; display:flex; flex-direction:column; gap:9px; text-align:center}
+.extq{font-size:15px}
+.extp{font-size:14px; color:var(--ink-2)}
+.extacts{display:flex; gap:9px; justify-content:center; margin-top:6px}
+.extbtn{
+  border:1px solid var(--line-2); border-radius:7px; padding:7px 18px; font-size:13.5px;
+  color:var(--ink-3); background:var(--panel);
+}
+.extbtn.on{background:var(--acc); border-color:var(--acc); color:var(--on-acc)}
+
+/* passo a passo do lançamento */
+.stepbox{display:grid; grid-template-columns:34px 1fr; gap:14px; padding:20px 18px; border-bottom:1px solid var(--line)}
+@media(max-width:560px){.stepbox{grid-template-columns:1fr; gap:10px}}
+.stepnum{
+  width:26px; height:26px; border-radius:50%; background:var(--acc-soft); color:var(--acc-ink);
+  display:grid; place-items:center; font-family:var(--fd); font-weight:900; font-size:13px;
+  border:1px solid var(--acc-line); margin-top:2px;
+}
+.stepbody{display:flex; flex-direction:column; gap:10px; min-width:0}
+.steplab{font-family:var(--fd); font-weight:700; font-size:16px; letter-spacing:-.015em}
+.linkin{
+  background:var(--panel-2); border:1px solid var(--line-2); border-radius:9px; padding:12px 14px;
+  font-family:var(--fm); font-size:14px; width:100%;
+}
+.linkin:focus{border-color:var(--acc); background:var(--panel)}
+.detect{
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap; padding:11px 13px; border-radius:9px;
+  background:var(--panel-2); border:1px solid var(--line); font-size:13.5px; min-height:44px;
+}
+.detect.ok{background:var(--acc-soft); border-color:var(--acc-line)}
+.detect.erro{background:var(--crit-soft); border-color:var(--crit)}
+.det-idle{color:var(--ink-3)}
+.det-txt{color:var(--ink-2)}
+.det-txt b{color:var(--ink)}
+.sel.sm{padding:5px 26px 5px 9px; font-size:13px; background-position:calc(100% - 13px) 51%,calc(100% - 8px) 51%}
+.numfld input{font-family:var(--fm); font-size:16px; font-variant-numeric:tabular-nums}
+.more{margin-top:4px; border:0}
+.more summary{
+  list-style:none; cursor:pointer; font-family:var(--fm); font-size:12px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--acc-ink); padding:6px 0; font-weight:600;
+}
+.more summary::-webkit-details-marker{display:none}
+.more summary::before{content:"+ "; }
+.more[open] summary::before{content:"− "; }
+.lnk{
+  display:inline-flex; align-items:center; gap:3px; color:var(--acc-ink); text-decoration:none;
+  font-family:var(--fm); font-size:11px; letter-spacing:.04em;
+}
+.lnk:hover{text-decoration:underline}
+
+.toast{
+  position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(14px); z-index:80;
+  background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:9px; font-size:14px; font-weight:500;
+  opacity:0; transition:opacity .2s, transform .2s; pointer-events:none; box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+.toast.on{opacity:1; transform:translateX(-50%)}
+
+/* report / client view */
+.rep-hero{
+  background:linear-gradient(160deg,var(--acc-soft),var(--panel) 70%); border:1px solid var(--acc-line);
+  border-radius:14px; padding:clamp(22px,4vw,34px); display:flex; flex-direction:column; gap:12px;
+}
+.rep-hero h2{font-size:clamp(22px,3.4vw,32px); font-weight:900; letter-spacing:-.03em}
+.rep-hero p{color:var(--ink-2); max-width:60ch; font-size:15.5px}
+.rep-note{font-size:14px; color:var(--ink-2); background:var(--panel-2); border:1px solid var(--line); border-left:3px solid var(--acc); border-radius:0 var(--r) var(--r) 0; padding:14px 16px}
+
+.tip{
+  position:fixed; z-index:90; max-width:min(280px,88vw); pointer-events:none; opacity:0; transform:translate(-50%,-118%);
+  background:var(--ink); color:var(--bg); border-radius:8px; padding:8px 11px; font-family:var(--fm); font-size:11.5px;
+  line-height:1.55; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,.35); transition:opacity .12s;
+}
+.tip b{font-weight:600}
+.empty{padding:44px 20px; text-align:center; color:var(--ink-3); font-size:14.5px}
+
+/* ---- tela de entrada ---- */
+.auth{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:16px; padding:28px 20px; background:
+    radial-gradient(1100px 480px at 50% -12%, var(--acc-soft), transparent 62%), var(--bg);
+}
+.auth[hidden]{display:none}
+.auth-card{
+  width:min(430px,100%); background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; box-shadow:var(--shadow); padding:28px 26px; display:flex; flex-direction:column; gap:18px;
+}
+.auth-brand{display:flex; align-items:center; gap:10px; justify-content:center}
+.auth-brand .mark{width:34px; height:34px; border-radius:3px; background:var(--bloco); color:var(--facho); display:grid; place-items:center; flex:none}
+.auth-brand .mk{width:20px; height:20px}
+.auth-brand .nm{font-family:var(--fd); font-weight:900; font-variation-settings:"wdth" 118; font-size:21px; letter-spacing:-.01em}
+.auth-foot{font-size:12.5px; color:var(--ink-3); text-align:center}
+.authtabs{display:flex; background:var(--panel-3); border-radius:9px; padding:3px; gap:3px}
+.authtab{flex:1; border:0; background:transparent; border-radius:7px; padding:8px; font-size:14px; font-weight:600; color:var(--ink-3); cursor:pointer}
+.authtab.on{background:var(--panel); color:var(--ink); box-shadow:var(--shadow)}
+.authform{display:flex; flex-direction:column; gap:14px}
+.authbtn{justify-content:center; width:100%; padding:12px}
+.authnote{font-size:12.5px; color:var(--ink-3); text-align:center}
+.autherro{margin:0 26px 22px; padding:10px 13px; border-radius:9px; background:var(--crit-soft);
+  color:var(--crit); font-size:13.5px; text-align:center; border:1px solid var(--crit)}
+.authalt{font-size:14px; color:var(--ink-2); text-align:center}
+.lnkb{border:0; background:transparent; color:var(--acc-ink); font-weight:600; cursor:pointer; padding:0; font-size:14px; text-decoration:underline}
+
+/* cartões de plano */
+.pcards{display:grid; grid-template-columns:repeat(3,1fr); gap:9px}
+@media(max-width:520px){.pcards{grid-template-columns:1fr}}
+.pcard{
+  position:relative; border:1px solid var(--line-2); border-radius:10px; padding:12px 11px;
+  display:flex; flex-direction:column; gap:2px; cursor:pointer; background:var(--panel-2);
+  text-align:left; transition:border-color .15s, background .15s;
+}
+.pcard:hover{border-color:var(--acc-line)}
+.pcard.on{border-color:var(--acc); background:var(--acc-soft)}
+.pcard input{position:absolute; inset:0; width:100%; height:100%; opacity:0; pointer-events:none; margin:0}
+.pcard-n{font-family:var(--fd); font-weight:800; font-size:14.5px}
+.pcard-v{font-family:var(--fd); font-weight:900; font-size:20px; letter-spacing:-.03em}
+.pcard-v small{font-family:var(--fb); font-weight:400; font-size:11.5px; color:var(--ink-3); letter-spacing:0}
+.pcard-d{font-size:11.5px; color:var(--ink-3)}
+.pcard-b{font-family:var(--fm); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--acc-ink); margin-top:6px}
+.pcard.on .pcard-b{color:var(--acc-ink)}
+
+:root{--tema-borda:var(--line-2); --tema-cor:var(--ink-2); --tema-hover:var(--acc-ink); --tema-raio:3px}
+
+/* ---- seletor de tema ---- */
+.tema{
+  display:inline-flex; align-items:center; justify-content:center; gap:0;
+  width:36px; height:36px; flex:none; cursor:pointer; padding:0;
+  background:transparent; border:1px solid var(--tema-borda); border-radius:var(--tema-raio);
+  color:var(--tema-cor);
+}
+.tema:hover{border-color:var(--tema-hover); color:var(--tema-hover)}
+.tema svg{width:17px; height:17px; display:block}
+.tema .ic{display:none}
+.tema[data-modo="sistema"] .ic-sistema,
+.tema[data-modo="claro"] .ic-claro,
+.tema[data-modo="escuro"] .ic-escuro{display:block}
+/* chip de plano no topo */
+.planchip{
+  display:flex; flex-direction:column; align-items:flex-start; gap:0; border:1px solid var(--line-2);
+  background:var(--panel); border-radius:8px; padding:5px 11px; cursor:pointer; line-height:1.25; text-align:left;
+}
+.planchip:hover{border-color:var(--acc)}
+.planchip b{font-size:12.5px; font-weight:700}
+.planchip span{font-family:var(--fm); font-size:10px; color:var(--ink-3)}
+.planchip.cheio{border-color:var(--warn)}
+.planchip.cheio span{color:var(--warn)}
+.role.trava{opacity:.45; cursor:not-allowed}
+.tickr.no{background:var(--panel-3); color:var(--ink-4)}
+.uso{display:block; height:8px; background:var(--panel-3); border-radius:5px; overflow:hidden}
+.uso-f{display:block; height:100%; background:var(--acc); border-radius:5px; transition:width .4s}
+.uso-f.cheio{background:var(--warn)}
+
+/* estado vazio */
+.zero{padding:56px 26px; display:flex; flex-direction:column; align-items:center; gap:11px; text-align:center}
+.zero-ic{width:42px; height:42px; color:var(--ink-4); margin-bottom:2px}
+.zero h3{font-size:19px; font-weight:800}
+.zero p{font-size:14.5px; color:var(--ink-2); max-width:46ch}
+.zero .btn{margin-top:8px}
+.mform{display:flex; flex-direction:column; gap:13px}
+.fgrid2{display:grid; grid-template-columns:1fr 1fr; gap:13px}
+@media(max-width:480px){.fgrid2{grid-template-columns:1fr}}
+
+
+/* ================= CELULAR ================= */
+.hamb{
+  display:none; width:38px; height:38px; flex:none; align-items:center; justify-content:center;
+  background:transparent; border:1px solid var(--line-2); border-radius:3px;
+  color:var(--ink-2); cursor:pointer; padding:0;
+}
+.hamb:hover{border-color:var(--acc); color:var(--acc-ink)}
+.hamb svg{width:18px; height:18px}
+.veu{
+  position:fixed; inset:0; z-index:85; background:rgba(6,10,22,.5);
+  opacity:0; pointer-events:none; transition:opacity .22s;
+}
+.veu.on{opacity:1; pointer-events:auto}
+
+@media(max-width:960px){
+  .app{display:block}
+  .hamb{display:flex}
+
+  /* menu vira gaveta: some da tela e entra por cima quando chamado */
+  .side{
+    position:fixed; top:0; left:0; bottom:0; z-index:90;
+    width:min(280px, 84vw); height:100dvh; overflow-y:auto;
+    flex-direction:column; gap:4px; padding:16px 12px;
+    border-right:1px solid var(--line); border-bottom:0;
+    transform:translateX(-101%); transition:transform .24s cubic-bezier(.3,.8,.3,1);
+    box-shadow:none;
+  }
+  .side.aberta{transform:none; box-shadow:0 0 60px rgba(6,10,22,.35)}
+  .side .logo{display:flex}
+  .side .navgrp{display:block}
+  .side .nav{font-size:15.5px; padding:11px 12px}
+
+  /* barra de cima em duas linhas, sem apertar nada */
+  .top{padding:10px 14px; gap:9px; row-gap:9px}
+  .top .spacer{display:none}
+  .demo-flag{display:none}
+  #clientSel{flex:1 1 auto; min-width:0; order:2}
+  .tema{order:3}
+  .planchip{order:4}
+  .roles{order:5; flex:1 1 100%; min-width:0}
+  .roles .role{flex:1; text-align:center; padding:8px 6px}
+  #periodSel{order:6}
+  #btnNovo{order:7; padding:9px 12px}
+  #btnNovo span{display:none}
+  .hamb{order:1}
+
+  /* cartões de número: dois por linha, não um */
+  .stats,.grid.g4{grid-template-columns:repeat(2,1fr)!important; gap:10px}
+  .kpi{padding:13px 13px 11px}
+  .kpi .v{font-size:clamp(20px,6.4vw,26px)}
+  .kpi .n{font-size:11.5px}
+  .phead{margin-bottom:16px}
+}
+
+@media(max-width:520px){
+  .grid.g2,.grid.g3,.grid.g21{grid-template-columns:1fr!important}
+  .content{padding:16px 13px 48px}
+  .card-b{padding:15px}
+  .fgrid{grid-template-columns:repeat(2,1fr)}
+}
+
+
+@media(max-width:620px){
+  /* Lista de clientes: o nome e os números param de brigar pela mesma
+     linha. Nome em cima, números embaixo, e o mini-gráfico sai — num
+     celular ele vira um risco de 80px que não informa nada. */
+  .clist > a,.clist > button{grid-template-columns:1fr auto; gap:9px 12px; padding:15px 16px}
+  .clist .spark{display:none}
+  .clist > button > span:nth-child(2){grid-column:1 / -1; justify-content:flex-start}
+  .clist > button > span:nth-child(2) > span{text-align:left!important; min-width:0!important}
+  /* o selo de status volta para o alto, ao lado do nome */
+  .clist > button > :nth-child(3){grid-column:2; grid-row:1; justify-self:end; align-self:center}
+  .cname .nm{font-size:15.5px}
+  .cname .sg{font-size:12px; line-height:1.4}
+
+  /* Linhas da tela de contas conectadas */
+  .clist .wrow{grid-template-columns:1fr!important; gap:11px!important; padding:16px!important}
+  .clist .wrow > *{justify-self:start}
+  .clist .wrow > span[style*="display:flex"]{flex-wrap:wrap}
+
+  /* Barra de cima: cabe em duas linhas em vez de três */
+  #periodSel{flex:1 1 auto; min-width:0}
+  .roles{order:5}
+}
+
+/* ---- impressão: o relatório vira PDF pela própria janela do navegador ---- */
+@media print{
+  @page{ margin:14mm; }
+  .side,.top,.tip,.toast,.modal,.demo-flag,#btnPdf,#btnNovo{display:none!important}
+  .app{display:block}
+  .content{padding:0!important; max-width:none}
+  body{background:#fff; color:#111; font-size:11.5pt}
+  .card,.kpi,.rep-hero{
+    box-shadow:none!important; border:1px solid #d8dedb!important;
+    break-inside:avoid; page-break-inside:avoid; background:#fff!important;
+  }
+  .rep-hero{background:#f4f7f6!important}
+  .phead{border-bottom:2px solid #111; padding-bottom:12px}
+  .phead .desc{display:none}
+  .grid{gap:10px}
+  a[href^="http"]::after{content:"";}
+  .mbar-f,.hbar-fill,.minibar .fl,.seg{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .ins{break-inside:avoid; page-break-inside:avoid}
+}
+
+/* ---- recuperação de senha ---- */
+.authlnk{display:flex; justify-content:flex-end; margin-top:-6px}
+/* O verde dos gráficos é claro demais para texto sobre fundo claro (3,7:1).
+   Um token só para leitura resolve sem mexer na paleta dos gráficos. */
+:root{--good-texto:#075437}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--good-texto:#3FBF8C}}
+:root[data-theme="dark"]{--good-texto:#3FBF8C}
+.authok{margin:0 26px 22px; padding:10px 13px; border-radius:9px;
+  background:var(--good-soft); border:1px solid var(--good); color:var(--good-texto);
+  font-size:13.5px; line-height:1.5}
+.authvolta{font-size:13.5px; color:var(--ink-2); text-align:center}
+.hide{display:none!important}
+.demo-flag{
+  font-family:var(--fm); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--warn);
+  background:var(--warn-soft); border:1px solid var(--warn); border-radius:5px; padding:2px 7px; white-space:nowrap;
+}
+</style>
+
+<div class="auth" id="auth">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="mark"><svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.4 8.5 9.6v4.8L1.5 16.6V7.4Z" fill="currentColor" opacity=".38"/><path d="M22.5 7.4 15.5 9.6v4.8l7 2.2V7.4Z" fill="currentColor" opacity=".38"/><path d="M12 1.6 15.4 5H8.6L12 1.6Z" fill="currentColor"/><rect x="8.8" y="5.6" width="6.4" height="4.2" fill="currentColor"/><path d="M9.2 10.6h5.6L16.2 22H7.8L9.2 10.6Z" fill="currentColor" opacity=".85"/></svg></span>
+      <span class="nm">FAROL</span>
+    </div>
+    <div class="auth-body" id="authBody"></div>
+    <p class="autherro hide" id="authErro"></p>
+    <p class="authok hide" id="authOk"></p>
+  </div>
+  <p class="auth-foot">Sua senha nunca é guardada — só uma marca dela, que não dá para desfazer.</p>
+</div>
+
+<div class="app" id="app" hidden>
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <div class="logo">
+      <span class="mark"><svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.4 8.5 9.6v4.8L1.5 16.6V7.4Z" fill="currentColor" opacity=".38"/><path d="M22.5 7.4 15.5 9.6v4.8l7 2.2V7.4Z" fill="currentColor" opacity=".38"/><path d="M12 1.6 15.4 5H8.6L12 1.6Z" fill="currentColor"/><rect x="8.8" y="5.6" width="6.4" height="4.2" fill="currentColor"/><path d="M9.2 10.6h5.6L16.2 22H7.8L9.2 10.6Z" fill="currentColor" opacity=".85"/></svg></span>
+      <span class="nm">FAROL<small>Painel da agência</small></span>
+    </div>
+
+    <div class="navgrp">Agência</div>
+    <button class="nav" data-view="carteira" aria-current="true"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M8 5V3M16 5V3"/></svg>Carteira</button>
+    <button class="nav" data-view="painel"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 19V11M10 19V5M16 19v-5M21 19H3"/></svg>Painel do cliente</button>
+    <button class="nav" data-view="conteudos"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m10 9 5 3-5 3V9Z"/></svg>Conteúdos</button>
+    <button class="nav" data-view="diagnostico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3a6 6 0 0 0-3.5 10.9V17h7v-3.1A6 6 0 0 0 12 3ZM9.5 20h5"/></svg>Diagnóstico<span class="badge" id="insCount">0</span></button>
+    <button class="nav" data-view="lancar"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Lançar publicação</button>
+    <button class="nav" data-view="resultado"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 5-6"/></svg>Resultado do mês</button>
+    <button class="nav" data-view="conexoes"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8"/></svg>Contas conectadas<span class="badge nb" id="conCount">0</span></button>
+
+    <div class="navgrp">Entrega</div>
+    <button class="nav" data-view="relatorio"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5M9 14h6M9 17h4"/></svg>Relatório do cliente</button>
+  </aside>
+
+  <div class="veu" id="veu"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <div class="top">
+      <button class="hamb" id="btnMenu" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M3.5 7h17M3.5 12h17M3.5 17h17"/></svg>
+      </button>
+      <div class="roles" role="group" aria-label="Tipo de acesso">
+        <button class="role" data-role="agencia" aria-pressed="true">Agência</button>
+        <button class="role" data-role="cliente" aria-pressed="false">Cliente final</button>
+      </div>
+      <select class="sel" id="clientSel" aria-label="Selecionar cliente"></select>
+      <select class="sel" id="periodSel" aria-label="Período">
+        <option value="30">Últimos 30 dias</option>
+        <option value="60" selected>Últimos 60 dias</option>
+        <option value="90">Últimos 90 dias</option>
+      </select>
+      <span class="spacer"></span>
+      <button class="tema" id="btnTema" type="button" data-modo="sistema" title="Tema: automático">
+  <svg class="ic ic-sistema" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 20.5h7M12 17v3.5"/></svg>
+  <svg class="ic ic-claro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+  <svg class="ic ic-escuro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8Z"/></svg>
+</button>
+    <button class="planchip" id="planChip" type="button" title="Minha conta"></button>
+      <button class="btn sm" id="btnNovo" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Cliente</span>
+      </button>
+      <span class="demo-flag" id="demoFlag">Protótipo · dados de exemplo</span>
+    </div>
+
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Conectar conta">
+  <div class="mcard"><button class="mx" data-mclose="1" aria-label="Fechar">×</button><div class="mbody"></div></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =====================================================================
+   DADOS DE EXEMPLO
+   Em produção isto vem do banco. Aqui é um array em memória para o
+   protótipo funcionar de verdade: os gráficos, o ranking e o
+   diagnóstico são todos calculados a partir daqui.
+   ===================================================================== */
+/* DEMO = true  -> versão de demonstração, com carteira de exemplo carregada
+   DEMO = false -> versão zerada, pronta para a agência cadastrar os clientes dela */
+var DEMO = false;
+
+/* =====================================================================
+   PLANOS E CONTA
+   O plano escolhido na página de vendas chega aqui pela URL
+   (?plano=agencia&novo=1) e define limite de clientes e recursos.
+
+   ATENÇÃO DE ENGENHARIA: esta checagem é de INTERFACE, não de segurança.
+   Qualquer pessoa abre o console e muda a variável. No sistema real, o
+   limite e a liberação de recurso vivem no servidor, a cada requisição.
+   Aqui isso existe para desenhar o comportamento, não para proteger nada.
+   ===================================================================== */
+var PLANOS = {
+  essencial: { id:"essencial", nome:"Essencial", preco:97,  maxClientes:5,
+    recursos:{ clienteFinal:false, marcaPdf:false, alertas:false, multiUsuario:false } },
+  agencia:   { id:"agencia",   nome:"Agência",   preco:197, maxClientes:15,
+    recursos:{ clienteFinal:true,  marcaPdf:true,  alertas:true,  multiUsuario:false } },
+  estudio:   { id:"estudio",   nome:"Estúdio",   preco:397, maxClientes:40,
+    recursos:{ clienteFinal:true,  marcaPdf:true,  alertas:true,  multiUsuario:true } }
+};
+
+var CONTA = { entrou:false, email:"", agencia:"", plano:"essencial", desde:"", teste:true };
+/* Cópia do servidor, só para desenhar a interface. Quem decide é a API. */
+var PLANO_SERVIDOR = null;
+function plano(){ return PLANO_SERVIDOR || PLANOS[CONTA.plano] || PLANOS.essencial; }
+function pode(recurso){ return !!plano().recursos[recurso]; }
+
+var CLIENTES = [];
+
+/* =====================================================================
+   RESULTADO COMERCIAL POR MÊS
+   O elo que faltava: esforço de conteúdo de um lado, resultado do
+   negócio do outro. É o que a agência leva para a reunião de renovação.
+   'res' é lançado pela agência ou pelo cliente; o resto é o esforço.
+   ===================================================================== */
+var HISTORICO = {};
+
+// dia 0 = hoje. "d" é quantos dias atrás foi publicado.
+var POSTS = [];
+
+/* Publicações que "chegam sozinhas" quando a conta está conectada.
+   No sistema real isto vem da API; aqui simula o retorno da sincronização. */
+var SINCRONIZADOS = {};
+
+/* =====================================================================
+   ESTADO
+   ===================================================================== */
+var state = { role:"agencia", view:"carteira", cliente:"", periodo:60, sortKey:"alc", sortDir:-1 };
+
+// status da conexão de cada cliente com a própria conta do Instagram
+var CONEX = {};
+CLIENTES.forEach(function(c){
+  CONEX[c.id] = { ligada:false, conta:null, desde:null, expira:null, ultima:null, sincronizado:false };
+});
+
+var $  = function(s,r){ return (r||document).querySelector(s); };
+var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+var esc = function(s){ return String(s).replace(/[&<>"]/g, function(m){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]; }); };
+var fnum = function(n){ return Math.round(n).toLocaleString("pt-BR"); };
+var fk = function(n){
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace(".",",")+"M";
+  if (n >= 1000) return (n/1000).toFixed(1).replace(".",",")+"k";
+  return fnum(n);
+};
+var fpc = function(n,d){ return (n*100).toFixed(d===undefined?1:d).replace(".",",")+"%"; };
+var VAZIO_CLI = { id:"", nome:"—", ramo:"—", seguidores:0, plano:"—", contrato:"R$ 0/mês", metrica:"resultados", metricaS:"resultado", posts:0 };
+// matiz estável por cliente: mesma inicial, mesma cor, sempre
+var matiz = function(id){
+  var h = 0; for (var i=0;i<String(id).length;i++) h = (h*31 + String(id).charCodeAt(i)) % 360;
+  return h;
+};
+var cli = function(id){
+  for(var i=0;i<CLIENTES.length;i++) if(CLIENTES[i].id===id) return CLIENTES[i];
+  return CLIENTES[0] || VAZIO_CLI;
+};
+
+/* ---- métricas derivadas ---- */
+// interações: publicações lançadas pelo formulário novo já trazem o total somado;
+// as antigas trazem as parcelas. Um só ponto de leitura para os dois formatos.
+function inter(p){
+  return p.inter !== undefined ? p.inter : (p.cur||0)+(p.com||0)+(p.sal||0)+(p.sha||0);
+}
+function eng(p){ return p.alc>0 ? inter(p)/p.alc : 0; }
+function isVideo(p){ return p.f==="Reels"; }
+
+/* =====================================================================
+   LEITURA DO LINK
+   O que a URL entrega sem depender de API nenhuma: plataforma, formato
+   e o código da publicação. É a automação possível na fase 1.
+   ===================================================================== */
+var PADROES = [
+  { re:/instagram\.com\/reels?\/([A-Za-z0-9_-]+)/i,            p:"Instagram", f:"Reels",     certo:true  },
+  { re:/instagram\.com\/tv\/([A-Za-z0-9_-]+)/i,                p:"Instagram", f:"Reels",     certo:true  },
+  { re:/instagram\.com\/stories\/[^/]+\/(\d+)/i,               p:"Instagram", f:"Stories",   certo:true  },
+  { re:/instagram\.com\/p\/([A-Za-z0-9_-]+)/i,                 p:"Instagram", f:"Carrossel", certo:false },
+  { re:/tiktok\.com\/@[^/]+\/video\/(\d+)/i,                   p:"TikTok",    f:"Reels",     certo:true  },
+  { re:/(?:vm|vt)\.tiktok\.com\/([A-Za-z0-9]+)/i,              p:"TikTok",    f:"Reels",     certo:false },
+  { re:/youtube\.com\/shorts\/([A-Za-z0-9_-]+)/i,              p:"YouTube",   f:"Reels",     certo:true  },
+  { re:/(?:youtu\.be\/|youtube\.com\/watch\?v=)([A-Za-z0-9_-]+)/i, p:"YouTube", f:"Reels",   certo:false },
+  { re:/facebook\.com\/reel\/(\d+)/i,                          p:"Facebook",  f:"Reels",     certo:true  },
+  { re:/facebook\.com\/[^/]+\/videos\/(\d+)/i,                 p:"Facebook",  f:"Reels",     certo:true  },
+  { re:/facebook\.com\/[^/]+\/posts\/([A-Za-z0-9]+)/i,         p:"Facebook",  f:"Foto",      certo:false }
+];
+
+function lerLink(url){
+  var u = String(url||"").trim();
+  if (!u) return { ok:false, motivo:"vazio" };
+  for (var i=0;i<PADROES.length;i++){
+    var m = u.match(PADROES[i].re);
+    if (m) return { ok:true, plataforma:PADROES[i].p, formato:PADROES[i].f,
+                    certo:PADROES[i].certo, codigo:m[1], url:u };
+  }
+  if (/^https?:\/\//i.test(u)) return { ok:false, motivo:"nao_reconhecido", url:u };
+  return { ok:false, motivo:"invalido" };
+}
+
+function postsDe(cid, dias){
+  return POSTS.filter(function(p){ return p.c===cid && p.d<=dias; })
+              .sort(function(a,b){ return a.d-b.d; });
+}
+function agrega(list){
+  var a = {alcance:0, views:0, inter:0, salvos:0, cliques:0, posts:list.length, videos:0};
+  list.forEach(function(p){
+    a.alcance += p.alc; a.views += (p.vis||0);
+    a.inter += inter(p);
+    a.salvos += (p.sal||0); a.cliques += (p.cli||0);
+    if (isVideo(p)) a.videos++;
+  });
+  a.engajamento = a.alcance>0 ? a.inter/a.alcance : 0;
+  return a;
+}
+// compara período atual com o anterior de mesma duração
+function delta(cid, dias, campo){
+  var atual = agrega(POSTS.filter(function(p){ return p.c===cid && p.d<=dias; }));
+  var ant   = agrega(POSTS.filter(function(p){ return p.c===cid && p.d>dias && p.d<=dias*2; }));
+  if (!ant[campo]) return null;
+  return (atual[campo]-ant[campo])/ant[campo];
+}
+/* ---- leitura do histórico comercial ---- */
+function hist(cid){ return HISTORICO[cid] || []; }
+function ultimoMes(cid){ var h = hist(cid); return h.length ? h[h.length-1] : null; }
+function mediana(arr){
+  var a = arr.slice().sort(function(x,y){ return x-y; });
+  if (!a.length) return 0;
+  var i = Math.floor(a.length/2);
+  return a.length%2 ? a[i] : (a[i-1]+a[i])/2;
+}
+// resultado por mil pessoas alcançadas: mede eficiência, não volume
+function eficiencia(mes){ return mes.alc>0 ? (mes.res/mes.alc)*1000 : 0; }
+
+/* Compara os meses de muito esforço com os de pouco, num critério só.
+   Devolve null quando não há contraste suficiente para afirmar nada. */
+function contraste(cid, campo){
+  var h = hist(cid);
+  if (h.length < 4) return null;
+  var med = mediana(h.map(function(x){ return x[campo]; }));
+  var alto = h.filter(function(x){ return x[campo] >= med; });
+  var baixo = h.filter(function(x){ return x[campo] < med; });
+  if (!alto.length || !baixo.length) return null;
+  var ma = alto.reduce(function(s,x){ return s+x.res; },0)/alto.length;
+  var mb = baixo.reduce(function(s,x){ return s+x.res; },0)/baixo.length;
+  if (mb <= 0) return null;
+  return { med:med, mediaAlto:ma, mediaBaixo:mb, ganho:(ma-mb)/mb, nAlto:alto.length, nBaixo:baixo.length };
+}
+
+function deltaHtml(v){
+  if (v===null) return '<span class="d flat">— sem base anterior</span>';
+  var cls = v>0.02 ? "up" : (v<-0.02 ? "down" : "flat");
+  var ar  = v>0.02 ? "▲" : (v<-0.02 ? "▼" : "■");
+  return '<span class="d '+cls+'">'+ar+" "+(v>0?"+":"")+fpc(v,0)+" vs. período anterior</span>";
+}
+
+/* =====================================================================
+   MOTOR DE DIAGNÓSTICO — regras sobre os dados reais do cliente
+   ===================================================================== */
+function diagnosticar(cid, dias){
+  var list = postsDe(cid, dias);
+  var out = [];
+  if (list.length < 3){
+    return [{ tipo:"wa", t:"Dados insuficientes para diagnóstico",
+      d:"Este cliente tem apenas "+list.length+" publicação(ões) lançada(s) no período. O sistema precisa de pelo menos 3 para comparar.",
+      a:"Lance os números das publicações anteriores na aba Lançar números." }];
+  }
+
+  /* 1. formato que mais entrega — Stories fica de fora: é outra superfície,
+        só aparece para quem já segue, e comparar com feed distorce a leitura. */
+  var porF = {};
+  list.filter(function(p){ return p.f!=="Stories"; }).forEach(function(p){
+    if(!porF[p.f]) porF[p.f] = {soma:0, n:0};
+    porF[p.f].soma += p.alc; porF[p.f].n++;
+  });
+  var fmts = Object.keys(porF).map(function(k){ return {f:k, med:porF[k].soma/porF[k].n, n:porF[k].n}; })
+                   .sort(function(a,b){ return b.med-a.med; });
+  if (fmts.length >= 2 && fmts[fmts.length-1].med > 0){
+    var mult = fmts[0].med / fmts[fmts.length-1].med;
+    if (mult >= 1.8){
+      out.push({ tipo:"ok", t:fmts[0].f+" entrega "+mult.toFixed(1).replace(".",",")+"× mais que "+fmts[fmts.length-1].f,
+        d:"Alcance médio de "+fk(fmts[0].med)+" por "+fmts[0].f.toLowerCase()+" contra "+fk(fmts[fmts.length-1].med)+" por "+fmts[fmts.length-1].f.toLowerCase()+", em "+list.length+" publicações do período.",
+        a:"Realoque a produção: troque metade dos "+fmts[fmts.length-1].f.toLowerCase()+" por "+fmts[0].f.toLowerCase()+" no próximo ciclo e reavalie em 30 dias." });
+    }
+  }
+
+  /* 2. campeão de entrega */
+  var top = list.slice().sort(function(a,b){ return b.alc-a.alc; })[0];
+  out.push({ tipo:"ac", t:'Melhor entrega: "'+top.t+'"',
+    d:fk(top.alc)+" de alcance em "+top.p+", formato "+top.f+", publicado às "+top.h+"h. Foi "+ (agrega(list).alcance/list.length ? (top.alc/(agrega(list).alcance/list.length)).toFixed(1).replace(".",",") : "—") +"× a média do período.",
+    a:"Replique o padrão: mesmo formato, mesma faixa de horário e mesmo tipo de gancho na abertura." });
+
+  /* 3. alcance alto x engajamento alto nem sempre é o mesmo post */
+  var topEng = list.filter(function(p){ return p.alc>1000; }).sort(function(a,b){ return eng(b)-eng(a); })[0];
+  if (topEng && topEng.t !== top.t){
+    out.push({ tipo:"ac", t:"Quem mais entregou não foi quem mais engajou",
+      d:'"'+topEng.t+'" teve '+fpc(eng(topEng))+" de engajamento sobre alcance, acima de "+'"'+top.t+'"'+" ("+fpc(eng(top))+"), mesmo alcançando menos gente.",
+      a:"Use o formato do campeão de alcance para atrair e o do campeão de engajamento para converter. São papéis diferentes." });
+  }
+
+  /* 4. tendência de alcance */
+  var dAlc = delta(cid, dias, "alcance");
+  if (dAlc !== null){
+    if (dAlc <= -0.15){
+      out.push({ tipo:"cr", t:"Alcance caiu "+fpc(Math.abs(dAlc),0)+" em relação ao período anterior",
+        d:"É queda relevante e precisa entrar na conversa com o cliente antes que ele pergunte.",
+        a:"Verifique frequência de postagem e formato. Queda de alcance quase sempre vem de menos publicações ou de troca de formato." });
+    } else if (dAlc >= 0.15){
+      out.push({ tipo:"ok", t:"Alcance cresceu "+fpc(dAlc,0)+" no período",
+        d:"Crescimento consistente comparado à janela anterior de mesma duração.",
+        a:"Documente o que mudou neste ciclo e transforme em processo — é isso que renova contrato." });
+    }
+  }
+
+  /* 5. frequência */
+  var semanas = dias/7;
+  var freq = list.length/semanas;
+  var listAnt = POSTS.filter(function(p){ return p.c===cid && p.d>dias && p.d<=dias*2; });
+  var freqAnt = listAnt.length/semanas;
+  if (freqAnt > 0 && freq < freqAnt*0.75){
+    out.push({ tipo:"wa", t:"Frequência caiu de "+freqAnt.toFixed(1).replace(".",",")+" para "+freq.toFixed(1).replace(".",",")+" posts por semana",
+      d:"Menos publicação é a causa mais comum de queda de alcance — e a mais fácil de corrigir.",
+      a:"Volte ao ritmo contratado ("+cli(cid).plano+") antes de mexer em qualquer outra coisa." });
+  }
+
+  /* 6. horário */
+  var manha = list.filter(function(p){ return p.h < 15; });
+  var noite = list.filter(function(p){ return p.h >= 17; });
+  if (manha.length >= 2 && noite.length >= 2){
+    var mm = agrega(manha).alcance/manha.length, mn = agrega(noite).alcance/noite.length;
+    if (mn > mm*1.5){
+      out.push({ tipo:"ok", t:"Publicações a partir das 17h entregam "+(mn/mm).toFixed(1).replace(".",",")+"× mais",
+        d:"Média de "+fk(mn)+" à noite contra "+fk(mm)+" nos horários da manhã e do começo da tarde.",
+        a:"Concentre as publicações principais entre 17h e 21h e deixe a manhã para conteúdo de apoio." });
+    } else if (mm > mn*1.5){
+      out.push({ tipo:"ok", t:"Publicações da manhã entregam "+(mm/mn).toFixed(1).replace(".",",")+"× mais",
+        d:"Média de "+fk(mm)+" pela manhã contra "+fk(mn)+" no fim da tarde e à noite.",
+        a:"Mova os posts principais para antes das 15h e teste por 30 dias." });
+    }
+  }
+
+  /* 7. salvamentos */
+  var ag = agrega(list);
+  var taxaSal = ag.alcance>0 ? ag.salvos/ag.alcance : 0;
+  if (taxaSal >= 0.05){
+    out.push({ tipo:"ok", t:"Conteúdo com alta taxa de salvamento ("+fpc(taxaSal)+")",
+      d:"Salvamento é o sinal de que o conteúdo é útil, não só bonito. Esse cliente acerta na utilidade.",
+      a:"Leve isso para o relatório: salvamento é o argumento mais forte para justificar conteúdo educativo." });
+  } else if (taxaSal < 0.012 && ag.posts >= 4){
+    out.push({ tipo:"wa", t:"Poucos salvamentos ("+fpc(taxaSal)+" do alcance)",
+      d:"O conteúdo entretém mas não é guardado para depois. Falta material de referência: preço, como fazer, comparação, passo a passo.",
+      a:"Inclua um conteúdo salvável por semana — tabela, guia ou lista — e acompanhe a taxa por 30 dias." });
+  }
+
+  /* ---------- regras que cruzam esforço com resultado do negócio ----------
+     São as mais valiosas e as mais perigosas: descrevem associação, nunca
+     causa. O texto é escrito de propósito como "andou junto com". ---------- */
+  var c2 = cli(cid), h = hist(cid);
+
+  if (h.length >= 4){
+    var ult = h[h.length-1], pen = h[h.length-2];
+
+    /* R1 — volume de vídeo x resultado */
+    var cr = contraste(cid, "reels");
+    if (cr && cr.ganho >= 0.2){
+      out.push({ tipo:"ok", t:"Meses com mais vídeo andaram junto com mais "+c2.metrica,
+        d:"Nos "+cr.nAlto+" meses com "+cr.med+" ou mais Reels, a média foi de "+fnum(cr.mediaAlto)+" "+c2.metrica
+          +". Nos "+cr.nBaixo+" meses abaixo disso, "+fnum(cr.mediaBaixo)+". Diferença de "+fpc(cr.ganho,0)+".",
+        a:"Leve este número para a reunião de renovação e proponha travar o mínimo de "+cr.med+" Reels por mês em contrato.",
+        nota:"Associação observada no histórico, não prova de causa. Use como direção, não como promessa ao cliente." });
+    }
+
+    /* R2 — entrega subiu mas resultado não acompanhou */
+    if (ult.alc > pen.alc*1.1 && ult.res < pen.res*1.02){
+      out.push({ tipo:"cr", t:"O alcance subiu e os "+c2.metrica+" não acompanharam",
+        d:"De "+pen.m+" para "+ult.m+" o alcance cresceu "+fpc((ult.alc-pen.alc)/pen.alc,0)
+          +", mas o resultado ficou praticamente igual. O conteúdo está atraindo gente que não compra.",
+        a:"Troque parte do conteúdo de alcance por conteúdo de decisão: preço, como pedir, prova de cliente, chamada clara para a ação." });
+    }
+
+    /* R3 — eficiência: resultado por mil alcançados */
+    var ef = eficiencia(ult), efPen = eficiencia(pen);
+    if (efPen > 0){
+      var dEf = (ef-efPen)/efPen;
+      if (Math.abs(dEf) >= 0.15){
+        out.push({ tipo: dEf>0 ? "ok" : "wa",
+          t:"Cada mil pessoas alcançadas viraram "+ef.toFixed(1).replace(".",",")+" "+c2.metrica+" em "+ult.m,
+          d:"Em "+pen.m+" eram "+efPen.toFixed(1).replace(".",",")+". A eficiência "+(dEf>0?"subiu":"caiu")+" "+fpc(Math.abs(dEf),0)
+            +" — este número mostra qualidade da audiência, e não tamanho dela.",
+          a: dEf>0
+            ? "Identifique o que mudou no conteúdo deste mês e transforme em padrão fixo da produção."
+            : "Alcance maior com eficiência menor costuma ser público errado. Revise segmentação e o gancho de abertura." });
+      }
+    }
+
+    /* R4 — melhor mês do histórico */
+    var melhor = h.slice().sort(function(a,b){ return b.res-a.res; })[0];
+    if (melhor.m === ult.m){
+      out.push({ tipo:"ok", t:ult.m+" foi o melhor mês dos últimos "+h.length,
+        d:fnum(ult.res)+" "+c2.metrica+", com "+ult.posts+" publicações e "+fk(ult.alc)+" de alcance.",
+        a:"Abra a reunião com este número. É a frase que renova contrato antes de qualquer gráfico aparecer." });
+    }
+
+    /* R5 — sem resultado lançado: o furo mais comum */
+    if (ult.res === 0 || ult.res === null){
+      out.push({ tipo:"wa", t:"Falta lançar o resultado de "+ult.m,
+        d:"Sem o número de "+c2.metrica+" do mês, o sistema mede esforço mas não consegue provar retorno.",
+        a:"Peça o número ao cliente na primeira semana do mês. Uma pergunta no WhatsApp resolve." });
+    }
+  } else {
+    out.push({ tipo:"wa", t:"Sem histórico comercial suficiente",
+      d:"Com menos de 4 meses de resultado lançado não dá para cruzar esforço e retorno com honestidade.",
+      a:"Lance os meses anteriores em Resultado do mês — o cliente costuma ter esses números guardados." });
+  }
+
+  return out;
+}
+
+/* =====================================================================
+   GRÁFICOS
+   ===================================================================== */
+function chartLinha(list, dias){
+  // agrupa por semana
+  var semanas = Math.max(4, Math.round(dias/7));
+  var buckets = [];
+  for (var i=0;i<semanas;i++) buckets.push({soma:0, n:0, lab:""});
+  list.forEach(function(p){
+    var idx = semanas-1-Math.floor(p.d/7);
+    if (idx>=0 && idx<semanas){ buckets[idx].soma += p.alc; buckets[idx].n++; }
+  });
+  var vals = buckets.map(function(b){ return b.soma; });
+  var max = Math.max.apply(null, vals.concat([1]));
+  var W=680, H=190, pl=44, pr=10, pt=12, pb=26;
+  var iw = W-pl-pr, ih = H-pt-pb;
+  var x = function(i){ return pl + (semanas<=1?iw/2:(i/(semanas-1))*iw); };
+  var y = function(v){ return pt + ih - (v/max)*ih; };
+
+  var line = vals.map(function(v,i){ return (i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1); }).join(" ");
+  var area = line + " L"+x(semanas-1).toFixed(1)+" "+(pt+ih)+" L"+x(0).toFixed(1)+" "+(pt+ih)+" Z";
+
+  var s = '<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Alcance por semana">';
+  s += '<defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">'
+     + '<stop offset="0%" stop-color="var(--data)" stop-opacity=".22"/>'
+     + '<stop offset="100%" stop-color="var(--data)" stop-opacity="0"/></linearGradient></defs>';
+  for (var g=0; g<=3; g++){
+    var gy = pt + (g/3)*ih;
+    s += '<line class="gridline" x1="'+pl+'" y1="'+gy.toFixed(1)+'" x2="'+(W-pr)+'" y2="'+gy.toFixed(1)+'"/>';
+    s += '<text class="axl" x="'+(pl-8)+'" y="'+(gy+3.5).toFixed(1)+'" text-anchor="end">'+fk(max*(1-g/3))+'</text>';
+  }
+  s += '<path d="'+area+'" fill="url(#gA)"/>';
+  s += '<path d="'+line+'" fill="none" stroke="var(--data)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+  vals.forEach(function(v,i){
+    s += '<circle class="dot" cx="'+x(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="4.5" '
+       + 'data-tip="Semana '+(i+1)+'&#10;Alcance '+fnum(v)+'&#10;'+buckets[i].n+' publicação(ões)"/>';
+    if (i%2===0 || semanas<=6)
+      s += '<text class="axl" x="'+x(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">S'+(i+1)+'</text>';
+  });
+  s += '</svg>';
+  return s;
+}
+
+function barrasFormato(list){
+  var porF = {};
+  list.forEach(function(p){
+    if(!porF[p.f]) porF[p.f] = {soma:0,n:0};
+    porF[p.f].soma += p.alc; porF[p.f].n++;
+  });
+  var arr = Object.keys(porF).map(function(k){ return {f:k, med:porF[k].soma/porF[k].n, n:porF[k].n}; })
+                  .sort(function(a,b){ return b.med-a.med; });
+  var max = arr.length ? arr[0].med : 1;
+  if (!arr.length) return '<div class="empty">Sem publicações no período.</div>';
+  return arr.map(function(r){
+    return '<div class="hbar-row" data-tip="'+esc(r.f)+'&#10;Alcance médio '+fnum(r.med)+'&#10;'+r.n+' publicação(ões)">'
+      + '<span class="hbar-lab">'+esc(r.f)+'<small>'+r.n+' post'+(r.n>1?"s":"")+'</small></span>'
+      + '<span class="hbar-track"><span class="hbar-fill" style="width:'+((r.med/max)*100).toFixed(1)+'%"></span></span>'
+      + '<span class="hbar-val">'+fk(r.med)+'</span></div>';
+  }).join("");
+}
+
+/* Barras mensais. Dois gráficos pequenos lado a lado, com os mesmos meses
+   no eixo, em vez de um gráfico de dois eixos — que sempre mente sobre a
+   relação entre as duas escalas. */
+function barrasMes(cid, campo, corVar, rotulo, fmtV){
+  var h = hist(cid);
+  if (!h.length) return '<div class="empty">Sem histórico.</div>';
+  var max = Math.max.apply(null, h.map(function(x){ return x[campo]; }).concat([1]));
+  var s = '<div class="mbars">';
+  h.forEach(function(x){
+    var alt = Math.max((x[campo]/max)*100, 2);
+    s += '<div class="mbar" data-tip="'+esc(x.m)+'&#10;'+esc(rotulo)+' '+fmtV(x[campo])
+       + '&#10;'+x.posts+' publicações · '+x.reels+' Reels">'
+       + '<span class="mbar-v">'+fmtV(x[campo])+'</span>'
+       + '<span class="mbar-t"><span class="mbar-f" style="height:'+alt.toFixed(1)+'%; background:var('+corVar+')"></span></span>'
+       + '<span class="mbar-l">'+esc(x.m)+'</span></div>';
+  });
+  return s + '</div>';
+}
+
+/* =====================================================================
+   VIEWS
+   ===================================================================== */
+function sparkline(cid){
+  var b = (RESUMO[cid] && RESUMO[cid].serie && RESUMO[cid].serie.length)
+    ? RESUMO[cid].serie : [0,0,0,0,0,0,0,0];
+  var sem = b.length;
+  var max = Math.max.apply(null, b.concat([1]));
+  var pts = b.map(function(v,i){ return (i/(sem-1))*84+2 + "," + (22 - (v/max)*19).toFixed(1); }).join(" ");
+  return '<svg class="spark" viewBox="0 0 88 26" aria-hidden="true"><polyline points="'+pts+'" fill="none" stroke="var(--data)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+
+/* Estado vazio: é a primeira tela que a agência vê na versão zerada,
+   então precisa dizer o que fazer, não só que não há nada. */
+function vazio(titulo, texto, acao){
+  return '<div class="zero">'
+    + '<svg class="zero-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">'
+    + '<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M8 5V3M16 5V3"/></svg>'
+    + '<h3>'+esc(titulo)+'</h3><p>'+esc(texto)+'</p>'
+    + (acao||'') + '</div>';
+}
+
+function viewCarteira(){
+  if (!CLIENTES.length){
+    return '<div class="phead"><div><span class="eyebrow">Começo</span><h1>Sua carteira</h1>'
+      + '<p class="desc">Cadastre o primeiro cliente para começar a medir entrega e resultado.</p></div></div>'
+      + '<div class="card">'
+      + vazio("Nenhum cliente cadastrado ainda",
+              "Cada cliente tem sua própria carteira de conteúdos, seu diagnóstico e seu relatório. Comece por um — leva menos de um minuto.",
+              '<button class="btn" type="button" id="zeroNovo">Cadastrar primeiro cliente</button>')
+      + '</div>';
+  }
+  var totalCli = CLIENTES.length;
+  var alcTotal = 0, postsTotal = 0, alertas = 0;
+  CLIENTES.forEach(function(c){
+    var rs = RESUMO[c.id] || { alcance:0, posts:0, alerta:"ok" };
+    alcTotal += rs.alcance; postsTotal += rs.posts;
+    if (rs.alerta !== "ok") alertas++;
+  });
+  var mrr = CLIENTES.reduce(function(s,c){ return s + parseInt(c.contrato.replace(/\D/g,""),10); },0);
+
+  var h = '<div class="phead"><div>'
+    + '<span class="eyebrow">Visão geral</span><h1>Carteira de clientes</h1>'
+    + '<p class="desc">Todo mundo que a agência atende, com a entrega do período e os pontos que precisam de atenção antes da reunião mensal.</p>'
+    + '</div></div>';
+
+  h += '<div class="grid g4" style="margin-bottom:16px">'
+    + kpiHtml("Clientes ativos", totalCli, null, "sob contrato")
+    + kpiHtml("Alcance somado", fk(alcTotal), null, "em "+state.periodo+" dias")
+    + kpiHtml("Publicações", postsTotal, null, "lançadas no período")
+    + kpiHtml("Pontos de atenção", alertas, null, alertas>0?"exigem ação":"tudo em dia")
+    + '</div>';
+
+  h += '<div class="card"><div class="card-h"><h3>Clientes</h3><span class="sub">Clique para abrir o painel</span>'
+     + '<span class="spacer"></span><span class="sub mono">Contratos: R$ '+fnum(mrr)+'/mês</span></div><div class="clist">';
+
+  CLIENTES.forEach(function(c){
+    var rs = RESUMO[c.id] || { alcance:0, posts:0, alerta:"ok" };
+    var a = { alcance: rs.alcance, posts: rs.posts };
+    var u = ultimoMes(c.id);
+    var pill = rs.alerta === "cr" ? '<span class="pill cr">Risco</span>'
+             : rs.alerta === "wa" ? '<span class="pill wa">Atenção</span>'
+             : '<span class="pill ok">Saudável</span>';
+    h += '<button data-open="'+c.id+'">'
+      + '<span class="cname"><span class="cav" style="--h:'+matiz(c.id)+'">'+esc(c.nome.charAt(0))+'</span>'
+      + '<span><span class="nm">'+esc(c.nome)+'</span><br><span class="sg">'+esc(c.ramo)+' · '+fk(c.seguidores)+' seguidores · '+esc(c.plano)+'</span></span></span>'
+      + '<span style="display:flex;align-items:center;gap:14px">'+sparkline(c.id)
+      + '<span style="text-align:right;min-width:108px">'
+      + '<span class="mono num" style="font-weight:600">'+fk(a.alcance)+'</span>'
+      + '<span class="sg" style="font-size:11px; display:block; margin-top:-2px">de alcance</span>'
+      + (u ? '<span class="mono num" style="font-weight:600; color:var(--data-2); display:block; margin-top:5px">'
+             + fnum(u.res)+'</span><span class="sg" style="font-size:11px; display:block; margin-top:-2px">'
+             + esc(c.metrica)+' em '+esc(u.m)+'</span>'
+           : '<span class="sg" style="font-size:11px; display:block; margin-top:5px">sem resultado lançado</span>')
+      + '</span></span>'
+      + pill + '</button>';
+  });
+  h += '</div></div>';
+  return h;
+}
+
+function kpiHtml(k, v, deltaV, nota){
+  return '<div class="kpi"><span class="k">'+k+'</span><span class="v num">'+v+'</span>'
+    + (deltaV!==undefined && deltaV!==null ? deltaHtml(deltaV) : '')
+    + (nota?'<span class="n">'+nota+'</span>':'') + '</div>';
+}
+
+function viewPainel(){
+  var c = cli(state.cliente), list = postsDe(c.id, state.periodo), a = agrega(list);
+  var h = '<div class="phead"><div><span class="eyebrow">'+esc(c.ramo)+' · '+esc(c.plano)+'</span>'
+    + '<h1>'+esc(c.nome)+'</h1>'
+    + '<p class="desc">Entrega dos últimos '+state.periodo+' dias, comparada com a janela anterior de mesma duração.</p></div></div>';
+
+  if (!list.length){
+    return h + '<div class="card">' + vazio("Nenhuma publicação lançada",
+      "Assim que a primeira publicação entrar, este painel monta os gráficos, o ranking e o diagnóstico sozinho.",
+      '<button class="btn" type="button" data-view="lancar">Lançar primeira publicação</button>') + '</div>';
+  }
+
+  h += '<div class="grid g4" style="margin-bottom:16px">'
+    + kpiHtml("Alcance", fk(a.alcance), delta(c.id,state.periodo,"alcance"), "pessoas alcançadas")
+    + kpiHtml("Interações", fk(a.inter), delta(c.id,state.periodo,"inter"), "curtidas, comentários, salvos e compart.")
+    + kpiHtml("Engajamento", fpc(a.engajamento), null, "sobre o alcance")
+    + (function(){
+        var u = ultimoMes(c.id);
+        if (!u) return kpiHtml("Publicações", a.posts, null, a.videos+" vídeo(s) no período");
+        var hh = hist(c.id), pen = hh.length>1 ? hh[hh.length-2] : null;
+        var d = pen && pen.res ? (u.res-pen.res)/pen.res : null;
+        return kpiHtml(c.metrica+" em "+u.m, fnum(u.res), d, "resultado do negócio");
+      })()
+    + '</div>';
+
+  h += '<div class="grid g21" style="margin-bottom:16px">'
+    + '<div class="card"><div class="card-h"><h3>Alcance por semana</h3><span class="sub">passe o mouse nos pontos</span></div>'
+    + '<div class="card-b chartbox">'+chartLinha(list, state.periodo)+'</div></div>'
+    + '<div class="card"><div class="card-h"><h3>Entrega por formato</h3><span class="sub">alcance médio</span></div>'
+    + '<div class="card-b">'+barrasFormato(list)+'</div></div>'
+    + '</div>';
+
+  var top5 = list.slice().sort(function(x,y){ return y.alc-x.alc; }).slice(0,5);
+  var maxA = top5.length ? top5[0].alc : 1;
+  h += '<div class="card"><div class="card-h"><h3>Melhores entregas do período</h3>'
+     + '<span class="spacer"></span><button class="btn ghost sm" data-view="conteudos">Ver todos</button></div><div class="tw"><table>'
+     + '<thead><tr><th>#</th><th>Conteúdo</th><th class="n">Alcance</th><th class="n">Engaj.</th><th class="n">Salvos</th></tr></thead><tbody>';
+  top5.forEach(function(p,i){
+    h += '<tr><td class="rank'+(i===0?" top":"")+'">'+(i+1)+'</td>'
+      + '<td><span class="ttl">'+esc(p.t)+'</span><span class="meta"><span class="pill nu">'+esc(p.f)+'</span>'+esc(p.p)+' · há '+p.d+' dias · '+p.h+'h'
+      + (p.u?' · <a class="lnk" href="'+esc(p.u)+'" target="_blank" rel="noopener">abrir ↗</a>':'')
+      + (p.auto?' <span class="autotag">auto</span>':'')+'</span></td>'
+      + '<td class="n"><span class="minibar"><span class="tr"><span class="fl" style="width:'+((p.alc/maxA)*100).toFixed(0)+'%"></span></span>'+fk(p.alc)+'</span></td>'
+      + '<td class="n">'+fpc(eng(p))+'</td><td class="n">'+fnum(p.sal)+'</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  return h;
+}
+
+function viewConteudos(){
+  var c = cli(state.cliente), list = postsDe(c.id, state.periodo);
+  var k = state.sortKey, dir = state.sortDir;
+  var sorted = list.slice().sort(function(a,b){
+    var va = k==="eng" ? eng(a) : (k==="d" ? -a.d : a[k]);
+    var vb = k==="eng" ? eng(b) : (k==="d" ? -b.d : b[k]);
+    return (va-vb)*dir;
+  });
+  var maxA = Math.max.apply(null, list.map(function(p){ return p.alc; }).concat([1]));
+
+  var h = '<div class="phead"><div><span class="eyebrow">'+esc(c.nome)+'</span><h1>Todos os conteúdos</h1>'
+    + '<p class="desc">Ordene por qualquer coluna para responder a pergunta do cliente na hora: o que entregou mais, o que engajou mais, o que foi mais salvo.</p></div></div>';
+
+  var cols = [["d","Publicado",""],["alc","Alcance","n"],["vis","Visualizações","n"],["eng","Engajamento","n"],["sal","Salvos","n"],["sha","Compart.","n"],["cli","Cliques","n"]];
+  h += '<div class="card"><div class="tw"><table><thead><tr><th>#</th><th>Conteúdo</th>';
+  cols.forEach(function(cl){
+    h += '<th class="s '+cl[2]+'" data-sort="'+cl[0]+'">'+cl[1]+(k===cl[0]?'<span class="ar">'+(dir<0?"↓":"↑")+'</span>':'')+'</th>';
+  });
+  h += '</tr></thead><tbody>';
+  if (!sorted.length) h += '<tr><td colspan="9"><div class="empty">Nenhuma publicação lançada neste período.</div></td></tr>';
+  sorted.forEach(function(p,i){
+    h += '<tr><td class="rank'+(i===0?" top":"")+'">'+(i+1)+'</td>'
+      + '<td><span class="ttl">'+esc(p.t)+'</span><span class="meta"><span class="pill nu">'+esc(p.f)+'</span>'+esc(p.p)+' · '+p.h+'h'
+      + (p.u?' · <a class="lnk" href="'+esc(p.u)+'" target="_blank" rel="noopener">abrir ↗</a>':'')
+      + (p.auto?' <span class="autotag">auto</span>':'')+'</span></td>'
+      + '<td>há '+p.d+' dias</td>'
+      + '<td class="n"><span class="minibar"><span class="tr"><span class="fl" style="width:'+((p.alc/maxA)*100).toFixed(0)+'%"></span></span>'+fk(p.alc)+'</span></td>'
+      + '<td class="n">'+(p.vis?fk(p.vis):"—")+'</td>'
+      + '<td class="n">'+fpc(eng(p))+'</td>'
+      + '<td class="n">'+fnum(p.sal)+'</td>'
+      + '<td class="n">'+fnum(p.sha)+'</td>'
+      + '<td class="n">'+fnum(p.cli)+'</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  return h;
+}
+
+function viewDiagnostico(){
+  var c = cli(state.cliente), ins = diagnosticar(c.id, state.periodo);
+  var icone = {ok:"↑", wa:"!", cr:"▼", ac:"★"};
+  var h = '<div class="phead"><div><span class="eyebrow">'+esc(c.nome)+'</span><h1>O que melhorar</h1>'
+    + '<p class="desc">Leituras geradas a partir dos números lançados no período. Cada uma vem com a ação que a agência deve executar — é isso que vira pauta da reunião.</p></div></div>';
+  h += '<div class="card">';
+  ins.forEach(function(i){
+    h += '<div class="ins"><span class="ins-ic '+i.tipo+'">'+icone[i.tipo]+'</span><div class="ins-b">'
+      + '<span class="t">'+esc(i.t)+'</span><span class="d">'+esc(i.d)+'</span>'
+      + '<span class="act"><b>Ação recomendada</b>'+esc(i.a)+'</span>'
+      + (i.nota ? '<span class="cav-nota">'+esc(i.nota)+'</span>' : '')
+      + '</div></div>';
+  });
+  h += '</div>';
+  h += '<p style="margin-top:14px; font-size:13.5px; color:var(--ink-3); max-width:70ch">As regras acima rodam sobre os dados lançados: formato, horário, frequência, tendência de alcance e taxa de salvamento. Quanto mais publicações lançadas, mais preciso fica o diagnóstico.</p>';
+  return h;
+}
+
+function viewLancar(){
+  var c = cli(state.cliente), x = CONEX[c.id];
+  var h = '<div class="phead"><div><span class="eyebrow">Entrada de dados</span><h1>Lançar publicação</h1>'
+    + '<p class="desc">'
+    + (x.ligada
+        ? 'A conta de '+esc(c.nome)+' está conectada, então as publicações entram sozinhas. Use esta tela para o que a API não entrega — investimento em anúncio, venda fechada no WhatsApp, material publicado fora das redes.'
+        : 'Cole o link e o sistema reconhece plataforma e formato sozinho. Você digita só os quatro números que a rede não entrega sem autorização do dono da conta.')
+    + '</p></div></div>';
+
+  if (x.ligada){
+    h += '<div class="card" style="margin-bottom:16px; border-color:var(--acc-line)"><div class="card-b" '
+      + 'style="display:flex; gap:15px; align-items:center; flex-wrap:wrap">'
+      + '<span class="ins-ic ok" style="width:36px;height:36px;border-radius:10px">✓</span>'
+      + '<div style="flex:1; min-width:230px"><span style="font-family:var(--fd); font-weight:800; font-size:16.5px">Conta conectada · @'+esc(x.conta)+'</span>'
+      + '<p style="font-size:14px; color:var(--ink-2); margin-top:3px">'
+      + (x.ultima ? 'Última sincronização às '+esc(x.ultima)+'. ' : '')
+      + 'Autorização válida até '+esc(x.expira)+'.</p></div>'
+      + '<button class="btn ghost sm" type="button" data-sync="'+c.id+'">Sincronizar agora</button>'
+      + '<button class="btn ghost sm" type="button" data-view="conexoes">Gerenciar</button>'
+      + '</div></div>';
+  }
+
+  h += '<form id="fLanc"><div class="card"><div class="card-h"><h3>Nova publicação</h3><span class="sub">'+esc(c.nome)+'</span></div>'
+
+    /* --- passo 1: link --- */
+    + '<div class="stepbox"><div class="stepnum">1</div><div class="stepbody">'
+    + '<label class="steplab" for="i_u">Cole o link do Reels, do post ou do vídeo</label>'
+    + '<input id="i_u" class="linkin" type="url" autocomplete="off" spellcheck="false" '
+    + 'placeholder="https://www.instagram.com/reel/DxK92mQsAbC/">'
+    + '<div id="detect" class="detect"><span class="det-idle">Assim que você colar, eu identifico a rede e o formato.</span></div>'
+    + '</div></div>'
+
+    /* --- passo 2: números --- */
+    + '<div class="stepbox"><div class="stepnum">2</div><div class="stepbody">'
+    + '<label class="steplab">Copie estes quatro números do painel da publicação</label>'
+    + '<div class="fgrid">'
+    + numFld("i_alc","Alcance","contas alcançadas", true)
+    + numFld("i_vis","Visualizações","0 se não for vídeo", false)
+    + numFld("i_int","Interações","curtidas + comentários + compart.", false)
+    + numFld("i_sal","Salvamentos","o número mais subestimado", false)
+    + '</div>'
+    + '<details class="more"><summary>Campos opcionais</summary><div class="fgrid" style="margin-top:12px">'
+    + '<div class="fld"><label for="i_t">Nome do conteúdo</label><input id="i_t" placeholder="Corte do X-Tudo em câmera lenta"></div>'
+    + '<div class="fld"><label for="i_cli">Cliques no link</label><input id="i_cli" type="number" min="0" value="0"></div>'
+    + '<div class="fld"><label for="i_d">Publicado há (dias)</label><input id="i_d" type="number" min="0" max="365" value="1"></div>'
+    + '<div class="fld"><label for="i_h">Hora da publicação</label><input id="i_h" type="number" min="0" max="23" value="19"></div>'
+    + '</div><p class="hint" style="margin-top:10px">A hora é o que permite ao diagnóstico descobrir o melhor horário de publicação deste cliente.</p></details>'
+    + '</div></div>'
+
+    + '<div class="card-b" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; border-top:1px solid var(--line)">'
+    + '<button class="btn" type="submit">Lançar publicação</button>'
+    + '<span class="hint">Painel, ranking e diagnóstico recalculam na hora.</span></div>'
+    + '</div></form>';
+
+  /* --- convite para conectar, só enquanto a conta não estiver ligada --- */
+  if (!x.ligada){
+    h += '<div class="card" style="margin-top:16px; border-style:dashed"><div class="card-b" style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap">'
+      + '<span class="ins-ic ac" style="width:38px;height:38px;border-radius:10px">⚡</span>'
+      + '<div style="flex:1; min-width:260px; display:flex; flex-direction:column; gap:7px">'
+      + '<span style="font-family:var(--fd); font-weight:800; font-size:17px">Cansou de digitar? Peça para '+esc(c.nome)+' conectar a conta</span>'
+      + '<p style="font-size:14.5px; color:var(--ink-2)">O cliente entra com o próprio Instagram, autoriza uma vez, e as publicações passam a chegar sozinhas — com alcance, salvamentos e compartilhamentos direto da fonte.</p>'
+      + '<p style="font-size:13px; color:var(--ink-3)">O sistema nunca pede nem guarda a senha dele. A autorização acontece na página da própria Meta.</p>'
+      + '</div>'
+      + '<button class="btn" type="button" data-connect="'+c.id+'">Conectar Instagram</button>'
+      + '</div></div>';
+  }
+
+  return h;
+}
+
+function numFld(id, lab, hint, req){
+  return '<div class="fld numfld"><label for="'+id+'">'+lab+'</label>'
+    + '<input id="'+id+'" type="number" min="0" inputmode="numeric" placeholder="0"'+(req?' required':'')+'>'
+    + '<span class="hint">'+hint+'</span></div>';
+}
+
+function viewResultado(){
+  var c = cli(state.cliente), h = hist(c.id), ult = ultimoMes(c.id);
+  var h2 = '<div class="phead"><div><span class="eyebrow">'+esc(c.nome)+'</span><h1>Resultado do mês</h1>'
+    + '<p class="desc">Alcance não renova contrato — '+esc(c.metrica)+' renovam. Aqui a agência lança o número que o cliente já tem na mão, e o sistema passa a cruzar esforço de conteúdo com resultado do negócio.</p></div></div>';
+
+  /* KPIs do topo */
+  if (ult){
+    var pen = h.length>1 ? h[h.length-2] : null;
+    var dRes = pen && pen.res ? (ult.res-pen.res)/pen.res : null;
+    var contrato = parseInt(c.contrato.replace(/\D/g,""),10);
+    h2 += '<div class="grid g4" style="margin-bottom:16px">'
+      + kpiHtml(esc(c.metrica)+" em "+esc(ult.m), fnum(ult.res), dRes, "lançado pela agência")
+      + kpiHtml("Por mil alcançados", eficiencia(ult).toFixed(1).replace(".",","), null, esc(c.metrica)+" a cada 1.000 pessoas")
+      + kpiHtml("Custo do contrato", "R$ "+fnum(contrato), null, "por mês")
+      + kpiHtml("Custo por "+esc(c.metricaS), "R$ "+(ult.res? (contrato/ult.res).toFixed(2).replace(".",",") : "—"), null, "contrato ÷ resultado do mês")
+      + '</div>';
+  }
+
+  /* dois gráficos pequenos, mesmos meses */
+  h2 += '<div class="grid g2" style="margin-bottom:16px">'
+    + '<div class="card"><div class="card-h"><h3>Esforço · alcance por mês</h3></div><div class="card-b">'
+    + barrasMes(c.id,"alc","--data","Alcance",fk)+'</div></div>'
+    + '<div class="card"><div class="card-h"><h3>Resultado · '+esc(c.metrica)+' por mês</h3></div><div class="card-b">'
+    + barrasMes(c.id,"res","--data-2",c.metrica,fnum)+'</div></div>'
+    + '</div>';
+
+  /* lançamento */
+  h2 += '<form id="fRes"><div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Lançar o mês</h3>'
+    + '<span class="sub">um número por mês, e o histórico se completa sozinho</span></div>'
+    + '<div class="card-b"><div class="fgrid">'
+    + '<div class="fld"><label for="r_m">Mês</label><input id="r_m" placeholder="Set" maxlength="6"></div>'
+    + '<div class="fld"><label for="r_res">Quantos '+esc(c.metrica)+'</label><input id="r_res" type="number" min="0" placeholder="0" required></div>'
+    + '<div class="fld"><label for="r_posts">Publicações no mês</label><input id="r_posts" type="number" min="0" value="'+c.posts+'"></div>'
+    + '<div class="fld"><label for="r_reels">Destes, Reels</label><input id="r_reels" type="number" min="0" value="0"></div>'
+    + '</div>'
+    + '<div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:16px">'
+    + '<button class="btn" type="submit">Lançar resultado</button>'
+    + '<span class="hint">O alcance do mês vem das publicações já lançadas. Se o mês estiver na lista, ele é atualizado.</span>'
+    + '</div></div></div></form>';
+
+  /* tabela */
+  h2 += '<div class="card"><div class="card-h"><h3>Histórico</h3><span class="sub">esforço de um lado, resultado do outro</span></div><div class="tw"><table>'
+    + '<thead><tr><th>Mês</th><th class="n">Publicações</th><th class="n">Reels</th><th class="n">Alcance</th>'
+    + '<th class="n">'+esc(c.metrica.charAt(0).toUpperCase()+c.metrica.slice(1))+'</th><th class="n">Por mil alcançados</th></tr></thead><tbody>';
+  if (!h.length) h2 += '<tr><td colspan="6"><div class="empty">Nenhum mês lançado ainda.</div></td></tr>';
+  var maxRes = Math.max.apply(null, h.map(function(x){ return x.res; }).concat([1]));
+  h.slice().reverse().forEach(function(x){
+    h2 += '<tr><td style="font-weight:600">'+esc(x.m)+'</td>'
+      + '<td class="n">'+x.posts+'</td><td class="n">'+x.reels+'</td><td class="n">'+fk(x.alc)+'</td>'
+      + '<td class="n"><span class="minibar"><span class="tr"><span class="fl" style="width:'+((x.res/maxRes)*100).toFixed(0)+'%; background:var(--data-2)"></span></span>'+fnum(x.res)+'</span></td>'
+      + '<td class="n">'+eficiencia(x).toFixed(1).replace(".",",")+'</td></tr>';
+  });
+  h2 += '</tbody></table></div></div>';
+
+  h2 += '<div class="rep-note" style="margin-top:16px"><b>Honestidade que protege a agência.</b> O sistema mostra que dois números andaram juntos — nunca que um causou o outro. Promoção, sazonalidade, clima e boca a boca também mexem no resultado. Uma ferramenta que promete causa entrega uma reunião constrangedora no mês em que o número cai.</div>';
+  return h2;
+}
+
+function viewConexoes(){
+  var h = '<div class="phead"><div><span class="eyebrow">Integração</span><h1>Contas conectadas</h1>'
+    + '<p class="desc">O cliente autoriza uma vez, na própria tela da Meta, e o sistema passa a buscar publicações e métricas sozinho. A agência nunca vê nem digita a senha de ninguém.</p></div></div>';
+
+  h += '<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Seus clientes</h3>'
+     + '<span class="sub">o convite vai por link, o cliente autoriza pelo celular dele</span></div><div class="clist">';
+
+  CLIENTES.forEach(function(c){
+    var x = CONEX[c.id];
+    h += '<div class="wrow" style="display:grid; grid-template-columns:1fr auto auto; gap:14px; align-items:center; padding:15px 18px; border-bottom:1px solid var(--line)">'
+      + '<span class="cname"><span class="cav" style="--h:'+matiz(c.id)+'">'+esc(c.nome.charAt(0))+'</span>'
+      + '<span><span class="nm">'+esc(c.nome)+'</span><br><span class="sg">'
+      + (x.ligada
+          ? '@'+esc(x.conta)+' · conectado em '+esc(x.desde)+' · token expira em '+esc(x.expira)
+          : esc(c.ramo)+' · nenhuma conta autorizada')
+      + '</span></span></span>'
+      + (x.ligada ? '<span class="pill ok">Conectada</span>' : '<span class="pill nu">Manual</span>')
+      + (x.ligada
+          ? '<span style="display:flex; gap:8px"><button class="btn ghost sm" data-sync="'+c.id+'">Sincronizar agora</button>'
+            + '<button class="btn ghost sm" data-unlink="'+c.id+'">Desconectar</button></span>'
+          : '<button class="btn sm" data-connect="'+c.id+'">Conectar Instagram</button>')
+      + '</div>';
+  });
+  h += '</div></div>';
+
+  h += '<div class="grid g2">'
+    + '<div class="card"><div class="card-h"><h3>O que muda quando conecta</h3></div><div class="card-b">'
+    + '<div class="incl2">'
+    + itemOk("As publicações entram sozinhas, sem ninguém colar link")
+    + itemOk("Alcance, visualizações, salvamentos e compartilhamentos vêm da fonte")
+    + itemOk("Histórico anterior à conexão também é importado")
+    + itemOk("O diagnóstico roda todo dia, não só quando alguém lembra de lançar")
+    + itemOk("O relatório do cliente fica sempre atualizado")
+    + '</div></div></div>'
+
+    + '<div class="card"><div class="card-h"><h3>O que isso exige de verdade</h3></div><div class="card-b">'
+    + '<div class="incl2">'
+    + itemWa("O cliente precisa ter conta profissional (comercial ou de criador)")
+    + itemWa("Seu app precisa passar pela revisão da Meta para as permissões de métricas")
+    + itemWa("A revisão pede política de privacidade, termos e rota de exclusão de dados")
+    + itemWa("A autorização expira e precisa ser renovada — o sistema tem que avisar antes")
+    + itemWa("Se o cliente trocar a senha ou revogar, a conexão cai e alguém precisa saber")
+    + '</div></div></div></div>';
+
+  h += '<div class="rep-note" style="margin-top:16px"><b>A regra de segurança que não se negocia.</b> O sistema nunca pede a senha do Instagram do cliente, em campo nenhum, em tela nenhuma. O cliente é levado para a página da própria Meta, digita a senha lá, e volta com uma autorização. Qualquer ferramenta que peça a senha dentro dela própria está pedindo para derrubar a conta do seu cliente — e para queimar a sua agência junto.</div>';
+
+  return h;
+}
+function itemOk(t){ return '<div><span class="tickr ok">✓</span><span>'+esc(t)+'</span></div>'; }
+function itemWa(t){ return '<div><span class="tickr wa">!</span><span>'+esc(t)+'</span></div>'; }
+
+/* --- cadastro de cliente --- */
+function abrirNovoCliente(){
+  var m = $("#modal");
+  m.querySelector(".mbody").innerHTML =
+      '<span class="eyebrow">Novo cliente</span>'
+    + '<h3 class="mtit">Quem a agência atende</h3>'
+    + '<p class="mtxt">Só o essencial. O resto o sistema aprende com as publicações que você lançar.</p>'
+    + '<form id="fCli" class="mform">'
+    + '<div class="fld"><label for="n_nome">Nome do negócio</label><input id="n_nome" required placeholder="Sabor da Praça"></div>'
+    + '<div class="fld"><label for="n_ramo">Ramo</label><input id="n_ramo" placeholder="Lanchonete"></div>'
+    + '<div class="fld"><label for="n_met">O que conta como resultado</label>'
+    + '<select id="n_met">'
+    + '<option value="pedidos|pedido">Pedidos</option>'
+    + '<option value="agendamentos|agendamento">Agendamentos</option>'
+    + '<option value="atendimentos|atendimento">Atendimentos</option>'
+    + '<option value="consultas|consulta">Consultas</option>'
+    + '<option value="orçamentos|orçamento">Orçamentos</option>'
+    + '<option value="vendas|venda">Vendas</option>'
+    + '</select><span class="hint">É o número que o cliente vai informar todo mês.</span></div>'
+    + '<div class="fgrid2">'
+    + '<div class="fld"><label for="n_seg">Seguidores</label><input id="n_seg" type="number" min="0" value="0"></div>'
+    + '<div class="fld"><label for="n_val">Contrato (R$/mês)</label><input id="n_val" type="number" min="0" value="0"></div>'
+    + '</div>'
+    + '<div class="fld"><label for="n_plano">O que foi contratado</label><input id="n_plano" placeholder="Social 3x/semana"></div>'
+    + '<div class="macts"><button class="btn ghost" type="button" data-mclose="1">Cancelar</button>'
+    + '<button class="btn" type="submit">Cadastrar cliente</button></div>'
+    + '</form>';
+  m.classList.add("on");
+}
+
+/* --- fluxo de autorização, em 3 passos --- */
+function abrirConexao(cid, passo){
+  var c = cli(cid);
+  var m = $("#modal");
+  var body = "";
+
+  if (passo === 1){
+    body = '<span class="eyebrow">Passo 1 de 3</span>'
+      + '<h3 class="mtit">Enviar convite para '+esc(c.nome)+'</h3>'
+      + '<p class="mtxt">O cliente recebe um link e autoriza pelo celular dele. Leva menos de dois minutos e ele não precisa aprender nada — é a mesma tela que aparece quando ele entra em qualquer app com o Instagram.</p>'
+      + '<div class="mbox"><span class="mbox-h">O que o sistema vai poder ler</span><ul class="mlist">'
+      + '<li>Publicações do perfil e suas métricas</li>'
+      + '<li>Alcance, visualizações, salvamentos e compartilhamentos</li>'
+      + '<li>Número de seguidores e dados do perfil</li></ul>'
+      + '<span class="mbox-h" style="margin-top:12px">O que o sistema nunca terá</span><ul class="mlist neg">'
+      + '<li>A senha do cliente</li><li>Mensagens diretas</li><li>Permissão para publicar em nome dele</li></ul></div>'
+      + '<div class="macts"><button class="btn ghost" data-mclose="1">Cancelar</button>'
+      + '<button class="btn" data-mstep="2" data-mcid="'+cid+'">Enviar convite</button></div>';
+  }
+
+  if (passo === 2){
+    body = '<span class="eyebrow">Passo 2 de 3 · simulação</span>'
+      + '<h3 class="mtit">Agora é com o cliente, no site da Meta</h3>'
+      + '<p class="mtxt">Este passo acontece <b>fora do seu sistema</b>. O cliente é redirecionado para a página da Meta, entra com a conta dele lá e decide se autoriza. O quadro abaixo é só uma representação do que ele vê — o seu sistema não desenha essa tela e não recebe a senha.</p>'
+      + '<div class="extbox">'
+      + '<span class="extbar">página da Meta · fora do seu sistema</span>'
+      + '<div class="extbody">'
+      + '<p class="extq"><b>'+esc(c.nome)+'</b> quer conectar sua conta profissional ao <b>Farol</b>.</p>'
+      + '<p class="extp">Permitir acesso às informações e métricas das suas publicações?</p>'
+      + '<div class="extacts"><span class="extbtn">Cancelar</span><span class="extbtn on">Permitir</span></div>'
+      + '</div></div>'
+      + '<div class="macts"><button class="btn ghost" data-mclose="1">Fechar</button>'
+      + '<button class="btn" data-mstep="3" data-mcid="'+cid+'">Simular autorização do cliente</button></div>';
+  }
+
+  if (passo === 3){
+    var x = CONEX[cid];
+    body = '<span class="eyebrow">Passo 3 de 3</span>'
+      + '<h3 class="mtit">Conta conectada</h3>'
+      + '<p class="mtxt">O sistema guardou uma autorização — não uma senha. A partir de agora as publicações de <b>'+esc(c.nome)+'</b> entram sozinhas.</p>'
+      + '<div class="mbox"><div class="mkv"><span>Conta</span><span>@'+esc(x.conta)+'</span></div>'
+      + '<div class="mkv"><span>Conectada em</span><span>'+esc(x.desde)+'</span></div>'
+      + '<div class="mkv"><span>Autorização expira</span><span>'+esc(x.expira)+'</span></div>'
+      + '<div class="mkv"><span>Renovação</span><span>automática, com aviso 7 dias antes</span></div></div>'
+      + '<div class="macts"><button class="btn ghost" data-mclose="1">Depois</button>'
+      + '<button class="btn" data-msync="'+cid+'">Sincronizar publicações agora</button></div>';
+  }
+
+  m.querySelector(".mbody").innerHTML = body;
+  m.classList.add("on");
+}
+
+function viewRelatorio(){
+  var c = cli(state.cliente), list = postsDe(c.id, state.periodo), a = agrega(list);
+  var top = list.slice().sort(function(x,y){ return y.alc-x.alc; })[0];
+  var dAlc = delta(c.id, state.periodo, "alcance");
+  var ins = diagnosticar(c.id, state.periodo).filter(function(i){ return i.tipo==="ok"||i.tipo==="ac"; }).slice(0,3);
+
+  var h = '<div class="phead"><div><span class="eyebrow">Visão do cliente final</span><h1>Relatório · '+esc(c.nome)+'</h1>'
+    + '<p class="desc">É isto que o dono do negócio vê quando entra com o login dele: sem jargão, sem métrica que ele não entende, e com a conclusão escrita em português.</p></div>'
+    + '<span class="spacer"></span><button class="btn ghost sm" id="btnPdf">Baixar em PDF</button></div>';
+
+  /* A manchete do relatório é o resultado do negócio, não o alcance.
+     Alcance é o meio; o cliente compra o fim. */
+  var u = ultimoMes(c.id), hh = hist(c.id);
+  var melhor = hh.length ? hh.slice().sort(function(x,y){ return y.res-x.res; })[0] : null;
+
+  h += '<div class="rep-hero" style="margin-bottom:16px">';
+  if (u){
+    h += '<h2>'+esc(u.m)+' fechou com '+fnum(u.res)+' '+esc(c.metrica)+''
+      + (melhor && melhor.m===u.m && hh.length>=3 ? ' — o melhor mês dos últimos '+hh.length+'.' : '.')+'</h2>'
+      + '<p>No mesmo período seu negócio apareceu para '+fnum(a.alcance)+' pessoas, em '+a.posts+' publicações, '
+      + 'que geraram '+fnum(a.inter)+' interações. Isso dá '+eficiencia(u).toFixed(1).replace(".",",")
+      + ' '+esc(c.metrica)+' a cada mil pessoas alcançadas.'
+      + (dAlc!==null ? ' O alcance '+(dAlc>0?'cresceu ':'caiu ')+fpc(Math.abs(dAlc),0)+' em relação ao período anterior.' : '')
+      + '</p>';
+  } else {
+    h += '<h2>Seu negócio apareceu para '+fnum(a.alcance)+' pessoas nos últimos '+state.periodo+' dias.</h2>'
+      + '<p>Foram '+a.posts+' publicações, que geraram '+fnum(a.inter)+' interações.</p>';
+  }
+  h += '</div>';
+
+  h += '<div class="grid g4" style="margin-bottom:16px">'
+    + (u ? kpiHtml(c.metrica+" em "+u.m, fnum(u.res), null, "o que virou negócio") : "")
+    + kpiHtml("Pessoas alcançadas", fk(a.alcance), null, "quantas viram seu conteúdo")
+    + kpiHtml("Interações", fk(a.inter), null, "quantas reagiram de alguma forma")
+    + kpiHtml("Cliques no seu link", fnum(a.cliques), null, "foram para o WhatsApp ou site")
+    + '</div>';
+
+  if (hh.length >= 3){
+    h += '<div class="grid g2" style="margin-bottom:16px">'
+      + '<div class="card"><div class="card-h"><h3>Quanto seu negócio apareceu</h3><span class="sub">por mês</span></div>'
+      + '<div class="card-b">'+barrasMes(c.id,"alc","--data","Alcance",fk)+'</div></div>'
+      + '<div class="card"><div class="card-h"><h3>Quantos '+esc(c.metrica)+'</h3><span class="sub">por mês</span></div>'
+      + '<div class="card-b">'+barrasMes(c.id,"res","--data-2",c.metrica,fnum)+'</div></div>'
+      + '</div>';
+  }
+
+  if (top){
+    h += '<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>O conteúdo que mais funcionou</h3></div><div class="card-b">'
+      + '<div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap">'
+      + '<div style="flex:1; min-width:230px"><p style="font-family:var(--fd); font-weight:800; font-size:20px; letter-spacing:-.02em; margin-bottom:6px">"'+esc(top.t)+'"</p>'
+      + '<p style="color:var(--ink-2); font-size:14.5px">Publicado no '+esc(top.p)+' em formato '+esc(top.f)+', às '+top.h+'h. Alcançou <b>'+fnum(top.alc)+' pessoas</b> e foi salvo '+fnum(top.sal)+' vezes.</p></div>'
+      + '<div style="flex:1; min-width:230px"><span class="eyebrow">Por que funcionou</span>'
+      + '<p style="font-size:14.5px; color:var(--ink-2)">Formato '+esc(top.f)+' e horário de pico. É o padrão que vamos repetir no próximo mês.</p></div>'
+      + '</div></div></div>';
+  }
+
+  h += '<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Como foi semana a semana</h3><span class="sub">alcance somado por semana</span></div>'
+     + '<div class="card-b chartbox">'+chartLinha(list, state.periodo)+'</div></div>';
+
+  if (ins.length){
+    h += '<div class="card"><div class="card-h"><h3>O que vamos fazer no próximo ciclo</h3></div>';
+    ins.forEach(function(i){
+      h += '<div class="ins"><span class="ins-ic ac">→</span><div class="ins-b">'
+        + '<span class="t">'+esc(i.t)+'</span><span class="d">'+esc(i.a)+'</span></div></div>';
+    });
+    h += '</div>';
+  }
+  return h;
+}
+
+/* =====================================================================
+   RENDER + EVENTOS
+   ===================================================================== */
+
+/* =====================================================================
+   CAMADA DE API
+   O navegador deixou de guardar dados próprios. Tudo vem do servidor, e
+   toda escrita passa por ele — inclusive as que o front já "sabe" que vão
+   dar certo. É o servidor que decide se o plano permite.
+   ===================================================================== */
+var DIAG = {};        // cid -> leituras vindas do servidor
+var RESUMO = {};      // cid -> números da carteira, calculados no servidor
+var CARREGADO = {};   // cid -> true quando o painel daquele cliente já veio
+
+async function api(metodo, caminho, corpo){
+  var r = await fetch(caminho, {
+    method: metodo,
+    headers: corpo ? { "content-type": "application/json" } : {},
+    body: corpo ? JSON.stringify(corpo) : undefined,
+    credentials: "same-origin"
+  });
+  var d = null;
+  try { d = await r.json(); } catch(e){ d = {}; }
+  if (!r.ok){
+    var e = new Error(d.erro || ("Erro " + r.status));
+    e.status = r.status; e.detalhe = d.detalhe;
+    throw e;
+  }
+  return d;
+}
+
+function mapPub(cid, p){
+  return { id:p.id, c:cid, d:p.dias, p:p.plataforma, f:p.formato, h:p.hora,
+           t:p.titulo, u:p.url, alc:p.alcance, vis:p.views, inter:p.interacoes,
+           sal:p.salvos, cli:p.cliques, auto:p.auto };
+}
+function mapRes(r){
+  return { m:r.rotulo, competencia:r.competencia, posts:r.posts, reels:r.reels,
+           alc:r.alcance, res:r.resultado };
+}
+function mapCli(c){
+  return { id:c.id, nome:c.nome, ramo:c.ramo, seguidores:c.seguidores,
+           plano:c.planoTxt || "A definir", contrato:"R$ " + (c.contrato||0).toLocaleString("pt-BR") + "/mês",
+           metrica:c.metrica, metricaS:c.metricaS, posts:0, tokenRel:c.tokenRel };
+}
+function mapConex(x){
+  if (!x || !x.ligada) return { ligada:false, conta:null, desde:null, expira:null, ultima:null, sincronizado:false };
+  var dt = function(v){ return v ? new Date(v).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"}) : null; };
+  return { ligada:true, conta:x.conta, desde:dt(x.ligadaEm), expira:dt(x.expiraEm),
+           ultima: x.ultimaSinc ? new Date(x.ultimaSinc).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) : null,
+           sincronizado:true };
+}
+
+function aplicarPlano(p){
+  if (!p) return;
+  PLANO_SERVIDOR = p;
+  CONTA.plano = p.id;
+  CONTA.teste = p.status === "teste";
+}
+
+async function carregarEstado(){
+  var d = await api("GET", "/api/estado");
+  CONTA.email = d.conta.email; CONTA.agencia = d.conta.agencia;
+  CONTA.desde = new Date(d.conta.criadaEm).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
+  aplicarPlano(d.plano);
+
+  CLIENTES = d.clientes.map(mapCli);
+  RESUMO = {};
+  d.clientes.forEach(function(c){
+    CONEX[c.id] = mapConex(c.conexao);
+    RESUMO[c.id] = c.resumo || { alcance:0, posts:0, serie:[], alerta:"ok", variacao:null };
+    if (c.ultimoResultado) HISTORICO[c.id] = HISTORICO[c.id] || [ mapRes(c.ultimoResultado) ];
+  });
+  if (CLIENTES.length && !CLIENTES.some(function(c){ return c.id === state.cliente; }))
+    state.cliente = CLIENTES[0].id;
+  montaSelect();
+}
+
+function invalidar(cid){
+  if (cid) delete CARREGADO[cid]; else CARREGADO = {};
+}
+
+function garantirCliente(cid){
+  if (!cid || CARREGADO[cid]) return;
+  CARREGADO[cid] = "carregando";
+  api("GET", "/api/clientes/" + cid + "/painel?dias=" + state.periodo).then(function(d){
+    POSTS = POSTS.filter(function(p){ return p.c !== cid; });
+    d.publicacoes.forEach(function(p){ POSTS.push(mapPub(cid, p)); });
+    HISTORICO[cid] = d.historico.map(mapRes);
+    DIAG[cid] = d.diagnostico;
+    CONEX[cid] = mapConex(d.conexao);
+    var alvo = CLIENTES.filter(function(c){ return c.id === cid; })[0];
+    if (alvo) alvo.posts = d.agora.posts;
+    CARREGADO[cid] = true;
+    render();
+  }).catch(function(e){
+    CARREGADO[cid] = true; DIAG[cid] = [];
+    toast(e.message || "Não consegui carregar este cliente.");
+  });
+}
+
+/* Substitui o motor local: as leituras agora chegam prontas do servidor. */
+function diagnosticar(cid){ return DIAG[cid] || []; }
+
+var VIEWS = { carteira:viewCarteira, painel:viewPainel, conteudos:viewConteudos,
+              diagnostico:viewDiagnostico, lancar:viewLancar, resultado:viewResultado,
+              conexoes:viewConexoes, relatorio:viewRelatorio, conta:viewConta };
+
+/* --- ações de conexão --- */
+function hojeMais(dias){
+  var d = new Date(); d.setDate(d.getDate()+dias);
+  return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
+}
+function conectar(cid){
+  var c = cli(cid);
+  var contaRede = c.nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
+  return api("POST", "/api/clientes/" + cid + "/conexao", { contaRede: contaRede })
+    .then(function(d){ CONEX[cid] = mapConex(d.conexao); })
+    .catch(function(err){ toast(err.message); });
+}
+function sincronizar(cid){
+  var x = CONEX[cid];
+  if (!x.ligada) return 0;
+  var novos = 0;
+  if (!x.sincronizado){
+    (SINCRONIZADOS[cid]||[]).forEach(function(p){
+      var copia = {}; for (var k in p) copia[k] = p[k];
+      copia.c = cid; copia.auto = true;
+      POSTS.push(copia); novos++;
+    });
+    x.sincronizado = true;
+  }
+  x.ultima = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+  return novos;
+}
+
+/* =====================================================================
+   ENTRADA — login e criação de conta
+   ===================================================================== */
+function params(){
+  var o = {}, q = (location.search||"").replace(/^\?/,"");
+  q.split("&").forEach(function(par){
+    if(!par) return;
+    var kv = par.split("=");
+    o[decodeURIComponent(kv[0])] = decodeURIComponent((kv[1]||"").replace(/\+/g," "));
+  });
+  return o;
+}
+
+function planoCards(sel){
+  return Object.keys(PLANOS).map(function(k){
+    var p = PLANOS[k];
+    return '<label class="pcard'+(k===sel?" on":"")+'">'
+      + '<input type="radio" name="plano" value="'+k+'"'+(k===sel?" checked":"")+'>'
+      + '<span class="pcard-n">'+esc(p.nome)+'</span>'
+      + '<span class="pcard-v">R$ '+p.preco+'<small>/mês</small></span>'
+      + '<span class="pcard-d">até '+p.maxClientes+' clientes</span>'
+      + '</label>';
+  }).join("");
+}
+
+function telaAuth(modo, planoSel){
+  var b = $("#authBody");
+  erroAuth(""); var _ok = $("#authOk"); if (_ok) _ok.classList.add("hide");
+  var abas = '<div class="authtabs">'
+    + '<button class="authtab'+(modo==="entrar"?" on":"")+'" data-modo="entrar" type="button">Entrar</button>'
+    + '<button class="authtab'+(modo==="criar"?" on":"")+'" data-modo="criar" type="button">Criar conta</button>'
+    + '</div>';
+
+
+  if (modo === "esqueci"){
+    b.innerHTML = '<div class="authtabs"><button class="authtab on" type="button">Recuperar acesso</button></div>'
+      + '<form id="fEsqueci" class="authform">'
+      + '<div class="fld"><label for="a_mailr">E-mail da conta</label>'
+      + '<input id="a_mailr" type="email" required autocomplete="email" placeholder="voce@suaagencia.com.br"></div>'
+      + '<button class="btn authbtn" type="submit">Enviar link de recuperação</button>'
+      + '</form>'
+      + '<p class="authnote">Chega um link no seu e-mail. Ele vale por uma hora e só funciona uma vez.</p>'
+      + '<p class="authvolta"><button class="lnkb" data-modo="entrar" type="button">Voltar para o login</button></p>';
+    return;
+  }
+
+  if (modo === "nova"){
+    b.innerHTML = '<div class="authtabs"><button class="authtab on" type="button">Criar senha nova</button></div>'
+      + '<form id="fNova" class="authform">'
+      + '<div class="fld"><label for="a_nova">Senha nova</label>'
+      + '<input id="a_nova" type="password" required minlength="8" autocomplete="new-password" placeholder="ao menos 8 caracteres"></div>'
+      + '<div class="fld"><label for="a_nova2">Repita a senha</label>'
+      + '<input id="a_nova2" type="password" required minlength="8" autocomplete="new-password" placeholder="a mesma de cima"></div>'
+      + '<button class="btn authbtn" type="submit">Salvar e usar esta senha</button>'
+      + '</form>'
+      + '<p class="authnote">Ao salvar, todos os aparelhos conectados nesta conta são desconectados — inclusive quem estivesse usando sem você saber.</p>'
+      + '<p class="authvolta"><button class="lnkb" data-modo="entrar" type="button">Voltar para o login</button></p>';
+    return;
+  }
+
+  if (modo === "entrar"){
+    b.innerHTML = abas
+      + '<form id="fEntrar" class="authform">'
+      + '<div class="fld"><label for="a_mail">E-mail</label><input id="a_mail" type="email" required placeholder="voce@suaagencia.com.br" value="'+(DEMO?"contato@agenciademo.com.br":"")+'"></div>'
+      + '<div class="fld"><label for="a_senha">Senha</label><input id="a_senha" type="password" required placeholder="••••••••" value="'+(DEMO?"demo1234":"")+'"></div>'
+      + '<div class="authlnk"><button class="lnkb" data-modo="esqueci" type="button">Esqueci minha senha</button></div>'
+      + '<button class="btn authbtn" type="submit">Entrar na minha conta</button>'
+      + '</form>'
+      + (DEMO
+          ? '<p class="authnote">Modo demonstração: os campos já vêm preenchidos, é só entrar.</p>'
+          : '')
+      + '<p class="authalt">Ainda não tem conta? <button class="lnkb" data-modo="criar" type="button">Criar agora</button></p>';
+    return;
+  }
+
+  b.innerHTML = abas
+    + '<form id="fCriar" class="authform">'
+    + '<div class="fld"><label for="a_ag">Nome da agência</label><input id="a_ag" required placeholder="Estúdio Norte"></div>'
+    + '<div class="fld"><label for="a_mail2">E-mail</label><input id="a_mail2" type="email" required placeholder="voce@suaagencia.com.br"></div>'
+    + '<div class="fld"><label for="a_senha2">Senha</label><input id="a_senha2" type="password" required placeholder="crie uma senha"></div>'
+    + '<div class="fld"><label>Seu plano</label><div class="pcards">'+planoCards(planoSel||"essencial")+'</div>'
+    + '<span class="hint">Você troca de plano quando quiser. O limite de clientes é o que muda.</span></div>'
+    + '<button class="btn authbtn" type="submit">Criar conta e começar</button>'
+    + '</form>'
+    + '<p class="authnote">14 dias de teste, sem cartão. Você troca de plano quando quiser.</p>';
+}
+
+function entrar(){
+  CONTA.entrou = true;
+  CONTA.desde = new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
+  $("#auth").hidden = true;
+  $("#app").hidden = false;
+  render();
+}
+function sair(){
+  api("POST", "/api/conta/sair").catch(function(){});
+  CLIENTES = []; POSTS = []; HISTORICO = {}; CONEX = {}; DIAG = {}; CARREGADO = {};
+  CONTA.entrou = false;
+  $("#app").hidden = true;
+  $("#auth").hidden = false;
+  telaAuth("entrar", CONTA.plano);
+}
+
+function viewConta(){
+  var p = plano(), usados = CLIENTES.length;
+  var pc = Math.min((usados/p.maxClientes)*100, 100);
+  var h = '<div class="phead"><div><span class="eyebrow">Assinatura</span><h1>Minha conta</h1>'
+    + '<p class="desc">O plano define quantos clientes cabem na carteira e quais recursos ficam liberados.</p></div></div>';
+
+  h += '<div class="grid g2" style="margin-bottom:16px">'
+    + '<div class="card"><div class="card-h"><h3>Plano '+esc(p.nome)+'</h3>'
+    + (CONTA.teste?'<span class="pill ac">em teste</span>':'<span class="pill ok">ativo</span>')+'</div><div class="card-b">'
+    + '<div class="mkv"><span>Agência</span><span>'+esc(CONTA.agencia||"—")+'</span></div>'
+    + '<div class="mkv"><span>E-mail</span><span>'+esc(CONTA.email||"—")+'</span></div>'
+    + '<div class="mkv"><span>Valor</span><span>R$ '+p.preco+'/mês</span></div>'
+    + '<div class="mkv"><span>Cliente desde</span><span>'+esc(CONTA.desde||"—")+'</span></div>'
+    + '<div style="margin-top:16px">'
+    + '<div style="display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:6px">'
+    + '<span style="color:var(--ink-2)">Clientes na carteira</span>'
+    + '<span class="mono num" style="font-weight:600">'+usados+' de '+p.maxClientes+'</span></div>'
+    + '<span class="uso"><span class="uso-f'+(pc>=100?" cheio":"")+'" style="width:'+pc.toFixed(0)+'%"></span></span>'
+    + '</div></div></div>'
+
+    + '<div class="card"><div class="card-h"><h3>O que está liberado</h3></div><div class="card-b">'
+    + '<div class="incl2">'
+    + linhaRec(true, "Diagnóstico automático e histórico de resultado")
+    + linhaRec(true, "Relatório em PDF pela impressão do navegador")
+    + linhaRec(pode("clienteFinal"), "Acesso do cliente final ao relatório dele")
+    + linhaRec(pode("marcaPdf"), "PDF com a marca da agência")
+    + linhaRec(pode("alertas"), "Alerta semanal de cliente em risco")
+    + linhaRec(pode("multiUsuario"), "Vários usuários com permissões")
+    + '</div></div></div></div>';
+
+  h += '<div class="card"><div class="card-h"><h3>Trocar de plano</h3><span class="sub">a diferença é proporcional, sem taxa</span></div>'
+    + '<div class="card-b"><div class="pcards">';
+  Object.keys(PLANOS).forEach(function(k){
+    var x = PLANOS[k], atual = k===CONTA.plano;
+    h += '<div class="pcard'+(atual?" on":"")+'" style="cursor:'+(atual?"default":"pointer")+'"'+(atual?"":' data-plano="'+k+'"')+'>'
+      + '<span class="pcard-n">'+esc(x.nome)+'</span>'
+      + '<span class="pcard-v">R$ '+x.preco+'<small>/mês</small></span>'
+      + '<span class="pcard-d">até '+x.maxClientes+' clientes</span>'
+      + '<span class="pcard-b">'+(atual?"Plano atual":"Mudar para este")+'</span></div>';
+  });
+  h += '</div></div></div>';
+
+  h += '<div class="rep-note" style="margin-top:16px"><b>Onde o plano é decidido.</b> Esta tela só desenha. Quem autoriza é o servidor: o limite de clientes é verificado a cada cadastro e a liberação de cada recurso a cada requisição. Mudar o plano pelo console do navegador não muda nada — o próximo pedido volta barrado.</div>';
+
+  h += '<div style="margin-top:16px"><button class="btn ghost" type="button" id="btnSair">Sair da conta</button></div>';
+  return h;
+}
+function linhaRec(ok, t){
+  return '<div><span class="tickr '+(ok?"ok":"no")+'">'+(ok?"✓":"—")+'</span>'
+    + '<span'+(ok?"":' style="color:var(--ink-3)"')+'>'+esc(t)+(ok?"":" · plano superior")+'</span></div>';
+}
+
+function render(){
+  // sem clientes, a única tela possível é a carteira vazia
+  // sem clientes só existem duas telas possíveis: a carteira vazia e a conta
+  if (!CLIENTES.length){
+    state.cliente = ""; state.role = "agencia";
+    if (state.view !== "conta") state.view = "carteira";
+  }
+  else if (!CLIENTES.some(function(c){ return c.id === state.cliente; })){
+    state.cliente = CLIENTES[0].id; montaSelect();
+  }
+  garantirCliente(state.cliente);
+
+  var vazia = !CLIENTES.length;
+  $("#demoFlag").textContent = CONTA.teste ? "Período de teste" : "Assinatura ativa";
+
+  var p = plano();
+  $("#planChip").innerHTML = '<b>'+esc(p.nome)+'</b><span>'+CLIENTES.length+'/'+p.maxClientes+' clientes</span>';
+  $("#planChip").classList.toggle("cheio", CLIENTES.length >= p.maxClientes);
+
+  // o acesso do cliente final é recurso de plano
+  $$(".role").forEach(function(b){
+    var trava = b.dataset.role === "cliente" && !pode("clienteFinal");
+    b.disabled = vazia || trava;
+    b.classList.toggle("trava", trava);
+    b.title = trava ? "Disponível a partir do plano Agência" : "";
+  });
+  if (state.role === "cliente" && !pode("clienteFinal")){
+    state.role = "agencia";
+    $$(".role").forEach(function(x){ x.setAttribute("aria-pressed", x.dataset.role==="agencia" ? "true":"false"); });
+  }
+
+  // papel de cliente final só enxerga o relatório
+  var soCliente = state.role === "cliente";
+  $$(".side .nav").forEach(function(b){
+    var isRel = b.dataset.view === "relatorio";
+    b.classList.toggle("hide", soCliente && !isRel);
+    b.setAttribute("aria-current", b.dataset.view === state.view ? "true" : "false");
+  });
+  $$(".navgrp").forEach(function(g,i){ g.classList.toggle("hide", soCliente && i===0); });
+  if (soCliente && state.view !== "relatorio") state.view = "relatorio";
+
+  var totalAlertas = 0;
+  CLIENTES.forEach(function(c){
+    var rs = RESUMO[c.id];
+    if (rs && rs.alerta !== "ok") totalAlertas++;
+  });
+  var badge = $("#insCount");
+  badge.textContent = totalAlertas;
+  badge.classList.toggle("hide", totalAlertas===0);
+
+  var ligadas = CLIENTES.filter(function(c){ return CONEX[c.id].ligada; }).length;
+  var cb = $("#conCount");
+  cb.textContent = ligadas + "/" + CLIENTES.length;
+  cb.classList.toggle("hide", false);
+
+  $("#content").innerHTML = (VIEWS[state.view]||viewCarteira)();
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+// select de clientes
+var csel = $("#clientSel");
+function montaSelect(){
+  csel.innerHTML = CLIENTES.length
+    ? CLIENTES.map(function(c){ return '<option value="'+c.id+'">'+esc(c.nome)+'</option>'; }).join("")
+    : '<option value="">Nenhum cliente</option>';
+  csel.value = state.cliente;
+  csel.disabled = !CLIENTES.length;
+}
+montaSelect();
+csel.addEventListener("change", function(){ state.cliente = csel.value; if(state.view==="carteira") state.view="painel"; render(); });
+$("#periodSel").addEventListener("change", function(e){
+  state.periodo = +e.target.value;
+  invalidar();                                   // o período mudou: tudo que estava em cache venceu
+  carregarEstado().then(render).catch(function(){ render(); });
+});
+
+$$(".side .nav").forEach(function(b){
+  b.addEventListener("click", function(){ state.view = b.dataset.view; render(); });
+});
+$$(".role").forEach(function(b){
+  b.addEventListener("click", function(){
+    state.role = b.dataset.role;
+    $$(".role").forEach(function(x){ x.setAttribute("aria-pressed", x===b ? "true":"false"); });
+    state.view = state.role==="cliente" ? "relatorio" : "carteira";
+    render();
+  });
+});
+
+// delegação: abrir cliente, ordenar tabela, botões internos
+$("#content").addEventListener("click", function(e){
+  var op = e.target.closest("[data-open]");
+  if (op){ state.cliente = op.dataset.open; csel.value = state.cliente; state.view="painel"; render(); return; }
+  var sv = e.target.closest("[data-view]");
+  if (sv){ state.view = sv.dataset.view; render(); return; }
+  var th = e.target.closest("[data-sort]");
+  if (th){
+    var k = th.dataset.sort;
+    state.sortDir = (state.sortKey===k) ? -state.sortDir : -1;
+    state.sortKey = k; render(); return;
+  }
+  if (e.target.closest("#btnPdf")){
+    // usa a impressão do navegador: gera PDF de verdade, sem servidor.
+    // O @media print abaixo esconde a navegação e deixa só o relatório.
+    toast("Escolha “Salvar como PDF” na janela de impressão.");
+    setTimeout(function(){ window.print(); }, 350);
+    return;
+  }
+
+  var cn = e.target.closest("[data-connect]");
+  if (cn){ abrirConexao(cn.dataset.connect, 1); return; }
+  var sy = e.target.closest("[data-sync]");
+  if (sy){
+    var n = sincronizar(sy.dataset.sync);
+    toast(n ? n+" publicação(ões) importada(s) da conta." : "Tudo em dia — nenhuma publicação nova.");
+    render(); return;
+  }
+  var un = e.target.closest("[data-unlink]");
+  if (un){
+    var idc = un.dataset.unlink;
+    api("DELETE", "/api/clientes/" + idc + "/conexao").then(function(){
+      CONEX[idc] = { ligada:false };
+      toast("Conta desconectada. As publicações já importadas continuam no histórico.");
+      render();
+    }).catch(function(err){ toast(err.message); });
+    return;
+  }
+});
+
+/* --- entrada: eventos da tela de login --- */
+$("#auth").addEventListener("click", function(e){
+  var t = e.target.closest("[data-modo]");
+  if (t){ telaAuth(t.dataset.modo, CONTA.plano); return; }
+  var card = e.target.closest(".pcard");
+  if (card && card.querySelector("input")){
+    $$(".pcard", $("#auth")).forEach(function(x){ x.classList.remove("on"); });
+    card.classList.add("on"); card.querySelector("input").checked = true;
+  }
+});
+$("#auth").addEventListener("submit", async function(e){
+  e.preventDefault();
+  var btn = e.target.querySelector("button[type=submit]");
+  var rotulo = btn ? btn.textContent : "";
+  if (btn){ btn.disabled = true; btn.textContent = "Aguarde..."; }
+  erroAuth("");
+  try {
+    if (e.target.id === "fEsqueci"){
+      var r = await api("POST", "/api/conta/esqueci", { email: $("#a_mailr").value.trim() });
+      // A resposta é a mesma exista o e-mail ou não — de propósito. Dizer
+      // "essa conta não existe" entregaria quais e-mails são clientes.
+      avisoAuth(r.mensagem || "Se existir uma conta com esse e-mail, o link chega em instantes.");
+      return;
+    }
+    if (e.target.id === "fNova"){
+      if ($("#a_nova").value !== $("#a_nova2").value) throw new Error("As duas senhas não são iguais.");
+      await api("POST", "/api/conta/redefinir", { token: params().t, senha: $("#a_nova").value });
+      // Tira o token da barra de endereço: ele já foi usado e não deve ficar
+      // no histórico do navegador nem em print de tela.
+      try { history.replaceState(null, "", location.pathname); } catch(_){}
+      telaAuth("entrar", CONTA.plano);
+      avisoAuth("Senha trocada. Entre com a senha nova.");
+      return;
+    }
+    if (e.target.id === "fEntrar"){
+      await api("POST", "/api/conta/entrar", {
+        email: $("#a_mail").value.trim(), senha: $("#a_senha").value
+      });
+    } else {
+      var sel = $("#auth input[name=plano]:checked");
+      await api("POST", "/api/conta/criar", {
+        agencia: $("#a_ag").value.trim(),
+        email: $("#a_mail2").value.trim(),
+        senha: $("#a_senha2").value,
+        plano: sel ? sel.value : "essencial"
+      });
+    }
+    await carregarEstado();
+    entrar();
+  } catch(err){
+    erroAuth(err.message);
+  } finally {
+    if (btn){ btn.disabled = false; btn.textContent = rotulo; }
+  }
+});
+function avisoAuth(msg){
+  var el = $("#authOk");
+  if (!el) return;
+  el.textContent = msg || "";
+  el.classList.toggle("hide", !msg);
+  erroAuth("");
+}
+function erroAuth(msg){
+  var el = $("#authErro");
+  if (!el) return;
+  el.textContent = msg || "";
+  el.classList.toggle("hide", !msg);
+}
+
+/* --- conta e plano --- */
+$("#planChip").addEventListener("click", function(){ state.view = "conta"; render(); });
+$("#content").addEventListener("click", function(e){
+  if (e.target.closest("#btnSair")){ sair(); return; }
+  var tp = e.target.closest("[data-plano]");
+  if (tp) trocarPlano(tp.dataset.plano);
+});
+
+async function trocarPlano(novo){
+  try {
+    var d = await api("POST", "/api/conta/plano", { plano: novo });
+    aplicarPlano(d.plano);
+    toast("Plano alterado para " + d.plano.nome + ".");
+    render();
+  } catch(err){ toast(err.message); }
+}
+
+/* --- cadastro de cliente --- */
+/* O front só ANTECIPA o bloqueio para não fazer o usuário preencher um
+   formulário à toa. Quem realmente barra é o servidor, no POST acima. */
+function tentarNovoCliente(){
+  var p = plano();
+  if (CLIENTES.length >= p.maxClientes){
+    bloqueioPlano("Seu plano " + p.nome + " comporta " + p.maxClientes + " clientes e você já está usando todos.");
+    return;
+  }
+  abrirNovoCliente();
+}
+
+function bloqueioPlano(msg){
+  var p = plano(), m = $("#modal");
+  var maiores = (p.catalogo || Object.values(PLANOS)).filter(function(x){ return x.maxClientes > p.maxClientes; });
+  m.querySelector(".mbody").innerHTML =
+      '<span class="eyebrow">Limite do plano</span>'
+    + '<h3 class="mtit">Carteira cheia</h3>'
+    + '<p class="mtxt">' + esc(msg) + ' Para cadastrar mais um, troque de plano — a diferença é proporcional e vale a partir de hoje.</p>'
+    + '<div class="pcards" style="margin-top:6px">'
+    + maiores.map(function(x){
+        return '<div class="pcard" data-plano="'+x.id+'" data-mclose="1" style="cursor:pointer">'
+          + '<span class="pcard-n">'+esc(x.nome)+'</span>'
+          + '<span class="pcard-v">R$ '+x.preco+'<small>/mês</small></span>'
+          + '<span class="pcard-d">até '+x.maxClientes+' clientes</span>'
+          + '<span class="pcard-b">Mudar para este</span></div>';
+      }).join("")
+    + '</div>'
+    + '<div class="macts"><button class="btn ghost" type="button" data-mclose="1">Agora não</button></div>';
+  m.classList.add("on");
+}
+$("#btnNovo").addEventListener("click", tentarNovoCliente);
+$("#content").addEventListener("click", function(e){
+  if (e.target.closest("#zeroNovo")) tentarNovoCliente();
+});
+$("#modal").addEventListener("click", function(e){
+  var tp = e.target.closest("[data-plano]");
+  if (tp) trocarPlano(tp.dataset.plano);
+});
+
+$("#modal").addEventListener("submit", async function(e){
+  if (e.target.id !== "fCli") return;
+  e.preventDefault();
+  var nome = $("#n_nome").value.trim();
+  if (!nome){ $("#n_nome").focus(); return; }
+  var met = $("#n_met").value.split("|");
+  try {
+    var d = await api("POST", "/api/clientes", {
+      nome: nome,
+      ramo: $("#n_ramo").value.trim() || "Negócio local",
+      seguidores: +($("#n_seg").value || 0),
+      planoTxt: $("#n_plano").value.trim(),
+      contrato: +($("#n_val").value || 0),
+      metrica: met[0], metricaS: met[1]
+    });
+    aplicarPlano(d.plano);
+    CLIENTES.push(mapCli(d.cliente));
+    HISTORICO[d.cliente.id] = [];
+    CONEX[d.cliente.id] = { ligada:false };
+    CARREGADO[d.cliente.id] = true; DIAG[d.cliente.id] = [];
+    $("#modal").classList.remove("on");
+    state.cliente = d.cliente.id; state.view = "lancar";
+    montaSelect();
+    toast(nome + " cadastrado. Agora lance a primeira publicação.");
+    render();
+  } catch(err){
+    // 402 = o servidor barrou por limite de plano. É aqui que a regra vale.
+    if (err.status === 402){ $("#modal").classList.remove("on"); bloqueioPlano(err.message); }
+    else toast(err.message);
+  }
+});
+
+/* --- eventos do modal --- */
+$("#modal").addEventListener("click", function(e){
+  if (e.target.id === "modal" || e.target.closest("[data-mclose]")){
+    $("#modal").classList.remove("on"); render(); return;
+  }
+  var st = e.target.closest("[data-mstep]");
+  if (st){
+    var cid = st.dataset.mcid, passo = +st.dataset.mstep;
+    if (passo === 3){ conectar(cid).then(function(){ abrirConexao(cid, 3); }); return; }
+    abrirConexao(cid, passo);
+    return;
+  }
+  var sy = e.target.closest("[data-msync]");
+  if (sy){
+    var n = sincronizar(sy.dataset.msync);
+    $("#modal").classList.remove("on");
+    toast(n ? n+" publicação(ões) importada(s) da conta." : "Conta conectada. Nada novo por enquanto.");
+    state.view = "painel"; render();
+  }
+});
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape" && $("#modal").classList.contains("on")){
+    $("#modal").classList.remove("on"); render();
+  }
+});
+
+/* --- detecção ao vivo do link --- */
+var ultimaLeitura = null;
+
+function pintaDeteccao(){
+  var box = $("#detect"), inp = $("#i_u");
+  if (!box || !inp) return;
+  var r = lerLink(inp.value);
+  ultimaLeitura = r.ok ? r : null;
+
+  if (!inp.value.trim()){
+    box.innerHTML = '<span class="det-idle">Assim que você colar, eu identifico a rede e o formato.</span>';
+    box.className = "detect"; return;
+  }
+  if (!r.ok){
+    box.className = "detect erro";
+    box.innerHTML = '<span class="pill cr">Não reconheci</span>'
+      + '<span class="det-txt">'+(r.motivo==="invalido"
+          ? 'Isso não parece um link. Cole o endereço completo, começando com https://'
+          : 'Link válido, mas de uma rede que ainda não sei ler. Escolha plataforma e formato nos campos opcionais.')+'</span>';
+    return;
+  }
+  box.className = "detect ok";
+  box.innerHTML = '<span class="pill ac">'+esc(r.plataforma)+'</span>'
+    + '<span class="pill '+(r.certo?"ok":"wa")+'">'+esc(r.formato)+'</span>'
+    + '<span class="det-txt">'
+    + (r.certo
+        ? 'Identificado pelo endereço. Código <span class="mono">'+esc(r.codigo)+'</span>.'
+        : 'Este endereço não diz se é foto ou carrossel — assumi <b>'+esc(r.formato)+'</b>. Corrija abaixo se for outro.')
+    + '</span>'
+    + (r.certo ? '' : '<select class="sel sm" id="i_f_fix" style="margin-left:auto">'
+        + ['Reels','Carrossel','Foto','Stories'].map(function(o){
+            return '<option'+(o===r.formato?' selected':'')+'>'+o+'</option>'; }).join("")
+        + '</select>');
+}
+
+$("#content").addEventListener("input", function(e){
+  if (e.target.id === "i_u") pintaDeteccao();
+});
+$("#content").addEventListener("paste", function(e){
+  if (e.target.id === "i_u") setTimeout(pintaDeteccao, 0);
+});
+
+// lançamento do resultado comercial do mês
+$("#content").addEventListener("submit", function(e){
+  if (e.target.id !== "fRes") return;
+  e.preventDefault();
+  var cid = state.cliente, h = hist(cid);
+  var mes = ($("#r_m").value || "").trim();
+  var res = +($("#r_res").value || 0);
+  if (!mes){ toast("Diga de que mês é esse número."); $("#r_m").focus(); return; }
+  if (!res){ toast("Sem o número de "+cli(cid).metrica+" o lançamento não serve para nada."); $("#r_res").focus(); return; }
+
+  var posts = +($("#r_posts").value || 0), reels = +($("#r_reels").value || 0);
+  // alcance do mês vem das publicações já lançadas, não é digitado
+  var alc = agrega(postsDe(cid, 30)).alcance || Math.round(res*260);
+
+  api("POST", "/api/clientes/" + cid + "/resultados", {
+    rotulo: mes, resultado: res, posts: posts, reels: reels,
+    competencia: competenciaDe(mes)
+  }).then(function(){
+    invalidar(cid);
+    toast(mes + " lançado. Diagnóstico recalculado com o novo mês.");
+    state.view = "diagnostico"; render();
+  }).catch(function(err){ toast(err.message); });
+});
+
+/* "Set" digitado pela agência vira AAAA-MM para o banco não duplicar mês. */
+function competenciaDe(rotulo){
+  var meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  var i = meses.indexOf(String(rotulo).toLowerCase().slice(0,3));
+  var hoje = new Date();
+  if (i < 0) return hoje.toISOString().slice(0,7);
+  var ano = hoje.getFullYear();
+  if (i > hoje.getMonth()) ano -= 1;   // mês à frente = ano passado
+  return ano + "-" + String(i+1).padStart(2,"0");
+}
+
+// formulário de lançamento de publicação
+$("#content").addEventListener("submit", function(e){
+  if (e.target.id !== "fLanc") return;
+  e.preventDefault();
+  var g = function(id){ var el = $("#"+id); return el ? +(el.value || 0) : 0; };
+  var r = ultimaLeitura;
+
+  if (!r){
+    toast("Cole um link que eu reconheça antes de lançar.");
+    var inp = $("#i_u"); if (inp) inp.focus();
+    return;
+  }
+  if (!g("i_alc")){
+    toast("O alcance é obrigatório — é a base de todo o diagnóstico.");
+    var a = $("#i_alc"); if (a) a.focus();
+    return;
+  }
+
+  var fixSel = $("#i_f_fix");
+  var formato = fixSel ? fixSel.value : r.formato;
+  var titulo = ($("#i_t") && $("#i_t").value.trim()) || (formato+" "+r.codigo.slice(0,8));
+
+  api("POST", "/api/clientes/" + state.cliente + "/publicacoes", {
+    url: r.url, formato: formato, titulo: titulo,
+    dias: g("i_d"), hora: g("i_h"),
+    alcance: g("i_alc"), views: g("i_vis"),
+    interacoes: g("i_int") + g("i_sal"), salvos: g("i_sal"), cliques: g("i_cli")
+  }).then(function(){
+    invalidar(state.cliente);
+    toast("Lançado como " + r.plataforma + " · " + formato + ". Diagnóstico recalculado.");
+    state.view = "painel"; render();
+  }).catch(function(err){ toast(err.message); });
+});
+
+/* ---------------------------------------------------------------
+   Tema: automático (segue o aparelho), claro ou escuro.
+   A escolha fica no navegador de quem está usando. Se o
+   armazenamento estiver bloqueado, o botão continua funcionando —
+   só não lembra na próxima visita.
+   --------------------------------------------------------------- */
+(function(){
+  "use strict";
+  var bt = document.getElementById("btnTema");
+  if (!bt) return;
+  var CHAVE = "farol-tema";
+  var ORDEM = ["sistema", "claro", "escuro"];
+  var NOME = { sistema:"automático", claro:"claro", escuro:"escuro" };
+
+  function ler(){
+    try { return localStorage.getItem(CHAVE); } catch(e){ return null; }
+  }
+  function gravar(v){
+    try { if (v === "sistema") localStorage.removeItem(CHAVE); else localStorage.setItem(CHAVE, v); } catch(e){}
+  }
+  function aplicar(modo){
+    var raiz = document.documentElement;
+    if (modo === "sistema") raiz.removeAttribute("data-theme");
+    else raiz.setAttribute("data-theme", modo === "escuro" ? "dark" : "light");
+    bt.dataset.modo = modo;
+    bt.title = "Tema: " + NOME[modo] + " (clique para trocar)";
+    bt.setAttribute("aria-label", bt.title);
+  }
+
+  var atual = ORDEM.indexOf(ler());
+  if (atual < 0) atual = 0;
+  aplicar(ORDEM[atual]);
+
+  bt.addEventListener("click", function(){
+    atual = (atual + 1) % ORDEM.length;
+    gravar(ORDEM[atual]);
+    aplicar(ORDEM[atual]);
+  });
+})();
+
+/* ---------------------------------------------------------------
+   Gaveta do menu no celular. Fecha ao escolher um item, ao tocar
+   fora e no Esc — as três saídas que a pessoa tenta.
+   --------------------------------------------------------------- */
+(function(){
+  "use strict";
+  var bt = document.getElementById("btnMenu");
+  var lado = document.querySelector(".side");
+  var veu = document.getElementById("veu");
+  if (!bt || !lado || !veu) return;
+
+  function abrir(sim){
+    lado.classList.toggle("aberta", sim);
+    veu.classList.toggle("on", sim);
+    bt.setAttribute("aria-expanded", sim ? "true" : "false");
+    document.body.style.overflow = sim ? "hidden" : "";
+  }
+  bt.addEventListener("click", function(){ abrir(!lado.classList.contains("aberta")); });
+  veu.addEventListener("click", function(){ abrir(false); });
+  lado.addEventListener("click", function(e){ if (e.target.closest(".nav")) abrir(false); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") abrir(false); });
+  // ao voltar para tela grande, a gaveta não pode ficar presa
+  window.addEventListener("resize", function(){ if (window.innerWidth > 960) abrir(false); });
+})();
+
+// tooltip
+var tip = $("#tip");
+document.addEventListener("mouseover", function(e){
+  var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+  if (!el) return;
+  tip.innerHTML = el.getAttribute("data-tip").split("\n").map(function(l,i){ return i===0?"<b>"+esc(l)+"</b>":esc(l); }).join("<br>");
+  tip.style.opacity = "1";
+});
+document.addEventListener("mousemove", function(e){
+  if (tip.style.opacity!=="1") return;
+  tip.style.left = e.clientX+"px"; tip.style.top = e.clientY+"px";
+});
+document.addEventListener("mouseout", function(e){
+  var el = e.target.closest ? e.target.closest("[data-tip]") : null;
+  if (el) tip.style.opacity = "0";
+});
+
+var tmr;
+function toast(msg){
+  var t = $("#toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(tmr); tmr = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+}
+
+/* ---- arranque: pergunta ao servidor se já existe sessão ---- */
+(async function boot(){
+  var q = params();
+  if (q.plano && PLANOS[q.plano]) CONTA.plano = q.plano;
+
+  // Link do e-mail: /app?t=TOKEN abre a tela de senha nova, sem passar pelo
+  // login — quem esqueceu a senha não conseguiria entrar mesmo.
+  if (q.t){ telaAuth("nova", CONTA.plano); return; }
+
+  try {
+    await api("GET", "/api/conta");   // 401 se não houver sessão
+    await carregarEstado();
+    entrar();
+  } catch(e){
+    telaAuth(q.novo === "1" ? "criar" : "entrar", CONTA.plano);
+  }
+})();
+})();
+</script>
+
+</body>
+</html>
