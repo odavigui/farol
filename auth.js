@@ -18,6 +18,7 @@
 
 const crypto = require("node:crypto");
 const dados = require("./dados");
+const { DIAS_TESTE } = require("./planos");
 
 const CUSTO = { N: 16384, r: 8, p: 1 };
 const TAM_HASH = 64;
@@ -75,13 +76,21 @@ async function criarConta({ agencia, email, senha, plano }) {
 
   if (await dados.contaPorEmail(email)) throw erro(409, "Já existe uma conta com esse e-mail.");
 
+  /* A agência PAGA antes de criar a conta. Se já houver
+     pagamento aprovado para este e-mail, o plano vem de lá — e não do que veio
+     no formulário, que qualquer pessoa poderia forjar. */
+  const pago = await require("./pagamento").planoPago(email);
+
   const { hash, salt } = hashSenha(senha);
   const conta = await dados.inserirConta({
     id: id("ct_"),
     agencia: String(agencia).trim().slice(0, 120),
     email, senha_hash: hash, senha_salt: salt,
-    plano: plano || "essencial", status: "teste",
-    teste_ate: maisDias(14), criada_em: agora()
+    plano: pago ? pago.plano : (plano || "essencial"),
+    status: pago ? "ativa" : "teste",
+    teste_ate: pago ? null : maisDias(DIAS_TESTE),
+    assinatura_id: pago ? pago.assinatura_id || null : null,
+    criada_em: agora()
   });
   return publica(conta);
 }

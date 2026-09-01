@@ -88,6 +88,55 @@ function exigirLogin(req) {
    ================================================================ */
 const rotas = {};
 
+/* ---------- saúde ---------- */
+/**
+ * Diagnóstico da instalação. Aberta de propósito: só responde SIM ou NÃO
+ * sobre cada configuração, nunca o valor de nenhuma. Sem esta rota, descobrir
+ * por que o sistema não sobe vira adivinhação — foi exatamente o que
+ * aconteceu na primeira publicação.
+ */
+rotas["GET /api/saude"] = async () => {
+  const conf = (v) => (v ? "configurada" : "FALTANDO");
+  const corpo = {
+    ok: true,
+    versao: "1.3",
+    node: process.version,
+    banco: {
+      adaptador: dados.nome,
+      SUPABASE_URL: conf(process.env.SUPABASE_URL),
+      SUPABASE_SERVICE_ROLE_KEY: conf(process.env.SUPABASE_SERVICE_ROLE_KEY),
+      responde: null
+    },
+    email: { modo: email.MODO, SMTP_USUARIO: conf(process.env.SMTP_USUARIO) },
+    pagamento: {
+      provedor: "Cakto",
+      CAKTO_WEBHOOK_SECRET: conf(process.env.CAKTO_WEBHOOK_SECRET),
+      ofertas: {
+        essencial: conf(process.env.CAKTO_OFERTA_ESSENCIAL),
+        agencia: conf(process.env.CAKTO_OFERTA_AGENCIA),
+        estudio: conf(process.env.CAKTO_OFERTA_ESTUDIO)
+      },
+      webhook: "POST " + (process.env.URL_BASE || "https://SEUSITE") + "/api/pagamento/webhook"
+    },
+    site: { URL_BASE: conf(process.env.URL_BASE), NODE_ENV: process.env.NODE_ENV || "(vazio)" }
+  };
+
+  try {
+    await dados.testarConexao();
+    corpo.banco.responde = "sim";
+  } catch (e) {
+    corpo.ok = false;
+    corpo.banco.responde = "não";
+    corpo.banco.motivo = String(e.message || e).slice(0, 300);
+  }
+
+  if (corpo.banco.SUPABASE_URL === "FALTANDO") corpo.ok = false;
+  corpo.resumo = corpo.ok
+    ? "Tudo certo. O sistema deve entrar normalmente."
+    : "Falta configuração. Veja o que está FALTANDO acima, cadastre na Vercel em Settings → Environment Variables e clique em Redeploy.";
+  return { corpo };
+};
+
 /* ---------- conta ---------- */
 rotas["POST /api/conta/criar"] = async (req) => {
   const b = req.body || {};
@@ -159,6 +208,11 @@ rotas["GET /api/conta"] = async (req) => {
 
 rotas["POST /api/conta/plano"] = async (req) => {
   exigirLogin(req);
+  // Durante o teste a agência troca de plano à vontade. Depois que o prazo
+  // vence, trocar aqui não libera nada — quem libera é o pagamento. Barrar
+  // com a mesma mensagem evita a pessoa achar que subiu de plano e continuar
+  // esbarrando no mesmo bloqueio.
+  planos.exigirEscrita(req.conta);
   const novo = txt(req.body?.plano, 20);
   if (!planos.PLANOS[novo]) throw erro(400, "Plano inválido.");
 
@@ -287,6 +341,7 @@ rotas["GET /api/clientes/:id/painel"] = async (req) => {
 /* ---------- publicações ---------- */
 rotas["POST /api/clientes/:id/publicacoes"] = async (req) => {
   exigirLogin(req);
+  planos.exigirEscrita(req.conta);
   const c = await clienteDaConta(req.conta.id, req.params.id);
   const b = req.body || {};
 
@@ -318,6 +373,7 @@ rotas["POST /api/link"] = async (req) => {
 /* ---------- resultado comercial ---------- */
 rotas["POST /api/clientes/:id/resultados"] = async (req) => {
   exigirLogin(req);
+  planos.exigirEscrita(req.conta);
   const c = await clienteDaConta(req.conta.id, req.params.id);
   const b = req.body || {};
   const rotulo = txt(b.rotulo, 12);
@@ -339,6 +395,7 @@ rotas["POST /api/clientes/:id/resultados"] = async (req) => {
 /* ---------- conexão com a rede ---------- */
 rotas["POST /api/clientes/:id/conexao"] = async (req) => {
   exigirLogin(req);
+  planos.exigirEscrita(req.conta);
   const c = await clienteDaConta(req.conta.id, req.params.id);
   // Em produção este endpoint recebe o "code" do OAuth da Meta e troca por um
   // token de longa duração. Aqui ele registra a conexão para o fluxo funcionar.
