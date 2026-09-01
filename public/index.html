@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farol — enxergue antes do cliente perguntar</title>
+<meta name="description" content="Farol transforma os numeros do mes na conversa que renova o contrato. Para agencias e social medias.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=DM+Mono:wght@400;500&family=Karla:wght@400;500;600;700&display=swap">
+<style>
+/* =====================================================================
+   FAROL — identidade
+   Concreto e cor: a arquitetura modernista brasileira (o reboco claro,
+   a forma limpa) com os blocos de cor saturada do neoconcretismo.
+   O facho do farol atravessa a página como elemento recorrente.
+   ===================================================================== */
+:root{
+  --concreto:#F4F6FB; --concreto-2:#E9EDF7; --concreto-3:#DCE2F0;
+  --tinta:#0B1020; --tinta-2:#454C63; --tinta-3:#767D93;
+  --linha:#D8DEEE; --linha-2:#BFC7DE;
+  --mar:#1435C8; --mar-claro:#3358DB; --mar-fundo:#DDE3FA;
+  --bloco:#1435C8; --sobre-bloco:#FFFFFF;   /* cobalto chapado, nos dois temas */
+  --facho:#FF5B45; --facho-claro:#FF8B79; --facho-fundo:#FFE6E0;
+  --brasa:#1435C8;
+  --folha:#0E8A5F; --folha-fundo:#DCF2E8;
+  --sobre-mar:#FFFFFF; --sobre-facho:#0B1020;
+  --papel:#FFFFFF;
+  --sombra:0 1px 2px rgba(20,22,27,.05), 0 24px 50px -34px rgba(20,22,27,.45);
+  --sombra-f:0 3px 8px rgba(20,22,27,.09), 0 46px 80px -50px rgba(20,22,27,.6);
+  --disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --corpo:"Karla","Helvetica Neue",Arial,sans-serif;
+  --mono:"DM Mono","SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --concreto:#080B16; --concreto-2:#101627; --concreto-3:#1A2238;
+    --tinta:#E9ECF7; --tinta-2:#A2A9C2; --tinta-3:#767D93;
+    --linha:#1B2238; --linha-2:#2C3557;
+    --mar:#8FA6FF; --mar-claro:#A9BAFF; --mar-fundo:#141E4D;
+    --bloco:#0D2185; --sobre-bloco:#F2F5FF;
+    --facho:#FF7A63; --facho-claro:#FFA793; --facho-fundo:#2E1410;
+    --brasa:#8FA6FF;
+    --folha:#3FBF8C; --folha-fundo:#0C2A20;
+    --sobre-mar:#080B16; --sobre-facho:#0B1020;
+    --papel:#101627;
+    --sombra:0 1px 2px rgba(0,0,0,.6), 0 24px 50px -34px rgba(0,0,0,1);
+    --sombra-f:0 3px 8px rgba(0,0,0,.6), 0 46px 80px -50px rgba(0,0,0,1);
+  }
+}
+:root[data-theme="dark"]{
+  --concreto:#080B16; --concreto-2:#101627; --concreto-3:#1A2238;
+  --tinta:#E9ECF7; --tinta-2:#A2A9C2; --tinta-3:#767D93;
+  --linha:#1B2238; --linha-2:#2C3557;
+  --mar:#8FA6FF; --mar-claro:#A9BAFF; --mar-fundo:#141E4D;
+  --bloco:#0D2185; --sobre-bloco:#F2F5FF;
+  --facho:#FF7A63; --facho-claro:#FFA793; --facho-fundo:#2E1410;
+  --brasa:#8FA6FF;
+  --folha:#3FBF8C; --folha-fundo:#0C2A20;
+  --sobre-mar:#080B16; --sobre-facho:#0B1020;
+  --papel:#101627;
+  --sombra:0 1px 2px rgba(0,0,0,.6), 0 24px 50px -34px rgba(0,0,0,1);
+  --sombra-f:0 3px 8px rgba(0,0,0,.6), 0 46px 80px -50px rgba(0,0,0,1);
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--concreto); color:var(--tinta); font-family:var(--corpo); font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0; font-family:var(--disp); text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--facho); outline-offset:3px}
+img,svg{display:block; max-width:100%}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+
+/* tipografia expandida — o gesto arquitetônico da marca */
+.disp{
+  font-family:var(--disp); font-weight:900;
+  font-variation-settings:"wdth" 112;
+  letter-spacing:-.04em; line-height:.94;
+}
+.rot{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.2em;
+  text-transform:uppercase; font-weight:500;
+}
+.num{font-variant-numeric:tabular-nums}
+
+.env{max-width:1180px; margin:0 auto; padding:0 26px}
+.faixa{padding:clamp(64px,9vw,124px) 0}
+.estreito{max-width:760px}
+
+/* revelação */
+.rv{opacity:0; transform:translateY(18px); transition:opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1; transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1; transform:none}}
+
+/* ===================== barra ===================== */
+.barra{position:sticky; top:0; z-index:60; background:color-mix(in srgb,var(--concreto) 92%,transparent); backdrop-filter:blur(14px); border-bottom:1px solid var(--linha)}
+.barra-in{max-width:1180px; margin:0 auto; padding:13px 26px; display:flex; align-items:center; gap:16px}
+.marca{display:flex; align-items:center; gap:10px; text-decoration:none}
+.marca .sig{width:30px; height:30px; flex:none}
+.marca .nome{font-family:var(--disp); font-weight:900; font-variation-settings:"wdth" 118; font-size:19px; letter-spacing:-.02em}
+.links{display:none; gap:2px; margin-left:auto}
+@media(min-width:900px){.links{display:flex}}
+.links a{font-size:15px; text-decoration:none; color:var(--tinta-2); padding:8px 13px; border-radius:2px}
+.links a:hover{color:var(--tinta); background:var(--concreto-2)}
+.entrar{margin-left:auto; font-size:15px; font-weight:600; text-decoration:none; color:var(--tinta-2); padding:8px 12px}
+@media(min-width:900px){.entrar{margin-left:0}}
+.entrar:hover{color:var(--tinta)}
+
+:root{--tema-borda:var(--linha-2); --tema-cor:var(--tinta-2); --tema-hover:var(--tinta); --tema-raio:3px}
+
+/* ---- seletor de tema ---- */
+.tema{
+  display:inline-flex; align-items:center; justify-content:center; gap:0;
+  width:36px; height:36px; flex:none; cursor:pointer; padding:0;
+  background:transparent; border:1px solid var(--tema-borda); border-radius:var(--tema-raio);
+  color:var(--tema-cor);
+}
+.tema:hover{border-color:var(--tema-hover); color:var(--tema-hover)}
+.tema svg{width:17px; height:17px; display:block}
+.tema .ic{display:none}
+.tema[data-modo="sistema"] .ic-sistema,
+.tema[data-modo="claro"] .ic-claro,
+.tema[data-modo="escuro"] .ic-escuro{display:block}
+/* ===================== botões ===================== */
+.bt{
+  display:inline-flex; align-items:center; gap:9px; background:var(--facho); color:var(--sobre-facho);
+  border:2px solid var(--facho); border-radius:3px; padding:13px 24px; font-family:var(--corpo);
+  font-size:16.5px; font-weight:700; text-decoration:none; cursor:pointer; white-space:nowrap;
+  transition:transform .16s cubic-bezier(.3,1.4,.5,1), box-shadow .16s;
+  box-shadow:4px 4px 0 var(--tinta);
+}
+.bt:hover{transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--tinta)}
+.bt:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--tinta)}
+.bt.gr{padding:17px 32px; font-size:18px}
+.bt.pq{padding:9px 16px; font-size:14.5px; box-shadow:3px 3px 0 var(--tinta)}
+.bt.vazio{background:transparent; color:var(--tinta); border-color:var(--tinta); box-shadow:4px 4px 0 var(--linha-2)}
+.bt.vazio:hover{box-shadow:6px 6px 0 var(--linha-2)}
+.bt.claro{background:var(--facho); color:#14161B; border-color:var(--facho); box-shadow:4px 4px 0 rgba(255,255,255,.28)}
+.bt.claro:hover{box-shadow:6px 6px 0 rgba(255,255,255,.28)}
+
+/* ===================== hero ===================== */
+.hero{position:relative; background:var(--bloco); color:var(--sobre-bloco); overflow:hidden}
+.hero::before{
+  content:""; position:absolute; inset:-60% -20%; pointer-events:none;
+  background:conic-gradient(from 0deg,
+    transparent 0deg, rgba(255,255,255,.17) 7deg, rgba(255,150,125,.10) 20deg, transparent 34deg,
+    transparent 180deg, rgba(255,255,255,.11) 187deg, transparent 208deg, transparent 360deg);
+  animation:girar 26s linear infinite;
+  transform-origin:50% 50%;
+}
+@keyframes girar{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.hero::before{animation:none; opacity:.5}}
+.hero-in{position:relative; z-index:1; padding:clamp(58px,8vw,112px) 0 clamp(48px,6vw,84px)}
+.hero .rot{color:var(--facho-claro); display:block; margin-bottom:22px}
+.hero h1{font-size:clamp(46px,9.4vw,116px); color:var(--sobre-bloco)}
+.hero h1 .b{
+  display:inline-block; background:var(--facho); color:#14161B;
+  padding:0 .12em; margin:0 -.04em; transform:rotate(-1.1deg);
+}
+.hero .sub{font-size:clamp(17.5px,2.1vw,21px); color:color-mix(in srgb,var(--sobre-bloco) 88%,transparent); max-width:54ch; margin-top:28px}
+.hero-bt{display:flex; flex-wrap:wrap; gap:14px; margin-top:36px; align-items:center}
+.hero .obs{margin-top:20px; font-size:14.5px; color:color-mix(in srgb,var(--sobre-bloco) 70%,transparent)}
+
+/* régua de cor — divisor que é informação, não enfeite */
+.regua{display:flex; height:9px}
+.regua i{flex:1}
+.regua i:nth-child(1){background:var(--facho)}
+.regua i:nth-child(2){background:var(--mar-claro)}
+.regua i:nth-child(3){background:var(--folha)}
+.regua i:nth-child(4){background:var(--tinta)}
+
+/* ===================== comparação ===================== */
+.duelo{display:grid; grid-template-columns:1fr 1fr; gap:0; border:2px solid var(--tinta); background:var(--papel)}
+@media(max-width:800px){.duelo{grid-template-columns:1fr}}
+.lado{padding:clamp(24px,3.4vw,38px); display:flex; flex-direction:column; gap:16px}
+.lado:first-child{border-right:2px solid var(--tinta)}
+@media(max-width:800px){.lado:first-child{border-right:0; border-bottom:2px solid var(--tinta)}}
+.lado.bom{background:var(--facho-fundo)}
+.lado .rot{color:var(--tinta-3)}
+.lado.bom .rot{color:var(--brasa)}
+.lado .fala{font-family:var(--disp); font-weight:800; font-variation-settings:"wdth" 100; font-size:clamp(19px,2.3vw,26px); letter-spacing:-.025em; line-height:1.22}
+.lado .reacao{font-size:15px; color:var(--tinta-2); padding-top:14px; border-top:2px solid var(--tinta)}
+.lado .reacao b{color:var(--tinta)}
+
+/* ===================== números grandes ===================== */
+.tit-sec{display:flex; flex-direction:column; gap:14px; margin-bottom:40px}
+.tit-sec h2{font-size:clamp(30px,5.2vw,58px)}
+.tit-sec .lede{font-size:clamp(17px,1.9vw,20px); color:var(--tinta-2); max-width:62ch}
+.tres{display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:2px solid var(--tinta)}
+@media(max-width:820px){.tres{grid-template-columns:1fr}}
+.perda{padding:30px 26px 32px; border-right:1px solid var(--linha-2); display:flex; flex-direction:column; gap:12px}
+.perda:last-child{border-right:0}
+@media(max-width:820px){.perda{border-right:0; border-bottom:1px solid var(--linha-2)}}
+.perda .gr{
+  font-family:var(--disp); font-weight:900; font-variation-settings:"wdth" 118;
+  font-size:clamp(40px,6vw,62px); letter-spacing:-.05em; line-height:.9; color:var(--brasa);
+}
+.perda h3{font-size:19.5px; font-weight:800; font-variation-settings:"wdth" 100; letter-spacing:-.02em}
+.perda p{font-size:15.5px; color:var(--tinta-2)}
+
+/* ===================== recursos ===================== */
+.rec{display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,4.5vw,64px); align-items:center; padding:clamp(34px,5vw,60px) 0; border-top:2px solid var(--tinta)}
+@media(max-width:900px){.rec{grid-template-columns:1fr; gap:26px}}
+.rec.inv .txt{order:2}
+@media(max-width:900px){.rec.inv .txt{order:0}}
+.txt{display:flex; flex-direction:column; gap:15px}
+.txt .rot{color:var(--brasa)}
+.txt h3{font-size:clamp(24px,3.3vw,36px); font-weight:900; font-variation-settings:"wdth" 106; letter-spacing:-.032em; line-height:1.06}
+.txt p{font-size:17px; color:var(--tinta-2)}
+.txt .fino{font-size:15px; color:var(--tinta-3)}
+
+/* mock */
+.mock{background:var(--papel); border:2px solid var(--tinta); box-shadow:var(--sombra-f)}
+.mock-top{display:flex; align-items:center; gap:7px; padding:10px 14px; background:var(--concreto-2); border-bottom:2px solid var(--tinta)}
+.mock-top i{width:9px; height:9px; border-radius:50%; background:var(--linha-2)}
+.mock-top i:first-child{background:var(--brasa)}
+.mock-top span{margin-left:8px; font-family:var(--mono); font-size:10.5px; color:var(--tinta-3); letter-spacing:.1em; text-transform:uppercase}
+.mock-b{padding:20px}
+.leitura{display:flex; gap:12px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--linha)}
+.leitura:last-child{border-bottom:0}
+.leitura .ic{width:26px; height:26px; flex:none; display:grid; place-items:center; font-family:var(--disp); font-weight:900; font-size:13px; background:var(--facho); color:#14161B}
+.leitura .ic.v{background:var(--folha); color:#fff}
+.leitura .ic.r{background:var(--brasa); color:#fff}
+.leitura b{display:block; font-family:var(--disp); font-weight:800; font-variation-settings:"wdth" 100; font-size:15.5px; letter-spacing:-.015em; margin-bottom:3px}
+.leitura p{font-size:14px; color:var(--tinta-2); line-height:1.5}
+
+.linhaN{display:flex; align-items:baseline; gap:11px; margin-bottom:16px}
+.linhaN .v{font-family:var(--disp); font-weight:900; font-variation-settings:"wdth" 115; font-size:38px; letter-spacing:-.045em; line-height:1}
+.linhaN .c{font-size:13.5px; color:var(--tinta-3)}
+.barras{display:flex; gap:7px; align-items:flex-end; height:96px; margin-bottom:14px}
+.bcol{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%}
+.bcol .t{flex:1; width:100%; display:flex; align-items:flex-end}
+.bcol .f{width:100%; display:block}
+.bcol .l{font-family:var(--mono); font-size:10px; color:var(--tinta-3)}
+
+/* ===================== limites ===================== */
+.limites{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+@media(max-width:820px){.limites{grid-template-columns:1fr}}
+.lim{border:2px solid var(--tinta); padding:26px 24px; display:flex; flex-direction:column; gap:11px; background:var(--papel)}
+.lim.sim{background:var(--mar-fundo)}
+.lim .cab{font-family:var(--disp); font-weight:900; font-variation-settings:"wdth" 108; font-size:23px; letter-spacing:-.03em; line-height:1.05}
+.lim.sim .cab{color:var(--mar)}
+.lim h3{font-size:17px; font-weight:700; font-variation-settings:"wdth" 100}
+.lim p{font-size:15px; color:var(--tinta-2)}
+
+/* ===================== preços ===================== */
+.planos{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; align-items:start}
+@media(max-width:880px){.planos{grid-template-columns:1fr}}
+.plano{border:2px solid var(--tinta); background:var(--papel); padding:28px 26px; display:flex; flex-direction:column; gap:17px}
+.plano.dest{
+  background:
+    linear-gradient(180deg, var(--facho-fundo) 0%, var(--papel) 34%);
+  border-width:3px; border-color:var(--tinta); position:relative;
+  box-shadow:9px 9px 0 var(--facho);
+}
+.plano.dest::before{content:""; position:absolute; inset:-3px -3px auto; height:7px; background:var(--facho)}
+.plano.dest .rot{color:var(--brasa)}
+.plano.dest .item{color:var(--tinta)}
+.plano .rot{color:var(--tinta-3)}
+.plano .val{display:flex; align-items:baseline; gap:7px}
+.plano .val b{font-family:var(--disp); font-weight:900; font-variation-settings:"wdth" 115; font-size:46px; letter-spacing:-.05em; line-height:1}
+.plano .val span{font-size:15px; opacity:.7}
+.itens{display:flex; flex-direction:column; gap:11px; padding-top:16px; border-top:2px solid currentColor; font-size:15.5px}
+.item{display:flex; gap:10px; align-items:flex-start}
+.item i{width:8px; height:8px; background:var(--facho); flex:none; margin-top:8px}
+.plano .obs{font-size:13.5px; color:var(--tinta-3)}
+
+/* ===================== faq ===================== */
+details{border-bottom:1px solid var(--linha-2)}
+details:first-of-type{border-top:2px solid var(--tinta)}
+summary{
+  list-style:none; cursor:pointer; padding:22px 46px 22px 0; position:relative;
+  font-family:var(--disp); font-weight:800; font-variation-settings:"wdth" 100;
+  font-size:19px; letter-spacing:-.022em;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:""; position:absolute; right:6px; top:50%; width:15px; height:3px;
+  background:var(--brasa); transition:transform .22s;
+}
+summary::before{
+  content:""; position:absolute; right:12px; top:50%; width:3px; height:15px;
+  margin-top:-6px; background:var(--brasa); transition:opacity .22s;
+}
+details[open] summary::before{opacity:0}
+details p{padding:0 46px 24px 0; color:var(--tinta-2); font-size:16.5px; max-width:68ch}
+
+/* ===================== fechamento ===================== */
+/* O facho chega. A página começa no mar de noite e termina na luz —
+   é a marca contada pelo próprio percurso, não só pelo nome. */
+.fecha{
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(120% 88% at 50% -12%, var(--facho-fundo) 0%, transparent 62%),
+    var(--papel);
+  border:2px solid var(--tinta); box-shadow:10px 10px 0 var(--facho);
+  color:var(--tinta); padding:clamp(48px,7vw,92px) clamp(26px,5vw,64px);
+  text-align:center; display:flex; flex-direction:column; align-items:center; gap:22px;
+}
+.fecha h2{font-size:clamp(30px,5.4vw,58px); color:var(--tinta)}
+.fecha p{color:var(--tinta-2); max-width:52ch; font-size:17.5px}
+.fecha .obs{font-size:14.5px; color:var(--tinta-3)}
+.fecha .obs a{color:var(--brasa); font-weight:700}
+.brilho{position:relative; display:grid; place-items:center; width:88px; height:88px}
+.brilho::before{
+  content:""; position:absolute; inset:-42px;
+  background:radial-gradient(circle, color-mix(in srgb,var(--facho) 34%,transparent) 0%, transparent 66%);
+}
+.brilho svg{position:relative; width:44px; height:44px; color:var(--facho)}
+
+.rodape{border-top:2px solid var(--tinta); padding:28px 0 60px; display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; font-size:14.5px; color:var(--tinta-3)}
+.editar{font-family:var(--mono); font-size:11px; background:var(--facho-fundo); color:var(--facho); border:1px dashed var(--facho); padding:2px 8px; white-space:nowrap}
+
+
+/* No celular a barra de cima fica só com o essencial: a chamada principal
+   já mora na doca fixa do rodapé, então repeti-la em cima só rouba espaço. */
+@media(max-width:600px){
+  .barra-in{padding:10px 16px; gap:10px}
+  .barra .bt{display:none}
+  .entrar{margin-left:auto; padding:8px 10px}
+  .marca .nome{font-size:17px}
+  .hero-bt .bt{width:100%; justify-content:center}
+  .hero-bt{gap:11px}
+}
+@media(max-width:420px){
+  .env{padding:0 18px}
+  .lado,.perda,.lim,.plano{padding:22px 18px}
+}
+
+.doca{position:fixed; left:0; right:0; bottom:0; z-index:70; padding:11px 16px calc(11px + env(safe-area-inset-bottom)); background:var(--concreto); border-top:2px solid var(--tinta); display:none}
+.doca .bt{width:100%; justify-content:center}
+@media(max-width:720px){.doca{display:block} body{padding-bottom:82px}}
+</style>
+</head>
+<body>
+
+<!-- símbolo do farol, reaproveitado -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+  <symbol id="farol" viewBox="0 0 24 24">
+    <path d="M1.5 7.4 8.5 9.6v4.8L1.5 16.6V7.4Z" fill="currentColor" opacity=".38"/>
+    <path d="M22.5 7.4 15.5 9.6v4.8l7 2.2V7.4Z" fill="currentColor" opacity=".38"/>
+    <path d="M12 1.6 15.4 5H8.6L12 1.6Z" fill="currentColor"/>
+    <rect x="8.8" y="5.6" width="6.4" height="4.2" fill="currentColor"/>
+    <path d="M9.2 10.6h5.6L16.2 22H7.8L9.2 10.6Z" fill="currentColor" opacity=".85"/>
+  </symbol>
+</svg>
+
+<div class="barra">
+  <div class="barra-in">
+    <a class="marca" href="#topo">
+      <svg class="sig" style="color:var(--mar)"><use href="#farol"/></svg>
+      <span class="nome">FAROL</span>
+    </a>
+    <nav class="links">
+      <a href="#problema">O problema</a>
+      <a href="#como">Como funciona</a>
+      <a href="#precos">Preços</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <button class="tema" id="btnTema" type="button" data-modo="sistema" title="Tema: automático">
+  <svg class="ic ic-sistema" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 20.5h7M12 17v3.5"/></svg>
+  <svg class="ic ic-claro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+  <svg class="ic ic-escuro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8Z"/></svg>
+</button>
+    <a class="entrar" href="/app">Entrar</a>
+    <a class="bt pq" href="/app?novo=1">Criar conta</a>
+  </div>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="topo">
+  <div class="hero-in env">
+    <span class="rot">Para agências e social medias</span>
+    <h1 class="disp">Enxergue antes<br>do cliente <span class="b">perguntar</span>.</h1>
+    <p class="sub">Seu cliente não sabe o que fazer com 204 mil de alcance. Ele sabe o que fazer com “os meses de mais vídeo tiveram 54% mais pedidos”. O Farol transforma os números do mês na conversa que renova o contrato.</p>
+    <div class="hero-bt">
+      <a class="bt claro gr" href="/app?novo=1">Testar grátis por 14 dias</a>
+      <a class="bt gr" href="#como" style="background:transparent;color:var(--sobre-bloco);border-color:var(--sobre-bloco);box-shadow:4px 4px 0 color-mix(in srgb,var(--sobre-bloco) 40%,transparent)">Ver como funciona</a>
+    </div>
+    <p class="obs">Sem cartão de crédito. Funciona com lançamento manual desde o primeiro dia.</p>
+  </div>
+</header>
+<div class="regua"><i></i><i></i><i></i><i></i></div>
+
+<!-- ===================== DUELO ===================== -->
+<section class="faixa" style="padding-top:clamp(48px,6vw,76px)">
+  <div class="env">
+    <div class="duelo rv">
+      <div class="lado">
+        <span class="rot">O relatório de sempre</span>
+        <span class="fala">“O alcance foi de 204 mil, com 19 mil interações e 13 publicações.”</span>
+        <span class="reacao">O cliente responde: <b>“legal”</b>. E na renovação pergunta se dá para baixar o valor.</span>
+      </div>
+      <div class="lado bom">
+        <span class="rot">O relatório que renova</span>
+        <span class="fala">“Agosto fechou com 690 pedidos, o melhor mês do ano. Nos meses com 6+ Reels, a média é 54% maior.”</span>
+        <span class="reacao">O cliente responde: <b>“então vamos fazer mais Reels”</b>. A conversa deixou de ser sobre preço.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROBLEMA ===================== -->
+<section class="faixa" id="problema" style="background:var(--concreto-2)">
+  <div class="env">
+    <div class="tit-sec rv">
+      <span class="rot" style="color:var(--brasa)">Por que isso acontece</span>
+      <h2 class="disp">O relatório mensal é o maior custo escondido da agência</h2>
+      <p class="lede">Não é o tempo de montar — é o que ele deixa de fazer. Um relatório que só mostra número não defende contrato, não justifica reajuste e não segura cliente em mês fraco.</p>
+    </div>
+    <div class="tres rv">
+      <div class="perda">
+        <span class="gr num">2–4h</span>
+        <h3>Por cliente, todo mês</h3>
+        <p>Abrir painel por painel, copiar número, montar slide, escrever o texto. Multiplique pela carteira e veja quantos dias somem.</p>
+      </div>
+      <div class="perda">
+        <span class="gr">Silêncio</span>
+        <h3>É o que vem na reunião</h3>
+        <p>O cliente olha os gráficos, não entende o que fazer com eles, e não pergunta nada. O relatório virou obrigação contratual, não argumento.</p>
+      </div>
+      <div class="perda">
+        <span class="gr">Mês 4</span>
+        <h3>Quando aparece o “vamos pausar”</h3>
+        <p>Sem ligação visível entre conteúdo e resultado do negócio, o serviço vira custo. E custo é a primeira coisa que se corta.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMO FUNCIONA ===================== -->
+<section class="faixa" id="como">
+  <div class="env">
+    <div class="tit-sec rv">
+      <span class="rot" style="color:var(--brasa)">Como funciona</span>
+      <h2 class="disp">Três coisas que nenhuma planilha faz</h2>
+      <p class="lede">Você lança os números — ou conecta a conta do cliente e nem isso. O resto o sistema faz sozinho.</p>
+    </div>
+
+    <div class="rec rv">
+      <div class="txt">
+        <span class="rot">01 · Diagnóstico</span>
+        <h3 class="disp">Ele diz o que fazer, não só o que aconteceu</h3>
+        <p>O sistema compara formato, horário, frequência e salvamentos do próprio cliente, e escreve a leitura em português com a ação recomendada junto. É a pauta da reunião pronta antes de você abrir o computador.</p>
+        <p class="fino">Nenhum benchmark inventado de mercado. Só o histórico real daquele cliente.</p>
+      </div>
+      <div class="mock">
+        <div class="mock-top"><i></i><i></i><i></i><span>diagnóstico</span></div>
+        <div class="mock-b">
+          <div class="leitura"><span class="ic v">↑</span><div><b>Reels entrega 9× mais que Foto</b><p>Alcance médio de 26,1k por Reels contra 2,9k por foto, em 13 publicações do período.</p></div></div>
+          <div class="leitura"><span class="ic v">↑</span><div><b>Depois das 17h entrega 3,4× mais</b><p>Concentre as principais entre 17h e 21h e deixe a manhã para conteúdo de apoio.</p></div></div>
+          <div class="leitura"><span class="ic">★</span><div><b>Melhor entrega: “Montagem do lanche em 15s”</b><p>41,2k de alcance. Replique formato, horário e tipo de gancho.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rec inv rv">
+      <div class="txt">
+        <span class="rot">02 · Resultado comercial</span>
+        <h3 class="disp">Liga o conteúdo ao caixa do cliente</h3>
+        <p>Todo mês o cliente informa um número que ele já tem na mão: pedidos, agendamentos, orçamentos. O sistema cruza com o esforço de conteúdo e mostra o que andou junto com o quê — e quanto custou cada resultado.</p>
+        <p class="fino">Associação, nunca promessa de causa. É o que protege a agência no mês em que o número cai.</p>
+      </div>
+      <div class="mock">
+        <div class="mock-top"><i></i><i></i><i></i><span>resultado do mês</span></div>
+        <div class="mock-b">
+          <div class="linhaN"><span class="v num" style="color:var(--brasa)">690</span><span class="c">pedidos em agosto · R$ 1,74 por pedido</span></div>
+          <div class="barras">
+            <div class="bcol"><span class="t"><span class="f" style="height:60%;background:var(--brasa)"></span></span><span class="l">Mar</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:85%;background:var(--brasa)"></span></span><span class="l">Abr</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:92%;background:var(--brasa)"></span></span><span class="l">Mai</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:56%;background:var(--brasa)"></span></span><span class="l">Jun</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:81%;background:var(--brasa)"></span></span><span class="l">Jul</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:100%;background:var(--brasa)"></span></span><span class="l">Ago</span></div>
+          </div>
+          <div class="leitura" style="border-top:1px solid var(--linha);border-bottom:0"><span class="ic v">↑</span><div><b>Mais vídeo andou junto com mais pedidos</b><p>Nos 4 meses com 6+ Reels, média de 618. Nos 2 meses abaixo, 400. Diferença de 54%.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rec rv">
+      <div class="txt">
+        <span class="rot">03 · Acesso do cliente</span>
+        <h3 class="disp">Seu cliente entra e vê o dele, sem te ligar</h3>
+        <p>Login separado, linguagem sem jargão e a manchete escrita em português: “Agosto fechou com 690 pedidos”. Ele acompanha quando quiser, e o PDF sai pronto com a identidade da sua agência.</p>
+        <p class="fino">O cliente que acompanha sozinho é o cliente que não some.</p>
+      </div>
+      <div class="mock">
+        <div class="mock-top"><i></i><i></i><i></i><span>relatório do cliente</span></div>
+        <div class="mock-b">
+          <div style="background:var(--acc-soft, var(--facho-fundo));border:2px solid var(--tinta);color:var(--tinta);padding:20px 18px;margin-bottom:14px">
+            <p class="disp" style="font-size:23px;font-variation-settings:'wdth' 104;line-height:1.1">Ago fechou com 690 pedidos — o melhor mês dos últimos 6.</p>
+            <p style="font-size:14px;opacity:.82;margin-top:10px">Seu negócio apareceu para 204.500 pessoas em 13 publicações. Isso dá 3,4 pedidos a cada mil alcançadas.</p>
+          </div>
+          <div class="barras" style="height:70px">
+            <div class="bcol"><span class="t"><span class="f" style="height:47%;background:var(--mar-claro)"></span></span><span class="l">Mar</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:77%;background:var(--mar-claro)"></span></span><span class="l">Abr</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:84%;background:var(--mar-claro)"></span></span><span class="l">Mai</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:38%;background:var(--mar-claro)"></span></span><span class="l">Jun</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:73%;background:var(--mar-claro)"></span></span><span class="l">Jul</span></div>
+            <div class="bcol"><span class="t"><span class="f" style="height:100%;background:var(--mar-claro)"></span></span><span class="l">Ago</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LIMITES ===================== -->
+<section class="faixa" style="background:var(--concreto-2)">
+  <div class="env">
+    <div class="tit-sec rv">
+      <span class="rot" style="color:var(--brasa)">Comparação honesta</span>
+      <h2 class="disp">O que o Farol não faz</h2>
+      <p class="lede">Existem ferramentas ótimas para agendar post e puxar dados de dez redes. Não é o que fazemos, e dizer isso na cara é mais útil para você do que fingir que fazemos tudo.</p>
+    </div>
+    <div class="limites rv">
+      <div class="lim">
+        <span class="cab">Não agendamos</span>
+        <h3>Publicação continua onde já está</h3>
+        <p>Se você usa uma ferramenta de agendamento, continue usando. Somos a camada de análise e de relatório, não o seu calendário.</p>
+      </div>
+      <div class="lim">
+        <span class="cab">Uma rede só</span>
+        <h3>Instagram bem feito, não dez pela metade</h3>
+        <p>Preferimos ler uma rede com profundidade a mostrar dez painéis rasos. Outras entram conforme a demanda real dos clientes.</p>
+      </div>
+      <div class="lim sim">
+        <span class="cab">Funciona sem API</span>
+        <h3>Não dependemos de integração para existir</h3>
+        <p>Quando a API da Meta muda e derruba as integrações do mercado, o modo manual mantém sua agência entregando relatório no prazo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PREÇOS ===================== -->
+<section class="faixa" id="precos">
+  <div class="env">
+    <div class="tit-sec rv" style="max-width:64ch">
+      <span class="rot" style="color:var(--brasa)">Planos</span>
+      <h2 class="disp">Você paga pelo tamanho da sua carteira</h2>
+      <p class="lede">Sem cobrança por usuário e sem taxa de implantação. Uma agência de três clientes entra sem doer, e o preço cresce junto com ela.</p>
+    </div>
+
+    <div class="planos rv">
+      <div class="plano">
+        <span class="rot">Essencial</span>
+        <div class="val"><b class="num">R$ 97</b><span>/mês</span></div>
+        <div class="itens">
+          <span class="item"><i></i>Até 5 clientes</span>
+          <span class="item"><i></i>Diagnóstico automático</span>
+          <span class="item"><i></i>Resultado comercial e histórico</span>
+          <span class="item"><i></i>Relatório em PDF</span>
+        </div>
+        <a class="bt vazio" href="/app?plano=essencial&amp;novo=1">Começar grátis</a>
+      </div>
+
+      <div class="plano dest">
+        <span class="rot">Agência · mais escolhido</span>
+        <div class="val"><b class="num">R$ 197</b><span>/mês</span></div>
+        <div class="itens">
+          <span class="item"><i></i>Até 15 clientes</span>
+          <span class="item"><i></i>Tudo do Essencial</span>
+          <span class="item"><i></i>Acesso do cliente final</span>
+          <span class="item"><i></i>PDF com a marca da agência</span>
+          <span class="item"><i></i>Alerta de cliente em risco</span>
+        </div>
+        <a class="bt" href="/app?plano=agencia&amp;novo=1">Começar grátis</a>
+      </div>
+
+      <div class="plano">
+        <span class="rot">Estúdio</span>
+        <div class="val"><b class="num">R$ 397</b><span>/mês</span></div>
+        <div class="itens">
+          <span class="item"><i></i>Até 40 clientes</span>
+          <span class="item"><i></i>Tudo do Agência</span>
+          <span class="item"><i></i>Vários usuários com permissão</span>
+          <span class="item"><i></i>Suporte prioritário</span>
+        </div>
+        <a class="bt vazio" href="/app?plano=estudio&amp;novo=1">Começar grátis</a>
+      </div>
+    </div>
+
+    <p style="margin-top:26px;font-size:15.5px;color:var(--tinta-3);max-width:62ch">
+      Plano anual com dois meses grátis. Cancele quando quiser, sem multa e sem fidelidade.
+      <br><span class="editar">EDITAR</span> Ajuste os valores antes de publicar.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="faixa" id="duvidas" style="background:var(--concreto-2)">
+  <div class="env estreito">
+    <div class="tit-sec rv">
+      <span class="rot" style="color:var(--brasa)">Dúvidas</span>
+      <h2 class="disp">O que perguntam antes de assinar</h2>
+    </div>
+    <div class="rv">
+      <details>
+        <summary>Preciso conectar a conta dos meus clientes para usar?</summary>
+        <p>Não. Você lança os números manualmente e o sistema funciona por completo, inclusive o diagnóstico. Colar o link já identifica rede e formato sozinho, e sobram quatro números para digitar. Conectar a conta é opcional e serve para você parar de digitar.</p>
+      </details>
+      <details>
+        <summary>Como funciona a conexão da conta do cliente?</summary>
+        <p>O cliente autoriza pela página da própria Meta, com a conta profissional dele. Nunca pedimos nem guardamos a senha de ninguém — recebemos uma autorização que ele pode revogar quando quiser. Depois disso as publicações e as métricas entram sozinhas.</p>
+      </details>
+      <details>
+        <summary>De onde vem o número de pedidos ou agendamentos?</summary>
+        <p>Do próprio cliente, uma vez por mês. É o número que ele já acompanha para tocar o negócio. Uma pergunta no WhatsApp resolve, e é justamente essa conversa mensal que aproxima a agência do resultado dele.</p>
+      </details>
+      <details>
+        <summary>Vocês garantem que o conteúdo causou o resultado?</summary>
+        <p>Não, e desconfie de quem garantir. O sistema mostra o que andou junto com o quê, e diz isso com essas palavras. Promoção, sazonalidade e boca a boca também mexem no número. Essa honestidade é o que evita a reunião constrangedora no primeiro mês de queda.</p>
+      </details>
+      <details>
+        <summary>Já uso outra ferramenta de social media. Preciso trocar?</summary>
+        <p>Não. Se a sua ferramenta agenda posts e você gosta dela, continue. Entramos na camada de análise e de relatório, que é onde a maioria delas para no gráfico.</p>
+      </details>
+      <details>
+        <summary>E se eu tiver mais clientes do que o plano permite?</summary>
+        <p>Você troca de plano quando quiser, e a diferença é proporcional. Ninguém fica travado no meio do mês.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FECHAMENTO ===================== -->
+<section class="faixa" style="padding-top:0">
+  <div class="env">
+    <div class="fecha rv">
+      <span class="brilho"><svg><use href="#farol"/></svg></span>
+      <h2 class="disp">Monte o relatório de um cliente<br>e veja a diferença você mesma.</h2>
+      <p>14 dias grátis, sem cartão. Cadastre um cliente, lance as publicações do último mês e leia o diagnóstico. Se não mudar a sua reunião, não custou nada.</p>
+      <a class="bt gr" href="/app?novo=1">Criar minha conta</a>
+      <p class="obs">Já é cliente? <a href="/app">Entrar na sua conta</a></p>
+    </div>
+  </div>
+</section>
+
+<div class="env">
+  <div class="rodape">
+    <span>Farol · Relatório e diagnóstico para agências de social media</span>
+    <span>Feito no Brasil</span>
+  </div>
+</div>
+
+<div class="doca"><a class="bt" href="/app?novo=1">Testar grátis por 14 dias</a></div>
+
+<script>
+/* ---------------------------------------------------------------
+   Tema: automático (segue o aparelho), claro ou escuro.
+   A escolha fica no navegador de quem está usando. Se o
+   armazenamento estiver bloqueado, o botão continua funcionando —
+   só não lembra na próxima visita.
+   --------------------------------------------------------------- */
+(function(){
+  "use strict";
+  var bt = document.getElementById("btnTema");
+  if (!bt) return;
+  var CHAVE = "farol-tema";
+  var ORDEM = ["sistema", "claro", "escuro"];
+  var NOME = { sistema:"automático", claro:"claro", escuro:"escuro" };
+
+  function ler(){
+    try { return localStorage.getItem(CHAVE); } catch(e){ return null; }
+  }
+  function gravar(v){
+    try { if (v === "sistema") localStorage.removeItem(CHAVE); else localStorage.setItem(CHAVE, v); } catch(e){}
+  }
+  function aplicar(modo){
+    var raiz = document.documentElement;
+    if (modo === "sistema") raiz.removeAttribute("data-theme");
+    else raiz.setAttribute("data-theme", modo === "escuro" ? "dark" : "light");
+    bt.dataset.modo = modo;
+    bt.title = "Tema: " + NOME[modo] + " (clique para trocar)";
+    bt.setAttribute("aria-label", bt.title);
+  }
+
+  var atual = ORDEM.indexOf(ler());
+  if (atual < 0) atual = 0;
+  aplicar(ORDEM[atual]);
+
+  bt.addEventListener("click", function(){
+    atual = (atual + 1) % ORDEM.length;
+    gravar(ORDEM[atual]);
+    aplicar(ORDEM[atual]);
+  });
+})();
+
+(function(){
+  "use strict";
+  var els = Array.prototype.slice.call(document.querySelectorAll(".rv"));
+  var parar = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (parar || !("IntersectionObserver" in window)){
+    els.forEach(function(e){ e.classList.add("in"); });
+    return;
+  }
+
+  /* O observador cuida da entrada suave. */
+  var io = new IntersectionObserver(function(ent){
+    ent.forEach(function(x){ if (x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } });
+  }, { rootMargin:"0px 0px -6% 0px", threshold:0 });
+  els.forEach(function(e){ io.observe(e); });
+
+  /* Rede de segurança para o celular: num deslize rápido a rolagem pula
+     várias telas entre um quadro e outro, e o observador não chega a ver
+     os blocos do meio — eles ficariam invisíveis para sempre. Esta
+     varredura revela qualquer bloco que já passou da dobra. */
+  var agendado = false;
+  function varrer(){
+    agendado = false;
+    var tela = window.innerHeight || document.documentElement.clientHeight;
+    for (var i = els.length - 1; i >= 0; i--){
+      var e = els[i];
+      if (e.classList.contains("in")){ els.splice(i, 1); continue; }
+      if (e.getBoundingClientRect().top < tela * 0.94){
+        e.classList.add("in"); io.unobserve(e); els.splice(i, 1);
+      }
+    }
+    if (!els.length){
+      window.removeEventListener("scroll", pedir);
+      window.removeEventListener("resize", pedir);
+    }
+  }
+  function pedir(){
+    if (agendado) return;
+    agendado = true;
+    window.requestAnimationFrame(varrer);
+  }
+  window.addEventListener("scroll", pedir, { passive:true });
+  window.addEventListener("resize", pedir);
+  pedir();
+})();
+</script>
+</body>
+</html>
