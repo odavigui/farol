@@ -198,6 +198,19 @@ async function registrarEvento(e) {
   });
 }
 
+/* ========================= assinaturas ========================= */
+async function assinaturaPorEmail(email) {
+  return um(await chamar(`assinaturas?email=eq.${q(String(email).toLowerCase())}&limit=1`));
+}
+async function salvarAssinatura(a) {
+  // upsert pelo e-mail: a agência pode trocar de plano, e o webhook chega de novo
+  await chamar("assinaturas?on_conflict=email", {
+    method: "POST",
+    headers: { prefer: "resolution=merge-duplicates" },
+    body: JSON.stringify({ ...a, email: String(a.email).toLowerCase() })
+  });
+}
+
 /* ====================== recuperação de senha ====================== */
 async function criarRecuperacao(r) {
   await chamar("recuperacoes", { method: "POST", body: JSON.stringify(r) });
@@ -217,9 +230,32 @@ async function apagarSessoesDaConta(contaId) {
 }
 
 /* ============================ diagnóstico ============================ */
+const TABELAS = [
+  "contas", "sessoes", "clientes", "publicacoes", "resultados",
+  "conexoes", "tentativas_login", "recuperacoes", "assinaturas", "eventos_pagamento"
+];
+
 async function testarConexao() {
   await chamar("contas?limit=1");
   return true;
+}
+
+/**
+ * Quais tabelas do esquema NÃO existem no banco.
+ *
+ * Existe por causa de um episódio concreto: o esquema tinha sido rodado antes
+ * de `assinaturas` e `recuperacoes` entrarem no arquivo. O banco respondia,
+ * `contas` estava lá, a saúde dizia "tudo certo" — e criar conta devolvia
+ * "Erro interno.", porque o cadastro consulta `assinaturas` para saber se a
+ * pessoa já tinha pago. Uma tabela faltando tem que aparecer pelo nome.
+ */
+async function tabelasFaltando() {
+  const faltam = [];
+  for (const t of TABELAS) {
+    try { await chamar(t + "?limit=1"); }
+    catch { faltam.push(t); }
+  }
+  return faltam;
 }
 
 module.exports = {
@@ -232,7 +268,8 @@ module.exports = {
   resultados, salvarResultado,
   conexao, salvarConexao, apagarConexao,
   eventoExiste, registrarEvento,
+  assinaturaPorEmail, salvarAssinatura,
   criarRecuperacao, recuperacaoPorHash, marcarRecuperacaoUsada,
   apagarRecuperacoesDaConta, apagarSessoesDaConta,
-  testarConexao
+  testarConexao, tabelasFaltando
 };

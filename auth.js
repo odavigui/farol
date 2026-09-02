@@ -95,7 +95,20 @@ async function criarConta({ agencia, email, senha, plano, ip }) {
   /* A agência PAGA antes de criar a conta. Se já houver
      pagamento aprovado para este e-mail, o plano vem de lá — e não do que veio
      no formulário, que qualquer pessoa poderia forjar. */
-  const pago = await require("./pagamento").planoPago(email);
+  /* Esta consulta é um ATALHO: descobre se a pessoa já pagou antes de criar a
+     conta, para ela nascer com o plano certo. Se ela falhar — a tabela
+     `assinaturas` não existe ainda, o Supabase piscou — o cadastro NÃO pode
+     morrer junto. Perder o atalho custa um upgrade que o webhook ou o suporte
+     conserta depois; derrubar o cadastro custa todo cliente novo que tentar
+     entrar. Foi exatamente isso que aconteceu: "Erro interno." em toda criação
+     de conta porque faltava uma tabela. */
+  let pago = null;
+  try {
+    pago = await require("./pagamento").planoPago(email);
+  } catch (e) {
+    console.error("[auth] não consegui consultar assinaturas no cadastro de",
+      email, "— a conta nasce em teste:", e.message);
+  }
 
   const { hash, salt } = hashSenha(senha);
   const conta = await dados.inserirConta({

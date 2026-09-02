@@ -108,7 +108,7 @@ rotas["GET /api/saude"] = async () => {
   const conf = (v) => (v ? "configurada" : "FALTANDO");
   const corpo = {
     ok: true,
-    versao: "1.3",
+    versao: "1.4",
     node: process.version,
     banco: {
       adaptador: dados.nome,
@@ -133,6 +133,21 @@ rotas["GET /api/saude"] = async () => {
   try {
     await dados.testarConexao();
     corpo.banco.responde = "sim";
+
+    // Banco que responde não quer dizer esquema completo. O caso real: o
+    // esquema tinha sido rodado antes de `assinaturas` existir, `contas`
+    // estava lá, esta rota dizia "tudo certo" — e cadastrar conta devolvia
+    // "Erro interno.". Agora a tabela que falta aparece pelo nome.
+    if (typeof dados.tabelasFaltando === "function") {
+      const faltam = await dados.tabelasFaltando();
+      corpo.banco.tabelasFaltando = faltam.length ? faltam : "nenhuma";
+      if (faltam.length) {
+        corpo.ok = false;
+        corpo.banco.comoResolver =
+          "Rode o arquivo banco/esquema.sql inteiro no SQL Editor do Supabase. " +
+          "Ele usa CREATE TABLE IF NOT EXISTS, então rodar de novo não apaga nada.";
+      }
+    }
   } catch (e) {
     corpo.ok = false;
     corpo.banco.responde = "não";
@@ -145,9 +160,17 @@ rotas["GET /api/saude"] = async () => {
   }
 
   if (corpo.banco.SUPABASE_URL === "FALTANDO") corpo.ok = false;
+  const faltamTabelas = Array.isArray(corpo.banco.tabelasFaltando)
+    && corpo.banco.tabelasFaltando.length > 0;
   corpo.resumo = corpo.ok
     ? "Tudo certo. O sistema deve entrar normalmente."
-    : "Falta configuração. Veja o que está FALTANDO acima, cadastre na Vercel em Settings → Environment Variables e clique em Redeploy.";
+    : faltamTabelas
+      ? "O banco responde, mas o esquema está incompleto: falta a tabela " +
+        corpo.banco.tabelasFaltando.join(", ") + ". Rode banco/esquema.sql no " +
+        "SQL Editor do Supabase — ele usa CREATE TABLE IF NOT EXISTS e não apaga " +
+        "nada do que já existe. Sem `assinaturas`, um pagamento aprovado não vira " +
+        "plano; sem `recuperacoes`, o link de esqueci minha senha não funciona."
+      : "Falta configuração. Veja o que está FALTANDO acima, cadastre na Vercel em Settings → Environment Variables e clique em Redeploy.";
   return { corpo };
 };
 

@@ -15,7 +15,18 @@ const path = require("node:path");
 const fs = require("node:fs");
 
 const PASTA = process.env.PASTA_DADOS || path.join(__dirname, "..", "dados");
-fs.mkdirSync(PASTA, { recursive: true });
+try {
+  fs.mkdirSync(PASTA, { recursive: true });
+} catch (e) {
+  // Disco somente leitura = servidor de produção. Aqui o SQLite não serve.
+  if (e.code === "EROFS" || e.code === "EACCES") {
+    throw new Error(
+      "Este adaptador grava em disco e o disco aqui é somente leitura. " +
+      "Configure SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY para usar o Supabase."
+    );
+  }
+  throw e;
+}
 
 const db = new DatabaseSync(path.join(PASTA, "prova.db"));
 db.exec("PRAGMA journal_mode = WAL");
@@ -80,6 +91,9 @@ CREATE TABLE IF NOT EXISTS recuperacoes (
   criado_em TEXT NOT NULL, ip TEXT);
 CREATE INDEX IF NOT EXISTS ix_rec_conta ON recuperacoes(conta_id);
 
+CREATE TABLE IF NOT EXISTS assinaturas (
+  email TEXT PRIMARY KEY, plano TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'ativa',
+  assinatura_id TEXT, pedido_id TEXT, atualizado_em TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS eventos_pagamento (
   id TEXT PRIMARY KEY, conta_id TEXT, tipo TEXT NOT NULL,
   bruto TEXT NOT NULL, recebido TEXT NOT NULL);
@@ -199,6 +213,21 @@ async function registrarEvento(e) {
    .run(e.id, e.conta_id || null, e.tipo, e.bruto, e.recebido);
 }
 
+/* ---------- assinaturas ---------- */
+async function assinaturaPorEmail(email) {
+  return p("SELECT * FROM assinaturas WHERE email = ?").get(String(email).toLowerCase()) || null;
+}
+async function salvarAssinatura(a) {
+  p(`INSERT INTO assinaturas (email,plano,status,assinatura_id,pedido_id,atualizado_em)
+     VALUES (?,?,?,?,?,?)
+     ON CONFLICT(email) DO UPDATE SET
+       plano=excluded.plano, status=excluded.status,
+       assinatura_id=excluded.assinatura_id, pedido_id=excluded.pedido_id,
+       atualizado_em=excluded.atualizado_em`)
+   .run(String(a.email).toLowerCase(), a.plano, a.status,
+        a.assinatura_id || null, a.pedido_id || null, a.atualizado_em);
+}
+
 /* ---------- recuperação de senha ---------- */
 async function criarRecuperacao(r) {
   p(`INSERT INTO recuperacoes (id,conta_id,hash,expira_em,criado_em,ip) VALUES (?,?,?,?,?,?)`)
@@ -217,7 +246,22 @@ async function apagarSessoesDaConta(contaId) {
   p("DELETE FROM sessoes WHERE conta_id = ?").run(contaId);
 }
 
+const TABELAS = [
+  "contas", "sessoes", "clientes", "publicacoes", "resultados",
+  "conexoes", "tentativas_login", "recuperacoes", "assinaturas", "eventos_pagamento"
+];
+
 async function testarConexao() { p("SELECT 1").get(); return true; }
+
+/** O mesmo diagnóstico do adaptador do Supabase, para o modo local. */
+async function tabelasFaltando() {
+  const faltam = [];
+  for (const t of TABELAS) {
+    try { p("SELECT 1 FROM " + t + " LIMIT 1").get(); }
+    catch { faltam.push(t); }
+  }
+  return faltam;
+}
 
 module.exports = {
   nome: "sqlite", db,
@@ -229,7 +273,8 @@ module.exports = {
   resultados, salvarResultado,
   conexao, salvarConexao, apagarConexao,
   eventoExiste, registrarEvento,
+  assinaturaPorEmail, salvarAssinatura,
   criarRecuperacao, recuperacaoPorHash, marcarRecuperacaoUsada,
   apagarRecuperacoesDaConta, apagarSessoesDaConta,
-  testarConexao
+  testarConexao, tabelasFaltando
 };
