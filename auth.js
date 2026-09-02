@@ -68,13 +68,29 @@ async function registrarFalha(chave) {
 }
 
 /* ---------- contas ---------- */
-async function criarConta({ agencia, email, senha, plano }) {
+/**
+ * Cadastro.
+ *
+ * O 409 "já existe uma conta com esse e-mail" é necessário: sem ele a pessoa
+ * não entende por que o cadastro falhou. Mas ele também responde, para quem
+ * perguntar, quais e-mails são clientes do Farol — e sem limite de tentativas
+ * dava para varrer uma lista inteira. O limite por IP fecha a varredura sem
+ * atrapalhar quem está só criando a conta dela.
+ */
+async function criarConta({ agencia, email, senha, plano, ip }) {
   email = String(email || "").trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw erro(400, "E-mail inválido.");
   if (String(senha || "").length < 8) throw erro(400, "A senha precisa ter ao menos 8 caracteres.");
   if (!String(agencia || "").trim()) throw erro(400, "Informe o nome da agência.");
 
-  if (await dados.contaPorEmail(email)) throw erro(409, "Já existe uma conta com esse e-mail.");
+  const chaveIp = "c:" + (ip || "?");
+  if (await bloqueado(chaveIp))
+    throw erro(429, "Muitas tentativas de cadastro. Tente de novo em 15 minutos.");
+
+  if (await dados.contaPorEmail(email)) {
+    await registrarFalha(chaveIp);
+    throw erro(409, "Já existe uma conta com esse e-mail.");
+  }
 
   /* A agência PAGA antes de criar a conta. Se já houver
      pagamento aprovado para este e-mail, o plano vem de lá — e não do que veio
@@ -117,8 +133,10 @@ async function autenticar({ email, senha, ip }) {
   }
   if (c.status === "cancelada") throw erro(403, "Esta conta está cancelada.");
 
+  // Só o contador DESTE e-mail é zerado. Zerar o do IP também deixava o
+  // atacante limpar o próprio rastro: 7 tentativas contra 7 contas alheias,
+  // 1 login na conta dele, contador no chão, repete para sempre.
   await dados.apagarTentativa(chaveEmail);
-  await dados.apagarTentativa(chaveIp);
   return publica(c);
 }
 
@@ -147,7 +165,13 @@ async function contaDaSessao(token) {
   const s = await dados.sessaoPorToken(token);
   if (!s) return null;
   if (s.expira_em < agora()) { await dados.apagarSessao(token); return null; }
-  return buscarConta(s.conta_id);
+
+  const c = await buscarConta(s.conta_id);
+  // O cancelamento era conferido só no login. Quem estivesse logado seguia
+  // dentro por até 14 dias depois de pedir estorno, porque o cookie não sabia
+  // de nada. Agora todo pedido reconfere.
+  if (c && c.status === "cancelada") { await dados.apagarSessao(token); return null; }
+  return c;
 }
 
 async function fecharSessao(token) { if (token) await dados.apagarSessao(token); }

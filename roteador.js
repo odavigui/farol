@@ -3,7 +3,7 @@
  * Roteador compartilhado.
  *
  * Existe uma implementação só das rotas, usada pelos dois ambientes:
- *   - api/[[...rota]].js   -> Vercel (serverless)
+ *   - api/index.js   -> Vercel (serverless)
  *   - servidor.js          -> sua máquina (node servidor.js)
  *
  * Assim não há risco de o comportamento local divergir do de produção, que é
@@ -95,15 +95,22 @@ async function tratar(pedido) {
 
   /* --- webhook: precisa do corpo cru, antes de qualquer parse --- */
   if (caminho === "/api/pagamento/webhook" && metodo === "POST") {
-    const assinatura = cabecalhos["stripe-signature"] || cabecalhos["x-signature"] || "";
-    const r = await pagamento.processar(corpoCru || "", assinatura);
+    // A Cakto autentica pelo campo `secret` dentro do corpo, não por
+    // cabeçalho. O corpo cru é passado inteiro e conferido lá dentro.
+    const r = await pagamento.processar(corpoCru || "");
     return { status: r.status, corpo: r.corpo };
   }
 
   if (!origemOk(cabecalhos.origin, cabecalhos.host))
     return { status: 403, corpo: { erro: "Origem não permitida." } };
 
-  const achado = achar(metodo, caminho);
+  // achar() roda FORA do try de baixo, e decodeURIComponent lança URIError
+  // numa sequência inválida como /api/clientes/%zz/painel. Sem este try a
+  // exceção escapava da função inteira e virava um 500 cru da plataforma,
+  // sem corpo JSON — de graça, sem cookie nenhum.
+  let achado;
+  try { achado = achar(metodo, caminho); }
+  catch { return { status: 400, corpo: { erro: "Endereço inválido." } }; }
   if (!achado) return { status: 404, corpo: { erro: "Rota não encontrada." } };
 
   let corpo = null;
@@ -138,7 +145,10 @@ async function tratar(pedido) {
     return {
       status,
       corpo: {
-        erro: status >= 500 ? "Erro interno." : (e.message || "Erro."),
+        // Erro de 500 não conta o que houve — detalhe interno vira pista para
+        // quem ataca. A exceção é o que marcamos como público: erro de
+        // configuração, cuja mensagem é justamente o conserto.
+        erro: (status >= 500 && !e.publico) ? "Erro interno." : (e.message || "Erro."),
         ...(e.extra ? { detalhe: e.extra } : {})
       }
     };

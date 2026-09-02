@@ -55,10 +55,19 @@ const publicacoes = (cid, deDias, ateDias = 0) =>
   dados.publicacoes(cid, desde(deDias), desde(ateDias));
 
 /* ---------------- serialização ---------------- */
+/**
+ * O token do relatório público NÃO sai aqui.
+ *
+ * Ele saía em toda resposta de painel e de estado, para qualquer plano —
+ * inclusive os que nem têm o recurso de acesso do cliente final. Um segredo
+ * que circula sem necessidade acaba em cache de navegador, em proxy de
+ * empresa e em print de tela. Quem quiser o link pede em
+ * GET /api/clientes/:id/link-relatorio, que confere o plano antes.
+ */
 const clienteJson = (c) => ({
   id: c.id, nome: c.nome, ramo: c.ramo, seguidores: c.seguidores,
   planoTxt: c.plano_txt, contrato: c.contrato,
-  metrica: c.metrica, metricaS: c.metrica_s, tokenRel: c.token_rel
+  metrica: c.metrica, metricaS: c.metrica_s
 });
 const pubJson = (p) => ({
   id: p.id, titulo: p.titulo, url: p.url, plataforma: p.plataforma, formato: p.formato,
@@ -127,7 +136,12 @@ rotas["GET /api/saude"] = async () => {
   } catch (e) {
     corpo.ok = false;
     corpo.banco.responde = "não";
-    corpo.banco.motivo = String(e.message || e).slice(0, 300);
+    // A rota é anônima de propósito (serve para diagnosticar sem conseguir
+    // entrar). Por isso NÃO devolve a mensagem do Postgres: ela traz nome de
+    // tabela, texto de RLS e dica de schema. Fica no log do servidor, onde só
+    // você lê.
+    console.error("[saude] banco:", e);
+    corpo.banco.motivo = "falha ao consultar o banco — veja o log do servidor";
   }
 
   if (corpo.banco.SUPABASE_URL === "FALTANDO") corpo.ok = false;
@@ -142,7 +156,8 @@ rotas["POST /api/conta/criar"] = async (req) => {
   const b = req.body || {};
   const conta = await auth.criarConta({
     agencia: b.agencia, email: b.email, senha: b.senha,
-    plano: planos.PLANOS[b.plano] ? b.plano : planos.PADRAO
+    plano: planos.PLANOS[b.plano] ? b.plano : planos.PADRAO,
+    ip: req.ip
   });
   return { corpo: { conta: contaJson(conta) }, sessao: await auth.abrirSessao(conta.id, req.ip) };
 };
@@ -206,27 +221,28 @@ rotas["GET /api/conta"] = async (req) => {
   return { corpo: { conta: contaJson(req.conta), plano: planos.paraCliente(req.conta, usados) } };
 };
 
+/**
+ * Trocar de plano — MOVIDO PARA A CAKTO, de propósito.
+ *
+ * Aqui existia POST /api/conta/plano, que gravava o plano novo direto. Bastava
+ * clicar no cartão do Estúdio para uma conta de R$ 97 virar uma de R$ 397, para
+ * sempre. Era o contrário de tudo que este sistema diz sobre quem decide o quê:
+ * plano é consequência de pagamento, e pagamento só a Cakto confirma, pelo
+ * webhook em pagamento.js.
+ *
+ * A rota foi removida em vez de corrigida. Uma rota que muda plano é um alvo
+ * permanente; não existir é a única versão que não tem bug.
+ *
+ * A interface agora abre o checkout da Cakto. Quem já tem assinatura ativa não
+ * ganha um segundo checkout — isso criaria uma SEGUNDA assinatura e a agência
+ * seria cobrada duas vezes. Esse caso vai para o suporte.
+ */
 rotas["POST /api/conta/plano"] = async (req) => {
   exigirLogin(req);
-  // Durante o teste a agência troca de plano à vontade. Depois que o prazo
-  // vence, trocar aqui não libera nada — quem libera é o pagamento. Barrar
-  // com a mesma mensagem evita a pessoa achar que subiu de plano e continuar
-  // esbarrando no mesmo bloqueio.
-  planos.exigirEscrita(req.conta);
-  const novo = txt(req.body?.plano, 20);
-  if (!planos.PLANOS[novo]) throw erro(400, "Plano inválido.");
-
-  // Downgrade não pode deixar a conta acima do limite do plano novo.
-  const usados = await dados.contarClientes(req.conta.id);
-  const alvo = planos.PLANOS[novo];
-  if (usados > alvo.maxClientes)
-    throw erro(409,
-      `Você tem ${usados} clientes e o plano ${alvo.nome} comporta ${alvo.maxClientes}. ` +
-      `Arquive ${usados - alvo.maxClientes} antes de trocar.`,
-      { motivo: "downgrade_bloqueado" });
-
-  const conta = auth.publica(await dados.atualizarConta(req.conta.id, { plano: novo }));
-  return { corpo: { conta: contaJson(conta), plano: planos.paraCliente(conta, usados) } };
+  throw erro(410,
+    "A troca de plano acontece no checkout da Cakto, não aqui. Abra Minha conta " +
+    "e escolha o plano desejado.",
+    { motivo: "rota_removida" });
 };
 
 /* ---------- estado inicial ---------- */
@@ -249,6 +265,10 @@ rotas["GET /api/estado"] = async (req) => {
     corpo: {
       conta: contaJson(req.conta),
       plano: planos.paraCliente(req.conta, lista.length),
+      integracao: { instagram: integracaoLigada() },
+      // Com assinatura ativa, um segundo checkout viraria segunda cobrança.
+      // Quem decide isso é o servidor, que conhece o status de verdade.
+      assinatura: { ativa: req.conta.status === "ativa" },
       clientes
     }
   };
@@ -393,12 +413,38 @@ rotas["POST /api/clientes/:id/resultados"] = async (req) => {
 };
 
 /* ---------- conexão com a rede ---------- */
+
+/**
+ * A integração com o Instagram está ligada?
+ *
+ * Enquanto a Meta não aprovar o app, ela NÃO está — e quem tem de saber disso
+ * é o servidor, não a tela. Se a decisão morasse no navegador, bastaria mexer
+ * no console para o sistema voltar a dizer "conectada" sem estar.
+ *
+ * Para ligar, um dia: basta existir META_APP_ID nas variáveis de ambiente.
+ * Enquanto não existir, o botão fica desativado e este endpoint recusa.
+ */
+function integracaoLigada() {
+  return !!process.env.META_APP_ID;
+}
+
 rotas["POST /api/clientes/:id/conexao"] = async (req) => {
   exigirLogin(req);
   planos.exigirEscrita(req.conta);
   const c = await clienteDaConta(req.conta.id, req.params.id);
-  // Em produção este endpoint recebe o "code" do OAuth da Meta e troca por um
-  // token de longa duração. Aqui ele registra a conexão para o fluxo funcionar.
+
+  // Sem app aprovado na Meta não há conexão possível. Antes daqui existia um
+  // atalho que gravava a conexão assim mesmo, com token nulo: a tela dizia
+  // "conectada", nenhum número entrava, e a agência só descobriria na véspera
+  // da reunião. Recusar é a resposta honesta.
+  if (!integracaoLigada())
+    throw Object.assign(erro(501,
+      "A conexão automática com o Instagram ainda não está disponível — o app " +
+      "está em aprovação na Meta. Enquanto isso, lance as publicações pelo " +
+      "formulário: o diagnóstico funciona igual.",
+      { motivo: "integracao_indisponivel" }), { publico: true });
+
+  // Com o app aprovado, é aqui que o "code" do OAuth vira token de longa duração.
   await dados.salvarConexao({
     cliente_id: c.id, rede: "instagram",
     conta_rede: txt(req.body?.contaRede, 60) || c.nome.toLowerCase().replace(/[^a-z0-9]/g, ""),
