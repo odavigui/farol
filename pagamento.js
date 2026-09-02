@@ -51,7 +51,29 @@ const SEGREDO = process.env.CAKTO_WEBHOOK_SECRET || "";
  * liberado — liberar por adivinhação é pior do que não liberar.
  */
 function lista(v) {
-  return String(v || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  const bruto = String(v || "")
+    .split(/[,;\s]+/)                 // vírgula, ponto-e-vírgula ou espaço
+    .map((x) => x.trim().toLowerCase())
+    .filter(Boolean);
+
+  // E as partes de cada pedaço, separadas por "_".
+  //
+  // O link de checkout tem a forma pay.cakto.com.br/b2p6p4a_1078362, e não dá
+  // para saber de fora se a Cakto manda a primeira metade, a segunda, ou as
+  // duas juntas. Antes isso obrigava a cadastrar as três formas separadas por
+  // vírgula — e cadastrar uma lista num campo de configuração é convite para
+  // erro de digitação. Agora basta colar o pedaço do link como ele é:
+  //
+  //   CAKTO_OFERTA_AGENCIA=b2p6p4a_1078362
+  //
+  // que as três formas passam a valer. A lista separada por vírgula continua
+  // funcionando, para quem já cadastrou assim.
+  const todas = new Set();
+  for (const item of bruto) {
+    todas.add(item);
+    for (const parte of item.split("_")) if (parte) todas.add(parte);
+  }
+  return [...todas];
 }
 const DE_PARA = [
   { plano: "essencial", ids: lista(process.env.CAKTO_OFERTA_ESSENCIAL) },
@@ -283,4 +305,4 @@ async function planoPago(email) {
   return PLANOS[a.plano] ? { plano: a.plano, assinatura_id: a.assinatura_id } : null;
 }
 
-module.exports = { processar, planoPago, segredoConfere, semSegredo, LIBERA, CANCELA, SUSPENDE };
+module.exports = { processar, planoPago, segredoConfere, semSegredo, planoDoEvento, LIBERA, CANCELA, SUSPENDE };
