@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Termos de Uso — Farol</title>
+<meta name="description" content="As regras do contrato entre você e o Farol: planos, pagamento, cancelamento, o que cada lado se compromete a fazer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Karla:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fundo:#F4F6FB; --papel:#FFFFFF; --tinta:#0B1020; --tinta-2:#454C63; --tinta-3:#767D93;
+  --linha:#D8DEEE; --linha-2:#C2CBE3;
+  --mar:#1435C8; --bloco:#1435C8; --sobre-bloco:#FFFFFF; --facho:#FF5B45;
+  --preencher-fundo:#FFF3D6; --preencher-tinta:#7A4B00; --preencher-borda:#E0A040;
+  --fd:'Archivo',system-ui,-apple-system,sans-serif;
+  --fc:'Karla',system-ui,-apple-system,sans-serif;
+  --fm:'DM Mono',ui-monospace,SFMono-Regular,monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fundo:#080B16; --papel:#0F1424; --tinta:#E9ECF7; --tinta-2:#A9B0C7; --tinta-3:#7C849D;
+    --linha:#232B44; --linha-2:#333C5C;
+    --mar:#8FA6FF; --bloco:#0D2185; --sobre-bloco:#FFFFFF; --facho:#FF7A63;
+    --preencher-fundo:#3A2A05; --preencher-tinta:#F0C77A; --preencher-borda:#8A6A20;
+  }
+}
+:root[data-theme="dark"]{
+  --fundo:#080B16; --papel:#0F1424; --tinta:#E9ECF7; --tinta-2:#A9B0C7; --tinta-3:#7C849D;
+  --linha:#232B44; --linha-2:#333C5C;
+  --mar:#8FA6FF; --bloco:#0D2185; --sobre-bloco:#FFFFFF; --facho:#FF7A63;
+  --preencher-fundo:#3A2A05; --preencher-tinta:#F0C77A; --preencher-borda:#8A6A20;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--fundo); color:var(--tinta);
+  font:400 16.5px/1.72 var(--fc); -webkit-font-smoothing:antialiased}
+.wrap{max-width:760px; margin:0 auto; padding:34px 20px 80px}
+a{color:var(--mar)}
+
+.topo{border-bottom:2px solid var(--tinta); padding-bottom:22px; margin-bottom:14px}
+.marca{display:inline-flex; align-items:center; gap:9px; text-decoration:none; color:inherit; margin-bottom:16px}
+.marca .mk{width:26px; height:26px; background:var(--mar); color:#fff; display:grid; place-items:center}
+.marca .mk svg{width:17px; height:17px}
+.marca .nm{font:800 17px/1 var(--fd); letter-spacing:.08em}
+h1{font:800 clamp(29px,6vw,42px)/1.07 var(--fd); font-variation-settings:"wdth" 112;
+  letter-spacing:-.025em; margin:0 0 12px}
+.datas{font:500 12.5px/1.6 var(--fm); color:var(--tinta-3)}
+
+.indice{background:var(--papel); border:1px solid var(--linha); padding:18px 22px; margin:26px 0 34px}
+.indice h2{font:700 12.5px/1 var(--fm); letter-spacing:.12em; text-transform:uppercase;
+  color:var(--tinta-3); margin:0 0 12px}
+.indice ol{margin:0; padding-left:20px; columns:2; column-gap:26px}
+.indice li{margin-bottom:6px; font-size:15px; break-inside:avoid}
+
+h2.sec{font:800 22.5px/1.2 var(--fd); letter-spacing:-.015em; margin:42px 0 10px;
+  padding-top:24px; border-top:1px solid var(--linha); scroll-margin-top:20px}
+h3{font:700 17px/1.3 var(--fc); margin:26px 0 8px}
+p{margin:0 0 15px}
+ul,ol.corpo{margin:0 0 15px; padding-left:22px}
+li{margin-bottom:8px}
+
+.bloco{background:var(--bloco); color:var(--sobre-bloco); padding:24px 26px;
+  border-left:6px solid var(--facho); margin:0 0 30px}
+.bloco p{margin:0 0 10px; opacity:.94; font-size:15.5px}
+.bloco p:last-child{margin-bottom:0}
+.bloco strong{color:#fff}
+
+.nota{border:1px solid var(--linha-2); border-left:4px solid var(--facho);
+  background:var(--papel); padding:15px 18px; margin:22px 0; font-size:15.5px; color:var(--tinta-2)}
+.nota .tit{display:block; font:700 15px/1.3 var(--fc); color:var(--tinta); margin-bottom:5px}
+
+.p{background:var(--preencher-fundo); color:var(--preencher-tinta);
+  border:1px dashed var(--preencher-borda); padding:1px 7px; font:600 14.5px/1.5 var(--fm);
+  white-space:nowrap}
+
+.tw{overflow-x:auto; margin:20px 0}
+table{width:100%; border-collapse:collapse; font-size:15.5px; min-width:480px}
+th{text-align:left; font:700 12px/1.3 var(--fm); letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tinta-3); padding:0 14px 10px 0; border-bottom:2px solid var(--tinta); vertical-align:bottom}
+td{padding:13px 14px 13px 0; border-bottom:1px solid var(--linha); vertical-align:top; color:var(--tinta-2)}
+td:first-child{color:var(--tinta); font-weight:600}
+
+.rodape{margin-top:52px; padding-top:22px; border-top:2px solid var(--tinta);
+  display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between;
+  font-size:14px; color:var(--tinta-3)}
+
+@media(max-width:600px){
+  .wrap{padding:26px 16px 60px}
+  .indice ol{columns:1}
+  body{font-size:16px}
+}
+@media print{
+  :root{--fundo:#fff; --papel:#fff; --tinta:#000; --tinta-2:#222; --tinta-3:#555; --linha:#ccc}
+  body{background:#fff; font-size:11pt}
+  .wrap{max-width:none; padding:0}
+  .indice{break-inside:avoid}
+  h2.sec{break-after:avoid}
+  .bloco{background:#eee!important; color:#000!important; border-left:4px solid #000}
+  .bloco strong{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topo">
+    <a class="marca" href="/">
+      <span class="mk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.4 8.5 9.6v4.8L1.5 16.6V7.4Z" fill="currentColor" opacity=".38"/><path d="M22.5 7.4 15.5 9.6v4.8l7 2.2V7.4Z" fill="currentColor" opacity=".38"/><path d="M12 1.6 15.4 5H8.6L12 1.6Z" fill="currentColor"/><rect x="8.8" y="5.6" width="6.4" height="4.2" fill="currentColor"/><path d="M9.2 10.6h5.6L16.2 22H7.8L9.2 10.6Z" fill="currentColor" opacity=".85"/></svg></span>
+      <span class="nm">FAROL</span>
+    </a>
+    <h1>Termos de Uso</h1>
+    <p class="datas">Em vigor desde <strong>01/09/2026</strong> · Última atualização em <strong>01/09/2026</strong></p>
+  </div>
+
+  <div class="bloco">
+    <p><strong>O resumo honesto.</strong> Você assina o Farol por mês, sem fidelidade, e pode cancelar quando quiser. Teste 14 dias sem cartão. Se desistir em até 7 dias depois de pagar, devolvemos tudo.</p>
+    <p>Em troca, você se compromete a duas coisas: cuidar da sua senha, e ter direito de usar os dados dos clientes que cadastrar aqui.</p>
+    <p>Este resumo é para leitura rápida. O que vale juridicamente é o texto completo abaixo.</p>
+  </div>
+
+  <div class="indice">
+    <h2>Neste documento</h2>
+    <ol>
+      <li><a href="#objeto">O que é o Farol</a></li>
+      <li><a href="#aceite">Aceite</a></li>
+      <li><a href="#conta">Sua conta</a></li>
+      <li><a href="#planos">Planos e teste</a></li>
+      <li><a href="#pagamento">Pagamento e reajuste</a></li>
+      <li><a href="#cancelar">Cancelamento e reembolso</a></li>
+      <li><a href="#voce">O que você se compromete a fazer</a></li>
+      <li><a href="#proibido">O que não é permitido</a></li>
+      <li><a href="#nos">O que nós nos comprometemos a fazer</a></li>
+      <li><a href="#disponibilidade">Disponibilidade</a></li>
+      <li><a href="#propriedade">Propriedade e seus dados</a></li>
+      <li><a href="#responsabilidade">Limites de responsabilidade</a></li>
+      <li><a href="#suspensao">Suspensão e encerramento</a></li>
+      <li><a href="#mudancas">Mudanças nestes termos</a></li>
+      <li><a href="#lei">Lei aplicável e foro</a></li>
+    </ol>
+  </div>
+
+  <h2 class="sec" id="objeto">1. O que é o Farol</h2>
+  <p>O Farol é um sistema pela internet (software como serviço) para agências de marketing e social media organizarem a carteira de clientes, lançarem números de desempenho, gerarem relatórios e receberem leituras de diagnóstico sobre o próprio histórico.</p>
+  <p>É operado por <span class="p">RAZÃO SOCIAL OU NOME COMPLETO</span>, <span class="p">CNPJ OU CPF</span>, com sede em <span class="p">ENDEREÇO COMPLETO</span>.</p>
+  <p>O Farol <strong>não é</strong> uma ferramenta de publicação, agendamento ou disparo em massa, e não garante resultado de marketing. Ele mede e organiza o que já aconteceu.</p>
+
+  <h2 class="sec" id="aceite">2. Aceite</h2>
+  <p>Ao criar uma conta, você declara que leu e aceita estes Termos e a <a href="/privacidade.html">Política de Privacidade</a>, que é parte integrante deles. Se estiver contratando em nome de uma empresa, declara ter poderes para isso.</p>
+  <p>Se você não concorda com algum ponto, não crie a conta. Não há como usar o sistema aceitando só uma parte.</p>
+
+  <h2 class="sec" id="conta">3. Sua conta</h2>
+  <ul>
+    <li>Você é responsável por tudo que acontece na sua conta.</li>
+    <li>A senha é pessoal. Não compartilhe. Se desconfiar que alguém teve acesso, troque imediatamente pela tela de recuperação — trocar a senha desconecta todos os aparelhos.</li>
+    <li>Mantenha o e-mail atualizado: é por ele que você recupera o acesso e recebe avisos.</li>
+    <li>Uma conta corresponde a uma agência. Planos com múltiplos usuários, quando disponíveis, estão descritos na página de planos.</li>
+  </ul>
+
+  <h2 class="sec" id="planos">4. Planos e teste</h2>
+  <p>Os planos vigentes, seus preços e limites estão na <a href="/">página inicial</a> e prevalecem sobre qualquer valor citado aqui.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Plano</th><th>Preço</th><th>Limite</th></tr></thead>
+    <tbody>
+      <tr><td>Essencial</td><td>R$ 97/mês</td><td>até 5 clientes</td></tr>
+      <tr><td>Agência</td><td>R$ 197/mês</td><td>até 15 clientes, com acesso do cliente final</td></tr>
+      <tr><td>Estúdio</td><td>R$ 397/mês</td><td>até 40 clientes, com múltiplos usuários</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><strong>Teste:</strong> 14 dias, sem cartão de crédito. Ao fim do período, a conta fica bloqueada para novos lançamentos até que um plano seja contratado. Nada é cobrado automaticamente.</p>
+  <p><strong>Trocar de plano:</strong> a qualquer momento. Ao subir de plano, os recursos novos ficam disponíveis na hora. Ao descer, é preciso primeiro reduzir a carteira ao limite do plano menor — o sistema não apaga cliente por conta própria.</p>
+
+  <h2 class="sec" id="pagamento">5. Pagamento e reajuste</h2>
+  <ul>
+    <li>A assinatura é mensal e recorrente, processada pela <strong>Cakto</strong>, com renovação automática na data de contratação. Você pode pagar com cartão de crédito, Pix ou boleto.</li>
+    <li>Não temos acesso aos dados do seu cartão. Eles são digitados no ambiente do meio de pagamento.</li>
+    <li><strong>Falha no pagamento:</strong> a conta é marcada como inadimplente e os recursos ficam limitados. Seus dados <strong>não</strong> são apagados nesse momento — você continua podendo acessá-los e exportá-los.</li>
+    <li><strong>Reajuste:</strong> os preços podem ser reajustados no máximo uma vez a cada 12 meses, com aviso por e-mail com pelo menos <strong>30 dias</strong> de antecedência. Se não concordar, você pode cancelar antes da nova vigência sem qualquer ônus.</li>
+  </ul>
+
+  <h2 class="sec" id="cancelar">6. Cancelamento e reembolso</h2>
+  <p><strong>Você pode cancelar quando quiser.</strong> Não há fidelidade, não há multa e não há período mínimo.</p>
+  <ul>
+    <li>Ao cancelar, o acesso continua até o fim do período já pago. Não fazemos cobrança proporcional nem devolução do período em curso, salvo o caso de arrependimento abaixo.</li>
+    <li><strong>Direito de arrependimento:</strong> conforme o art. 49 do Código de Defesa do Consumidor, você pode desistir da contratação em até <strong>7 dias corridos</strong> contados do primeiro pagamento e receber a devolução integral. Basta escrever para <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a>.</li>
+    <li>Depois do cancelamento, os dados da conta são apagados em até <strong>30</strong> dias. Exporte o que quiser guardar antes disso.</li>
+  </ul>
+
+  <h2 class="sec" id="voce">7. O que você se compromete a fazer</h2>
+  <p>Ao cadastrar no Farol dados de clientes seus — nome, contato, números de desempenho — <strong>você é o controlador desses dados</strong> perante a LGPD, e nós somos apenas o operador. Isso significa que cabe a você:</p>
+  <ul>
+    <li>Ter base legal para tratar aqueles dados, normalmente a execução do contrato de prestação de serviço que você firmou com o cliente.</li>
+    <li>Informar seus clientes de que utiliza uma ferramenta de terceiro para gerar os relatórios deles.</li>
+    <li>Atender aos pedidos que seus clientes fizerem sobre os dados deles. Se precisar da nossa ajuda, nos aciona e nós atendemos.</li>
+    <li>Cuidar dos links de relatório que você gerar: quem tiver o endereço consegue ver aquele relatório, sem senha. Envie apenas a quem deve ver.</li>
+  </ul>
+  <div class="nota">
+    <span class="tit">Vale prever isso no seu contrato</span>
+    A forma mais simples de resolver: incluir no seu contrato de prestação de serviço uma cláusula dizendo que você utiliza ferramentas de terceiros para produzir relatórios de desempenho. Não somos advogados e isto não é orientação jurídica — é o que costuma aparecer em contratos do setor.
+  </div>
+
+  <h2 class="sec" id="proibido">8. O que não é permitido</h2>
+  <ul>
+    <li>Usar o sistema para qualquer finalidade ilícita, ou que viole direito de terceiro.</li>
+    <li>Tentar acessar dados de outra conta, burlar limites de plano, ou explorar falhas em vez de reportá-las.</li>
+    <li>Compartilhar credenciais para que várias agências usem uma assinatura só.</li>
+    <li>Revender, sublicenciar ou apresentar o Farol como produto próprio sem acordo escrito conosco.</li>
+    <li>Automatizar acessos em volume que prejudique a estabilidade do serviço.</li>
+    <li>Inserir dados sensíveis (saúde, biometria, convicção religiosa ou política, entre outros): o sistema não foi projetado para esse tipo de informação.</li>
+  </ul>
+  <p>Se você encontrar uma falha de segurança, escreva para <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a>. Reportar de boa-fé nunca será motivo de punição.</p>
+
+  <h2 class="sec" id="nos">9. O que nós nos comprometemos a fazer</h2>
+  <ul>
+    <li>Manter o sistema disponível e funcionando conforme descrito na página de planos.</li>
+    <li>Proteger seus dados com as medidas descritas na <a href="/privacidade.html">Política de Privacidade</a>.</li>
+    <li>Não acessar o conteúdo da sua conta, salvo quando você pedir suporte e autorizar, ou quando for estritamente necessário para resolver falha técnica ou cumprir obrigação legal.</li>
+    <li>Avisar com antecedência sobre mudanças relevantes de preço, de recursos ou destes Termos.</li>
+    <li>Permitir a exportação dos seus dados enquanto a conta existir.</li>
+  </ul>
+
+  <h2 class="sec" id="disponibilidade">10. Disponibilidade</h2>
+  <p>Trabalhamos para manter o Farol no ar o tempo todo, mas <strong>não prometemos disponibilidade ininterrupta</strong>. O serviço depende de fornecedores de infraestrutura e de conexão à internet, e pode ficar indisponível por manutenção, falha técnica ou motivo fora do nosso controle.</p>
+  <p>Manutenções programadas que exijam parada serão avisadas por e-mail com antecedência sempre que possível.</p>
+  <p>Não há, nesta versão, acordo de nível de serviço (SLA) com garantia de percentual de disponibilidade ou compensação por indisponibilidade. Preferimos dizer isso claramente a prometer o que não podemos sustentar.</p>
+
+  <h2 class="sec" id="propriedade">11. Propriedade e seus dados</h2>
+  <p><strong>O sistema é nosso.</strong> Código, interface, marca, textos e o método de diagnóstico do Farol são de titularidade de <span class="p">RAZÃO SOCIAL OU NOME COMPLETO</span>. A assinatura concede a você uma licença de uso, não transfere propriedade.</p>
+  <p><strong>Os dados são seus.</strong> Tudo o que você cadastra continua seu. Não usamos o conteúdo da sua conta para treinar modelo, alimentar produto nosso ou qualquer outra finalidade além de operar o serviço para você.</p>
+  <p>Podemos usar dados <strong>agregados e anonimizados</strong> — que não permitem identificar você, sua agência ou seus clientes — para melhorar o produto e entender seu uso.</p>
+
+  <h2 class="sec" id="responsabilidade">12. Limites de responsabilidade</h2>
+  <p>O Farol organiza e interpreta números que você fornece. <strong>As decisões de negócio são suas.</strong> Não respondemos por resultado comercial, perda de cliente, ou consequência de decisão tomada a partir de um relatório ou leitura de diagnóstico.</p>
+  <p>As leituras do diagnóstico apontam <em>associação</em> entre o que foi feito e o que aconteceu — nunca relação de causa. São ponto de partida para a sua análise, não conclusão técnica.</p>
+  <p>Também não respondemos por dado incorreto que você tenha lançado, nem por indisponibilidade causada por fornecedor de infraestrutura ou por falta de conexão.</p>
+  <div class="nota">
+    <span class="tit">O que a lei não deixa limitar</span>
+    Nada nesta cláusula afasta nossa responsabilidade por dolo, culpa grave, vício do serviço ou violação de direitos previstos no Código de Defesa do Consumidor e na LGPD. Cláusula que tente excluir isso é nula, e não faria sentido escrevê-la.
+  </div>
+
+  <h2 class="sec" id="suspensao">13. Suspensão e encerramento</h2>
+  <p>Podemos suspender ou encerrar uma conta que viole estes Termos, especialmente a seção 8. Sempre que a situação permitir, avisamos antes e damos prazo para corrigir. Em caso de risco imediato à segurança ou aos dados de terceiros, a suspensão pode ser imediata.</p>
+  <p>Mesmo em encerramento por violação, você continua com direito a exportar seus dados por <strong>15</strong> dias, salvo determinação judicial em contrário.</p>
+  <p>Se decidirmos descontinuar o Farol, avisaremos com pelo menos <strong>60 dias</strong> de antecedência, devolveremos os valores de período já pago e não usufruído, e manteremos a exportação disponível durante todo o aviso.</p>
+
+  <h2 class="sec" id="mudancas">14. Mudanças nestes termos</h2>
+  <p>Podemos alterar estes Termos. Mudanças relevantes são avisadas por e-mail com pelo menos <strong>15 dias</strong> de antecedência, e a data no topo é atualizada. Continuar usando o sistema após a vigência significa aceitar o texto novo; se não concordar, você pode cancelar sem custo.</p>
+
+  <h2 class="sec" id="lei">15. Lei aplicável e foro</h2>
+  <p>Estes Termos são regidos pelas leis brasileiras.</p>
+  <p>Fica eleito o foro da comarca de <span class="p">SUA CIDADE/UF</span> para dirimir controvérsias. <strong>Se você for consumidor</strong>, nos termos do Código de Defesa do Consumidor, poderá optar pelo foro do seu próprio domicílio — esse direito é seu e esta cláusula não o afasta.</p>
+
+  <div class="rodape">
+    <span>Farol · <a href="/privacidade.html">Política de Privacidade</a> · <a href="/">Início</a></span>
+    <span>Feito no Brasil</span>
+  </div>
+</div>
+</body>
+</html>

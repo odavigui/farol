@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Política de Privacidade — Farol</title>
+<meta name="description" content="Como o Farol trata dados pessoais: o que coletamos, por quê, com quem compartilhamos e como você exerce seus direitos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Karla:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Documento legal do Farol. Mesma paleta do produto, mas com hierarquia de
+   texto longo: coluna estreita, entrelinha alta, âncoras por seção. */
+:root{
+  --fundo:#F4F6FB; --papel:#FFFFFF; --tinta:#0B1020; --tinta-2:#454C63; --tinta-3:#767D93;
+  --linha:#D8DEEE; --linha-2:#C2CBE3;
+  --mar:#1435C8; --bloco:#1435C8; --sobre-bloco:#FFFFFF; --facho:#FF5B45;
+  --preencher-fundo:#FFF3D6; --preencher-tinta:#7A4B00; --preencher-borda:#E0A040;
+  --fd:'Archivo',system-ui,-apple-system,sans-serif;
+  --fc:'Karla',system-ui,-apple-system,sans-serif;
+  --fm:'DM Mono',ui-monospace,SFMono-Regular,monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fundo:#080B16; --papel:#0F1424; --tinta:#E9ECF7; --tinta-2:#A9B0C7; --tinta-3:#7C849D;
+    --linha:#232B44; --linha-2:#333C5C;
+    --mar:#8FA6FF; --bloco:#0D2185; --sobre-bloco:#FFFFFF; --facho:#FF7A63;
+    --preencher-fundo:#3A2A05; --preencher-tinta:#F0C77A; --preencher-borda:#8A6A20;
+  }
+}
+:root[data-theme="dark"]{
+  --fundo:#080B16; --papel:#0F1424; --tinta:#E9ECF7; --tinta-2:#A9B0C7; --tinta-3:#7C849D;
+  --linha:#232B44; --linha-2:#333C5C;
+  --mar:#8FA6FF; --bloco:#0D2185; --sobre-bloco:#FFFFFF; --facho:#FF7A63;
+  --preencher-fundo:#3A2A05; --preencher-tinta:#F0C77A; --preencher-borda:#8A6A20;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--fundo); color:var(--tinta);
+  font:400 16.5px/1.72 var(--fc); -webkit-font-smoothing:antialiased}
+.wrap{max-width:760px; margin:0 auto; padding:34px 20px 80px}
+a{color:var(--mar)}
+
+.topo{border-bottom:2px solid var(--tinta); padding-bottom:22px; margin-bottom:14px}
+.marca{display:inline-flex; align-items:center; gap:9px; text-decoration:none; color:inherit; margin-bottom:16px}
+.marca .mk{width:26px; height:26px; background:var(--mar); color:#fff; display:grid; place-items:center}
+.marca .mk svg{width:17px; height:17px}
+.marca .nm{font:800 17px/1 var(--fd); letter-spacing:.08em}
+h1{font:800 clamp(29px,6vw,42px)/1.07 var(--fd); font-variation-settings:"wdth" 112;
+  letter-spacing:-.025em; margin:0 0 12px}
+.datas{font:500 12.5px/1.6 var(--fm); color:var(--tinta-3)}
+
+.indice{background:var(--papel); border:1px solid var(--linha); padding:18px 22px; margin:26px 0 34px}
+.indice h2{font:700 12.5px/1 var(--fm); letter-spacing:.12em; text-transform:uppercase;
+  color:var(--tinta-3); margin:0 0 12px}
+.indice ol{margin:0; padding-left:20px; columns:2; column-gap:26px}
+.indice li{margin-bottom:6px; font-size:15px; break-inside:avoid}
+
+h2.sec{font:800 22.5px/1.2 var(--fd); letter-spacing:-.015em; margin:42px 0 10px;
+  padding-top:24px; border-top:1px solid var(--linha); scroll-margin-top:20px}
+h3{font:700 17px/1.3 var(--fc); margin:26px 0 8px}
+p{margin:0 0 15px}
+ul,ol.corpo{margin:0 0 15px; padding-left:22px}
+li{margin-bottom:8px}
+strong{font-weight:700}
+
+.bloco{background:var(--bloco); color:var(--sobre-bloco); padding:24px 26px;
+  border-left:6px solid var(--facho); margin:0 0 30px}
+.bloco p{margin:0 0 10px; opacity:.94; font-size:15.5px}
+.bloco p:last-child{margin-bottom:0}
+.bloco strong{color:#fff}
+
+.nota{border:1px solid var(--linha-2); border-left:4px solid var(--facho);
+  background:var(--papel); padding:15px 18px; margin:22px 0; font-size:15.5px; color:var(--tinta-2)}
+.nota .tit{display:block; font:700 15px/1.3 var(--fc); color:var(--tinta); margin-bottom:5px}
+
+/* Campos que a Fernanda precisa preencher. Amarelo forte de propósito:
+   publicar com um destes visível é pior do que não publicar. */
+.p{background:var(--preencher-fundo); color:var(--preencher-tinta);
+  border:1px dashed var(--preencher-borda); padding:1px 7px; font:600 14.5px/1.5 var(--fm);
+  white-space:nowrap}
+
+.tw{overflow-x:auto; margin:20px 0}
+table{width:100%; border-collapse:collapse; font-size:15.5px; min-width:520px}
+th{text-align:left; font:700 12px/1.3 var(--fm); letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tinta-3); padding:0 14px 10px 0; border-bottom:2px solid var(--tinta); vertical-align:bottom}
+td{padding:13px 14px 13px 0; border-bottom:1px solid var(--linha); vertical-align:top; color:var(--tinta-2)}
+td:first-child{color:var(--tinta); font-weight:600}
+
+.rodape{margin-top:52px; padding-top:22px; border-top:2px solid var(--tinta);
+  display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between;
+  font-size:14px; color:var(--tinta-3)}
+
+@media(max-width:600px){
+  .wrap{padding:26px 16px 60px}
+  .indice ol{columns:1}
+  body{font-size:16px}
+}
+@media print{
+  :root{--fundo:#fff; --papel:#fff; --tinta:#000; --tinta-2:#222; --tinta-3:#555; --linha:#ccc}
+  body{background:#fff; font-size:11pt}
+  .wrap{max-width:none; padding:0}
+  .indice{break-inside:avoid}
+  h2.sec{break-after:avoid}
+  .bloco{background:#eee!important; color:#000!important; border-left:4px solid #000}
+  .bloco strong{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topo">
+    <a class="marca" href="/">
+      <span class="mk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.4 8.5 9.6v4.8L1.5 16.6V7.4Z" fill="currentColor" opacity=".38"/><path d="M22.5 7.4 15.5 9.6v4.8l7 2.2V7.4Z" fill="currentColor" opacity=".38"/><path d="M12 1.6 15.4 5H8.6L12 1.6Z" fill="currentColor"/><rect x="8.8" y="5.6" width="6.4" height="4.2" fill="currentColor"/><path d="M9.2 10.6h5.6L16.2 22H7.8L9.2 10.6Z" fill="currentColor" opacity=".85"/></svg></span>
+      <span class="nm">FAROL</span>
+    </a>
+    <h1>Política de Privacidade</h1>
+    <p class="datas">Em vigor desde <strong>01/09/2026</strong> · Última atualização em <strong>01/09/2026</strong></p>
+  </div>
+
+  <div class="bloco">
+    <p><strong>O resumo honesto.</strong> O Farol guarda o e-mail e a senha de quem contrata, os nomes dos clientes que a agência cadastra e os números de desempenho que ela lança. Não vendemos nada disso, não usamos para publicidade e não cruzamos com dados de outras agências.</p>
+    <p>Sua senha nunca é guardada: gravamos só uma marca matemática dela, que não pode ser revertida. Nem nós conseguimos descobrir qual é.</p>
+    <p>Este resumo é para você entender rápido. O que vale juridicamente é o texto completo abaixo.</p>
+  </div>
+
+  <div class="indice">
+    <h2>Neste documento</h2>
+    <ol>
+      <li><a href="#quem">Quem somos</a></li>
+      <li><a href="#papeis">Nossos dois papéis</a></li>
+      <li><a href="#dados">Que dados tratamos</a></li>
+      <li><a href="#bases">Por que podemos tratar</a></li>
+      <li><a href="#uso">Para que usamos</a></li>
+      <li><a href="#compartilha">Com quem compartilhamos</a></li>
+      <li><a href="#internacional">Servidores fora do Brasil</a></li>
+      <li><a href="#tempo">Por quanto tempo guardamos</a></li>
+      <li><a href="#direitos">Seus direitos</a></li>
+      <li><a href="#seguranca">Segurança</a></li>
+      <li><a href="#cookies">Cookies</a></li>
+      <li><a href="#menores">Menores de idade</a></li>
+      <li><a href="#instagram">Conexão com o Instagram</a></li>
+      <li><a href="#mudancas">Mudanças nesta política</a></li>
+      <li><a href="#contato">Como falar com a gente</a></li>
+    </ol>
+  </div>
+
+  <h2 class="sec" id="quem">1. Quem somos</h2>
+  <p>O Farol é um sistema de relatórios e diagnóstico para agências de marketing e social media, operado por <span class="p">RAZÃO SOCIAL OU NOME COMPLETO</span>, inscrita no <span class="p">CNPJ OU CPF</span>, com sede em <span class="p">ENDEREÇO COMPLETO</span>.</p>
+  <p>Nesta política, "Farol", "nós" e "nosso" se referem a essa pessoa. "Você" se refere a quem usa o sistema.</p>
+  <p>Encarregado pelo tratamento de dados pessoais (o "DPO" da LGPD): <span class="p">NOME DO ENCARREGADO</span>, pelo e-mail <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a>.</p>
+
+  <h2 class="sec" id="papeis">2. Nossos dois papéis</h2>
+  <p>Esta é a parte que mais confunde, e ela muda a quem você deve recorrer. O Farol ocupa dois papéis diferentes ao mesmo tempo, na linguagem da Lei Geral de Proteção de Dados (Lei 13.709/2018):</p>
+
+  <h3>Somos <strong>controladores</strong> dos dados da agência</h3>
+  <p>Sobre os dados de quem contrata o Farol — nome da agência, e-mail, senha, plano contratado, histórico de pagamento — <strong>nós</strong> decidimos o que é coletado e por quê. Se você é a agência, é com a gente que você fala.</p>
+
+  <h3>Somos <strong>operadores</strong> dos dados que a agência insere</h3>
+  <p>Sobre os dados que a agência cadastra no sistema — nomes dos clientes dela, contatos, números de desempenho — quem decide é <strong>a agência</strong>. Nós apenas guardamos e processamos conforme ela determina.</p>
+  <p>Na prática: se você é dono de um restaurante e sua agência usa o Farol, o responsável pelos seus dados é <strong>a agência</strong>, não nós. Peça a ela. Se ela nos acionar, atendemos.</p>
+
+  <div class="nota">
+    <span class="tit">Se você é a agência, isso é obrigação sua</span>
+    Ao cadastrar dados de terceiros no Farol, você declara ter base legal para isso. Se você insere o nome e o telefone de um cliente, é você quem precisa poder justificar esse tratamento perante a ANPD — nós não temos como saber que combinação você fez com ele. Recomendamos prever isso no seu contrato de prestação de serviço.
+  </div>
+
+  <h2 class="sec" id="dados">3. Que dados tratamos</h2>
+  <p>Só coletamos o que o sistema precisa para funcionar. Não há rastreador de comportamento, não há perfilamento publicitário e não compramos listas de ninguém.</p>
+
+  <div class="tw">
+  <table>
+    <thead><tr><th>Dado</th><th>De onde vem</th><th>Para quê</th></tr></thead>
+    <tbody>
+      <tr><td>Nome da agência</td><td>você digita no cadastro</td><td>identificar a conta e assinar os relatórios</td></tr>
+      <tr><td>E-mail</td><td>você digita no cadastro</td><td>login, recuperação de senha e avisos sobre o serviço</td></tr>
+      <tr><td>Senha</td><td>você escolhe</td><td>autenticação. Guardamos apenas o resultado de <em>scrypt</em> — a senha em si nunca é gravada nem trafega para nossos registros</td></tr>
+      <tr><td>Endereço IP</td><td>automático, a cada acesso</td><td>limitar tentativas de login e conter ataque de força bruta</td></tr>
+      <tr><td>Plano e status</td><td>do meio de pagamento</td><td>liberar os recursos contratados</td></tr>
+      <tr><td>Nome e ramo dos clientes da agência</td><td>a agência digita</td><td>organizar a carteira e montar os relatórios</td></tr>
+      <tr><td>Números de desempenho</td><td>a agência lança, ou vêm da rede social conectada</td><td>gerar gráficos e o diagnóstico</td></tr>
+      <tr><td>Resultado comercial mensal</td><td>a agência lança</td><td>relacionar entrega com resultado do negócio</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>Não coletamos</strong> dados sensíveis na acepção do art. 5º, II da LGPD — origem racial ou étnica, convicção religiosa, opinião política, filiação sindical, dado de saúde, vida sexual, dado genético ou biométrico. Não peça e não cadastre esse tipo de informação no Farol; o sistema não foi feito para isso.</p>
+
+  <h2 class="sec" id="bases">4. Por que podemos tratar (bases legais)</h2>
+  <ul>
+    <li><strong>Execução de contrato</strong> (art. 7º, V): tudo que é necessário para o sistema entregar o que você contratou — conta, login, relatórios, cobrança.</li>
+    <li><strong>Cumprimento de obrigação legal</strong> (art. 7º, II): guarda de registros de acesso por 6 meses, conforme o art. 15 do Marco Civil da Internet, e obrigações fiscais.</li>
+    <li><strong>Legítimo interesse</strong> (art. 7º, IX): segurança da plataforma — limite de tentativas de login, registro de IP para conter abuso. Também usamos essa base para avisos operacionais sobre o serviço.</li>
+    <li><strong>Consentimento</strong> (art. 7º, I): apenas quando você conecta uma conta do Instagram, autorizando na página da própria Meta. Você pode revogar a qualquer momento.</li>
+  </ul>
+
+  <h2 class="sec" id="uso">5. Para que usamos</h2>
+  <p>Usamos os dados para: manter sua conta e autenticar seu acesso; gerar os relatórios, gráficos e leituras de diagnóstico; enviar o link de recuperação de senha quando você pede; cobrar a assinatura; e avisar sobre mudanças relevantes no serviço.</p>
+  <p><strong>Não usamos</strong> para publicidade, não vendemos, não alugamos e não cedemos seus dados a terceiros com finalidade comercial. Não cruzamos os dados de uma agência com os de outra: cada consulta ao banco é filtrada pela conta de quem está logado.</p>
+  <p>As leituras do diagnóstico são cálculos sobre o histórico do próprio cliente. Elas apontam <em>associação</em> entre o que foi feito e o que aconteceu — nunca afirmam causa — e não constituem decisão automatizada que afete a esfera jurídica de ninguém, nos termos do art. 20 da LGPD.</p>
+
+  <h2 class="sec" id="compartilha">6. Com quem compartilhamos</h2>
+  <p>Compartilhamos apenas com quem é necessário para o sistema funcionar. Estes são todos os nossos fornecedores:</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Quem</th><th>Para quê</th><th>O que vê</th></tr></thead>
+    <tbody>
+      <tr><td>Supabase</td><td>banco de dados</td><td>tudo o que está guardado no sistema</td></tr>
+      <tr><td>Vercel</td><td>hospedagem e execução</td><td>os dados em trânsito e registros de acesso</td></tr>
+      <tr><td>Google (Gmail)</td><td>envio dos e-mails de recuperação de senha</td><td>o e-mail do destinatário e o conteúdo da mensagem</td></tr>
+      <tr><td>Cakto</td><td>checkout e cobrança da assinatura</td><td>nome, e-mail, CPF e dados de pagamento de quem contrata. O checkout roda no ambiente da Cakto e não passa por nós</td></tr>
+      <tr><td>Meta (Instagram)</td><td>só se você conectar uma conta</td><td>o que você autorizar na tela da própria Meta</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Também podemos compartilhar dados quando houver ordem judicial ou requisição de autoridade competente, nos limites da lei.</p>
+  <p><strong>Não temos acesso aos seus dados de cartão.</strong> Eles são digitados diretamente no ambiente do meio de pagamento e não passam pelos nossos servidores.</p>
+
+  <h2 class="sec" id="internacional">7. Servidores fora do Brasil</h2>
+  <p>Supabase, Vercel e Google mantêm servidores fora do território nacional. Isso significa que <strong>seus dados são transferidos internacionalmente</strong>, o que a LGPD permite nos termos do art. 33 — no nosso caso, por ser necessário à execução do contrato que você firmou conosco, e mediante cláusulas contratuais que esses fornecedores adotam para proteção de dados.</p>
+  <p>Se isso for impeditivo para você ou para o seu cliente, fale com a gente antes de contratar. É melhor saber agora.</p>
+
+  <h2 class="sec" id="tempo">8. Por quanto tempo guardamos</h2>
+  <ul>
+    <li><strong>Enquanto a conta existir</strong>: dados de cadastro, clientes e números lançados.</li>
+    <li><strong>Registros de acesso</strong>: 6 meses, por exigência do Marco Civil da Internet.</li>
+    <li><strong>Documentos fiscais</strong>: 5 anos, por exigência da legislação tributária.</li>
+    <li><strong>Sessões de login</strong>: expiram em 14 dias e são apagadas automaticamente.</li>
+    <li><strong>Links de recuperação de senha</strong>: valem 1 hora, servem uma única vez e são apagados em seguida.</li>
+    <li><strong>Depois do cancelamento</strong>: apagamos os dados da conta em até <strong>30</strong> dias, exceto o que a lei nos obriga a manter.</li>
+  </ul>
+
+  <h2 class="sec" id="direitos">9. Seus direitos</h2>
+  <p>O art. 18 da LGPD te garante, a qualquer momento e gratuitamente:</p>
+  <ul>
+    <li><strong>Confirmação e acesso</strong> — saber se tratamos dados seus e receber uma cópia.</li>
+    <li><strong>Correção</strong> — atualizar dado incompleto, inexato ou desatualizado.</li>
+    <li><strong>Anonimização, bloqueio ou eliminação</strong> — de dado desnecessário, excessivo ou tratado em desconformidade com a lei.</li>
+    <li><strong>Portabilidade</strong> — receber seus dados em formato que sirva para levar a outro fornecedor.</li>
+    <li><strong>Eliminação</strong> dos dados tratados com base no seu consentimento.</li>
+    <li><strong>Informação</strong> sobre com quem compartilhamos.</li>
+    <li><strong>Revogação do consentimento</strong>, quando essa for a base usada.</li>
+    <li><strong>Oposição</strong> a tratamento feito com base em legítimo interesse.</li>
+  </ul>
+  <p>Para exercer qualquer um deles, escreva para <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a> do e-mail cadastrado na conta. Respondemos em até <strong>15 dias</strong>. Podemos pedir informação adicional para confirmar que é você — é proteção sua, não obstáculo.</p>
+  <p>Você também pode peticionar diretamente à <strong>ANPD</strong>, a Autoridade Nacional de Proteção de Dados.</p>
+
+  <div class="nota">
+    <span class="tit">Como pedir a exclusão da sua conta</span>
+    Mande um e-mail para <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a> com o assunto <strong>"Excluir minha conta"</strong>, do endereço cadastrado. Apagamos a conta e tudo que está ligado a ela — clientes, publicações, resultados e relatórios — em até <strong>30</strong> dias. Os links de relatório que você já tiver enviado aos seus clientes param de funcionar. Essa exclusão é definitiva e não tem como desfazer.
+  </div>
+
+  <h2 class="sec" id="seguranca">10. Segurança</h2>
+  <p>O que fazemos, em português:</p>
+  <ul>
+    <li>Sua senha nunca é gravada. Guardamos o resultado de uma função de derivação (<em>scrypt</em>) com sal aleatório, e a comparação é feita em tempo constante.</li>
+    <li>O cookie de sessão é <em>HttpOnly</em>: o JavaScript da página não consegue lê-lo, o que impede que um script malicioso roube seu acesso.</li>
+    <li>Todo o tráfego é criptografado por HTTPS.</li>
+    <li>Login errado tem limite por e-mail e por endereço IP.</li>
+    <li>Cada consulta ao banco é filtrada pela conta de quem está logado. Trocar o identificador no endereço não mostra dado de outra agência.</li>
+    <li>A chave de acesso ao banco existe apenas no servidor e nunca é enviada ao navegador.</li>
+  </ul>
+  <p>Nenhum sistema é inviolável, e seria desonesto prometer o contrário. Se ocorrer incidente de segurança com risco relevante aos seus direitos, comunicaremos você e a ANPD, nos termos do art. 48 da LGPD.</p>
+
+  <h2 class="sec" id="cookies">11. Cookies</h2>
+  <p>Usamos <strong>um</strong> cookie, chamado <code>sessao</code>, que serve exclusivamente para manter você conectado. Ele é estritamente necessário ao funcionamento do sistema, expira em 14 dias e não acompanha você por outros sites.</p>
+  <p>Não usamos cookies de publicidade, de rastreamento ou de análise de comportamento. Por isso não há banner de cookies aqui: não há nada para você aceitar ou recusar.</p>
+  <p>O sistema também guarda no seu navegador a preferência de tema (claro ou escuro). Isso fica só no seu aparelho e nunca chega até nós.</p>
+
+  <h2 class="sec" id="menores">12. Menores de idade</h2>
+  <p>O Farol é destinado a profissionais e empresas. Não é dirigido a menores de 18 anos e não coletamos conscientemente dados de crianças ou adolescentes. Se identificarmos que isso aconteceu, apagaremos o registro.</p>
+
+  <h2 class="sec" id="instagram">13. Conexão com o Instagram</h2>
+  <p>Se a agência ou o cliente final optar por conectar uma conta do Instagram, a autorização acontece <strong>na página da própria Meta</strong>. O Farol nunca pede, nunca vê e nunca guarda a senha da rede social — recebemos apenas um token de acesso, que pode ser revogado a qualquer momento pelo titular, tanto no Farol quanto nas configurações da conta Meta.</p>
+  <p>O que recebemos são as métricas de desempenho que você autorizar: alcance, visualizações, interações e salvamentos das publicações. Não lemos mensagens diretas e não publicamos nada em seu nome.</p>
+
+  <h2 class="sec" id="mudancas">14. Mudanças nesta política</h2>
+  <p>Se mudarmos algo relevante, avisamos pelo e-mail cadastrado com pelo menos <strong>15 dias</strong> de antecedência e atualizamos a data no topo desta página. Continuar usando o sistema depois disso significa concordar com o texto novo. Se não concordar, você pode cancelar sem custo.</p>
+
+  <h2 class="sec" id="contato">15. Como falar com a gente</h2>
+  <p>Dúvida, pedido ou reclamação sobre dados pessoais: <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a></p>
+  <p>Assuntos gerais: <a href="mailto:ocontatodavid@gmail.com">ocontatodavid@gmail.com</a></p>
+  <p>Endereço: <span class="p">ENDEREÇO COMPLETO</span></p>
+
+  <div class="rodape">
+    <span>Farol · <a href="/termos.html">Termos de Uso</a> · <a href="/">Início</a></span>
+    <span>Feito no Brasil</span>
+  </div>
+</div>
+</body>
+</html>

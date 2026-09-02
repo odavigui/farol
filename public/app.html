@@ -492,6 +492,7 @@ svg.chart{display:block; width:100%; height:auto; overflow:visible}
 .tarja-bt{
   flex:none; padding:7px 15px; border-radius:8px; font-size:13.5px; font-weight:700;
   background:var(--acc); color:var(--on-acc); text-decoration:none; white-space:nowrap;
+  border:0; font-family:inherit; cursor:pointer;
 }
 .tarja-bt:hover{filter:brightness(1.08)}
 .role.trava{opacity:.45; cursor:not-allowed}
@@ -752,6 +753,10 @@ var CONTA = { entrou:false, email:"", agencia:"", plano:"essencial", desde:"", t
               testeVencido:false, diasDeTeste:null, diasTeste:14 };
 /* Cópia do servidor, só para desenhar a interface. Quem decide é a API. */
 var PLANO_SERVIDOR = null;
+/* A conexão automática com o Instagram depende de o app estar aprovado na
+   Meta. Quem sabe disso é o servidor (/api/estado); a tela só obedece.
+   Falso por padrão: na dúvida, não prometer. */
+var INTEGRACAO = { instagram:false };
 function plano(){ return PLANO_SERVIDOR || PLANOS[CONTA.plano] || PLANOS.essencial; }
 function pode(recurso){ return !!plano().recursos[recurso]; }
 
@@ -1392,11 +1397,17 @@ function viewLancar(){
     h += '<div class="card" style="margin-top:16px; border-style:dashed"><div class="card-b" style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap">'
       + '<span class="ins-ic ac" style="width:38px;height:38px;border-radius:10px">⚡</span>'
       + '<div style="flex:1; min-width:260px; display:flex; flex-direction:column; gap:7px">'
-      + '<span style="font-family:var(--fd); font-weight:800; font-size:17px">Cansou de digitar? Peça para '+esc(c.nome)+' conectar a conta</span>'
-      + '<p style="font-size:14.5px; color:var(--ink-2)">O cliente entra com o próprio Instagram, autoriza uma vez, e as publicações passam a chegar sozinhas — com alcance, salvamentos e compartilhamentos direto da fonte.</p>'
-      + '<p style="font-size:13px; color:var(--ink-3)">O sistema nunca pede nem guarda a senha dele. A autorização acontece na página da própria Meta.</p>'
+      + '<span style="font-family:var(--fd); font-weight:800; font-size:17px">' + (INTEGRACAO.instagram
+          ? 'Cansou de digitar? Peça para '+esc(c.nome)+' conectar a conta'
+          : 'Conectar a conta de '+esc(c.nome)+' — em breve') + '</span>'
+      + '<p style="font-size:14.5px; color:var(--ink-2)">' + (INTEGRACAO.instagram
+          ? 'O cliente entra com o próprio Instagram, autoriza uma vez, e as publicações passam a chegar sozinhas — com alcance, salvamentos e compartilhamentos direto da fonte.'
+          : 'Quando a Meta aprovar o app, o cliente vai autorizar uma vez e as publicações passarão a chegar sozinhas. <b>Ainda não está disponível</b> — por enquanto, o lançamento é por aqui.') + '</p>'
+      + '<p style="font-size:13px; color:var(--ink-3)">' + (INTEGRACAO.instagram
+          ? 'O sistema nunca pede nem guarda a senha dele. A autorização acontece na página da própria Meta.'
+          : 'O diagnóstico não depende disso: ele lê os números que você lançar, venham de onde vierem.') + '</p>'
       + '</div>'
-      + '<button class="btn" type="button" data-connect="'+c.id+'">Conectar Instagram</button>'
+      + btConectar(c.id, '')
       + '</div></div>';
   }
 
@@ -1469,10 +1480,25 @@ function viewResultado(){
 
 function viewConexoes(){
   var h = '<div class="phead"><div><span class="eyebrow">Integração</span><h1>Contas conectadas</h1>'
-    + '<p class="desc">O cliente autoriza uma vez, na própria tela da Meta, e o sistema passa a buscar publicações e métricas sozinho. A agência nunca vê nem digita a senha de ninguém.</p></div></div>';
+    + '<p class="desc">' + (INTEGRACAO.instagram
+        ? 'O cliente autoriza uma vez, na própria tela da Meta, e o sistema passa a buscar publicações e métricas sozinho. A agência nunca vê nem digita a senha de ninguém.'
+        : 'Esta é a integração que vai poupar a digitação quando estiver no ar. Hoje ela não está — e a página inteira abaixo descreve o destino, não o presente.')
+    + '</p></div></div>';
+
+  if (!INTEGRACAO.instagram){
+    h += '<div class="tarja venceu" style="margin-bottom:18px">'
+      + '<span class="tarja-tx"><b>A conexão automática ainda não está disponível.</b> '
+      + 'O app do Farol está em aprovação na Meta, que exige verificação da empresa e revisão humana das permissões de métricas. '
+      + 'Até lá, nenhuma conta pode ser conectada de verdade — e o sistema prefere dizer isso a fingir que conectou. '
+      + '<b>O lançamento manual entrega o mesmo diagnóstico</b>, com quatro números por publicação.</span>'
+      + '<button class="tarja-bt" type="button" data-view="lancar">Lançar publicação</button>'
+      + '</div>';
+  }
 
   h += '<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Seus clientes</h3>'
-     + '<span class="sub">o convite vai por link, o cliente autoriza pelo celular dele</span></div><div class="clist">';
+     + '<span class="sub">' + (INTEGRACAO.instagram
+         ? 'o convite vai por link, o cliente autoriza pelo celular dele'
+         : 'todos no modo manual — é assim que o sistema funciona hoje') + '</span></div><div class="clist">';
 
   CLIENTES.forEach(function(c){
     var x = CONEX[c.id];
@@ -1487,13 +1513,13 @@ function viewConexoes(){
       + (x.ligada
           ? '<span style="display:flex; gap:8px"><button class="btn ghost sm" data-sync="'+c.id+'">Sincronizar agora</button>'
             + '<button class="btn ghost sm" data-unlink="'+c.id+'">Desconectar</button></span>'
-          : '<button class="btn sm" data-connect="'+c.id+'">Conectar Instagram</button>')
+          : btConectar(c.id, 'sm'))
       + '</div>';
   });
   h += '</div></div>';
 
   h += '<div class="grid g2">'
-    + '<div class="card"><div class="card-h"><h3>O que muda quando conecta</h3></div><div class="card-b">'
+    + '<div class="card"><div class="card-h"><h3>' + (INTEGRACAO.instagram ? 'O que muda quando conecta' : 'O que vai mudar quando conectar') + '</h3></div><div class="card-b">'
     + '<div class="incl2">'
     + itemOk("As publicações entram sozinhas, sem ninguém colar link")
     + itemOk("Alcance, visualizações, salvamentos e compartilhamentos vêm da fonte")
@@ -1515,6 +1541,18 @@ function viewConexoes(){
 
   return h;
 }
+/* O botão de conectar. Enquanto a Meta não aprovar o app, ele fica visível
+   mas desativado, dizendo por quê. Esconder daria a impressão de que o
+   recurso não existe; deixar clicável daria a impressão de que funciona. */
+function btConectar(cid, tam){
+  var cls = "btn" + (tam ? " " + tam : "");
+  if (INTEGRACAO.instagram)
+    return '<button class="' + cls + '" type="button" data-connect="' + cid + '">Conectar Instagram</button>';
+  return '<button class="' + cls + ' ghost" type="button" disabled '
+       + 'title="Em aprovação na Meta. Enquanto isso, lance as publicações pelo formulário.">'
+       + 'Conectar · em breve</button>';
+}
+
 function itemOk(t){ return '<div><span class="tickr ok">✓</span><span>'+esc(t)+'</span></div>'; }
 function itemWa(t){ return '<div><span class="tickr wa">!</span><span>'+esc(t)+'</span></div>'; }
 
@@ -1553,6 +1591,24 @@ function abrirConexao(cid, passo){
   var c = cli(cid);
   var m = $("#modal");
   var body = "";
+
+  // Cinto e suspensório: o botão já está desativado, mas se alguém chegar
+  // aqui por outro caminho, o fluxo de 3 passos não pode abrir e sugerir
+  // que existe uma conexão a fazer. O servidor recusaria de todo jeito.
+  if (!INTEGRACAO.instagram){
+    m.querySelector(".mbody").innerHTML =
+        '<span class="eyebrow">Integração</span>'
+      + '<h3 class="mtit">Ainda não dá para conectar</h3>'
+      + '<p class="mtxt">O app do Farol está em aprovação na Meta. Até sair, nenhuma conta '
+      + 'do Instagram pode ser ligada de verdade — e conectar "de mentira" seria pior: você '
+      + 'pararia de lançar, achando que os números estavam entrando sozinhos.</p>'
+      + '<p class="mtxt">O diagnóstico de <b>' + esc(c.nome) + '</b> não depende disso. '
+      + 'Ele lê os números que você lançar, e são quatro por publicação.</p>'
+      + '<div class="macts"><button class="btn ghost" data-mclose="1">Fechar</button>'
+      + '<button class="btn" data-mclose="1" data-view="lancar">Ir para o lançamento</button></div>';
+    m.classList.add("on");
+    return;
+  }
 
   if (passo === 1){
     body = '<span class="eyebrow">Passo 1 de 3</span>'
@@ -1780,6 +1836,7 @@ function aplicarPlano(p){
 async function carregarEstado(){
   var d = await api("GET", "/api/estado");
   CONTA.email = d.conta.email; CONTA.agencia = d.conta.agencia;
+  INTEGRACAO.instagram = !!(d.integracao && d.integracao.instagram);
   CONTA.desde = new Date(d.conta.criadaEm).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
   aplicarPlano(d.plano);
 
@@ -2329,8 +2386,13 @@ $("#modal").addEventListener("submit", async function(e){
 
 /* --- eventos do modal --- */
 $("#modal").addEventListener("click", function(e){
-  if (e.target.id === "modal" || e.target.closest("[data-mclose]")){
-    $("#modal").classList.remove("on"); render(); return;
+  var fechar = e.target.closest("[data-mclose]");
+  if (e.target.id === "modal" || fechar){
+    // Um botão do modal pode fechar E levar para outra tela ao mesmo tempo.
+    var ir = fechar && fechar.dataset.view;
+    $("#modal").classList.remove("on");
+    if (ir) state.view = ir;
+    render(); return;
   }
   var st = e.target.closest("[data-mstep]");
   if (st){
