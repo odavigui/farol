@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Relatório</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Karla:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ---------------------------------------------------------------------
+   Relatório do cliente final.
+
+   Esta página é PÚBLICA por link, sem login: quem tem o endereço vê. Por
+   isso ela só mostra o que o dono do negócio já sabe sobre o próprio
+   negócio — nada da agência, nada de outro cliente, nada de dinheiro de
+   contrato. Quem decide o que sai daqui é o servidor, em
+   GET /api/relatorio/:token.
+
+   O <meta robots> impede que o Google indexe o link.
+   --------------------------------------------------------------------- */
+:root{
+  --fundo:#F4F6FB; --papel:#FFFFFF; --tinta:#0B1020; --tinta-2:#454C63; --tinta-3:#767D93;
+  --linha:#D8DEEE; --linha-2:#C2CBE3;
+  --mar:#1435C8; --bloco:#1435C8; --sobre-bloco:#FFFFFF;
+  --facho:#FF5B45; --folha:#0E8A5F;
+  --dado:#2E5BE0; --dado-2:#F2634A;
+  --fd:'Archivo',system-ui,-apple-system,sans-serif;
+  --fc:'Karla',system-ui,-apple-system,sans-serif;
+  --fm:'DM Mono',ui-monospace,SFMono-Regular,monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fundo:#080B16; --papel:#0F1424; --tinta:#E9ECF7; --tinta-2:#A9B0C7; --tinta-3:#7C849D;
+    --linha:#232B44; --linha-2:#333C5C;
+    --mar:#8FA6FF; --bloco:#0D2185; --sobre-bloco:#FFFFFF;
+    --facho:#FF7A63; --folha:#3FBF8C;
+    --dado:#5580EB; --dado-2:#E5673F;
+  }
+}
+:root[data-theme="dark"]{
+  --fundo:#080B16; --papel:#0F1424; --tinta:#E9ECF7; --tinta-2:#A9B0C7; --tinta-3:#7C849D;
+  --linha:#232B44; --linha-2:#333C5C;
+  --mar:#8FA6FF; --bloco:#0D2185; --sobre-bloco:#FFFFFF;
+  --facho:#FF7A63; --folha:#3FBF8C;
+  --dado:#5580EB; --dado-2:#E5673F;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--fundo); color:var(--tinta);
+  font:400 16px/1.6 var(--fc); -webkit-font-smoothing:antialiased}
+.wrap{max-width:900px; margin:0 auto; padding:26px 18px 64px}
+
+/* ---- topo ---- */
+.topo{display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; justify-content:space-between;
+  border-bottom:2px solid var(--tinta); padding-bottom:18px; margin-bottom:26px}
+.quem{min-width:0}
+.eyebrow{display:block; font:500 11px/1 var(--fm); letter-spacing:.16em; text-transform:uppercase;
+  color:var(--mar); margin-bottom:9px}
+.topo h1{font:800 clamp(25px,5.2vw,36px)/1.08 var(--fd); font-variation-settings:"wdth" 112;
+  letter-spacing:-.025em; margin:0}
+.topo .por{margin:7px 0 0; font-size:14.5px; color:var(--tinta-3)}
+.acoes{display:flex; gap:9px; flex:none}
+.bt{font:700 14px/1 var(--fc); background:transparent; color:var(--tinta);
+  border:1px solid var(--linha-2); padding:11px 15px; cursor:pointer; white-space:nowrap}
+.bt:hover{border-color:var(--mar); color:var(--mar)}
+
+/* ---- manchete ---- */
+.hero{background:var(--bloco); color:var(--sobre-bloco); padding:28px 28px 26px;
+  border-left:6px solid var(--facho); margin-bottom:16px}
+.hero h2{font:900 clamp(21px,4.1vw,31px)/1.14 var(--fd); font-variation-settings:"wdth" 108;
+  letter-spacing:-.03em; margin:0 0 12px}
+.hero p{margin:0; font-size:15.5px; line-height:1.65; opacity:.93; max-width:62ch}
+
+/* ---- números ---- */
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px}
+.kpi{background:var(--papel); border:1px solid var(--linha); padding:16px 16px 14px}
+.kpi .n{display:block; font:500 11px/1.35 var(--fm); letter-spacing:.06em; text-transform:uppercase;
+  color:var(--tinta-3); margin-bottom:8px}
+.kpi .v{display:block; font:800 clamp(23px,3.6vw,31px)/1 var(--fd); letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums}
+.kpi .d{display:block; margin-top:7px; font-size:13px; color:var(--tinta-2); line-height:1.45}
+.kpi .var{display:inline-block; margin-top:7px; font:600 12.5px/1 var(--fm); padding:4px 7px}
+.var.sobe{color:var(--folha)} .var.desce{color:var(--dado-2)}
+
+/* ---- blocos ---- */
+.card{background:var(--papel); border:1px solid var(--linha); margin-bottom:16px}
+.card-h{display:flex; flex-wrap:wrap; gap:8px; align-items:baseline; justify-content:space-between;
+  padding:15px 18px; border-bottom:1px solid var(--linha)}
+.card-h h3{font:700 16.5px/1.25 var(--fc); margin:0}
+.card-h .sub{font:400 13px/1 var(--fc); color:var(--tinta-3)}
+.card-b{padding:18px}
+.g2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px}
+.g2 .card{margin:0}
+
+/* ---- barras por mês ---- */
+.barras{display:flex; align-items:flex-end; gap:8px; padding-top:6px}
+.col{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:7px; min-width:0}
+.col .fl{width:100%; display:block; background:var(--dado)}
+.col.b2 .fl{background:var(--dado-2)}
+.col .rot{font:400 11px/1 var(--fm); color:var(--tinta-3); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; max-width:100%}
+.col .val{font:500 12px/1 var(--fm); color:var(--tinta-2); font-variant-numeric:tabular-nums}
+
+/* ---- melhor conteúdo ---- */
+.top-t{font:800 clamp(18px,3vw,23px)/1.25 var(--fd); letter-spacing:-.02em; margin:0 0 8px}
+.top-d{margin:0; font-size:14.5px; color:var(--tinta-2); line-height:1.6}
+.lista{list-style:none; margin:0; padding:0}
+.lista li{display:flex; gap:14px; align-items:baseline; padding:12px 0; border-bottom:1px solid var(--linha)}
+.lista li:last-child{border-bottom:0; padding-bottom:0}
+.lista .pos{font:500 12px/1 var(--fm); color:var(--tinta-3); flex:none; width:20px}
+.lista .tit{flex:1; min-width:0; font-size:15px}
+.lista .tit small{display:block; color:var(--tinta-3); font-size:12.5px; margin-top:3px}
+.lista .num{font:600 14px/1 var(--fm); font-variant-numeric:tabular-nums; flex:none}
+
+/* ---- próximos passos ---- */
+.ins{display:flex; gap:13px; padding:15px 18px; border-bottom:1px solid var(--linha)}
+.ins:last-child{border-bottom:0}
+.ins .ic{flex:none; width:26px; height:26px; display:grid; place-items:center;
+  background:var(--facho); color:#0B1020; font:700 14px/1 var(--fc)}
+.ins .t{display:block; font:700 15.5px/1.35 var(--fc); margin-bottom:4px}
+.ins .d{display:block; font-size:14.5px; color:var(--tinta-2); line-height:1.55}
+
+.rodape{margin-top:30px; padding-top:18px; border-top:1px solid var(--linha);
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between;
+  font-size:13px; color:var(--tinta-3)}
+.rodape a{color:var(--mar)}
+
+/* ---- estados ---- */
+.aviso{background:var(--papel); border:2px solid var(--tinta); padding:34px 28px; text-align:center;
+  max-width:520px; margin:56px auto}
+.aviso h2{font:800 23px/1.2 var(--fd); margin:0 0 10px}
+.aviso p{margin:0; color:var(--tinta-2); font-size:15.5px}
+.carregando{text-align:center; color:var(--tinta-3); padding:70px 20px; font-size:15px}
+
+@media(max-width:820px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:640px){
+  .wrap{padding:20px 14px 50px}
+  .g2{grid-template-columns:1fr}
+  .hero{padding:22px 20px}
+  .acoes{width:100%}
+  .bt{flex:1; text-align:center}
+  .barras{gap:5px}
+  .col .rot{font-size:10px}
+}
+
+/* ---- impressão: vira PDF pela própria janela do navegador ---- */
+@media print{
+  :root{--fundo:#fff; --papel:#fff; --tinta:#000; --tinta-2:#333; --tinta-3:#666; --linha:#ccc}
+  body{background:#fff}
+  .acoes{display:none}
+  .wrap{max-width:none; padding:0}
+  .card,.kpi,.hero{break-inside:avoid; page-break-inside:avoid}
+  .hero{background:#1435C8!important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  .col .fl{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="raiz">
+  <p class="carregando">Carregando seu relatório…</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var raiz = document.getElementById("raiz");
+
+  /* O token vem do próprio endereço: /r/<token>. Nunca é digitado.
+     Aceita também /relatorio.html?c=<token>, que funciona mesmo se a
+     reescrita do vercel.json não estiver valendo no servidor. */
+  function token(){
+    var m = location.pathname.match(/\/r\/([^/?#]+)/);
+    if (m) return m[1];
+    m = location.search.match(/[?&]c=([^&#]+)/);
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function(m){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[m];
+    });
+  }
+  function num(n){ return (n || 0).toLocaleString("pt-BR"); }
+  function curto(n){
+    n = n || 0;
+    if (n >= 1e6) return (n/1e6).toFixed(1).replace(".", ",") + "M";
+    if (n >= 1e3) return (n/1e3).toFixed(n >= 1e4 ? 0 : 1).replace(".", ",") + "k";
+    return String(n);
+  }
+  function pc(x){ return Math.round(Math.abs(x) * 100) + "%"; }
+
+  function aviso(titulo, texto){
+    raiz.innerHTML = '<div class="aviso"><h2>' + esc(titulo) + '</h2><p>' + esc(texto) + '</p></div>';
+  }
+
+  /* ---------------- barras por mês ---------------- */
+  /* A altura sai em PIXELS, não em porcentagem. Porcentagem só funciona
+     quando o elemento de cima tem altura definida — e numa coluna de flex
+     alinhada ao pé ele não tem, então a barra virava um risco de 3px. */
+  var ALTURA = 104;
+
+  function barras(hist, campo, classe, formata){
+    var max = 0;
+    hist.forEach(function(h){ if (h[campo] > max) max = h[campo]; });
+    if (!max) return '<p style="color:var(--tinta-3); font-size:14px; margin:0">Ainda sem histórico suficiente.</p>';
+    return '<div class="barras">' + hist.map(function(h){
+      var alt = Math.max(Math.round((h[campo] / max) * ALTURA), 3);
+      return '<div class="col ' + classe + '">'
+        + '<span class="val">' + formata(h[campo]) + '</span>'
+        + '<span class="fl" style="height:' + alt + 'px"></span>'
+        + '<span class="rot">' + esc(h.rotulo) + '</span>'
+        + '</div>';
+    }).join("") + '</div>';
+  }
+
+  /* ---------------- desenho ---------------- */
+  function desenhar(d){
+    var c = d.cliente || {};
+    var ag = d.agora || {};
+    var an = d.antes || {};
+    var hist = d.historico || [];
+    var melhores = d.melhores || [];
+    var ultimo = hist.length ? hist[hist.length - 1] : null;
+    var metrica = c.metrica || "resultados";
+
+    document.title = "Relatório · " + (c.nome || "");
+
+    var h = '';
+
+    /* topo */
+    h += '<div class="topo"><div class="quem">'
+      + '<span class="eyebrow">Relatório de entrega · últimos ' + (d.periodo || 60) + ' dias</span>'
+      + '<h1>' + esc(c.nome || "Seu negócio") + '</h1>'
+      + '<p class="por">Preparado por ' + esc(d.agencia || "sua agência") + '</p>'
+      + '</div>'
+      + '<div class="acoes"><button class="bt" id="btPdf" type="button">Baixar em PDF</button></div>'
+      + '</div>';
+
+    /* manchete: o resultado do negócio vem antes do alcance, porque o
+       alcance é o meio e o cliente comprou o fim. */
+    h += '<div class="hero">';
+    if (ultimo && ultimo.resultado){
+      var melhorMes = hist.slice().sort(function(a, b){ return b.resultado - a.resultado; })[0];
+      var recorde = melhorMes && melhorMes.competencia === ultimo.competencia && hist.length >= 3;
+      var porMil = ag.alcance ? (ultimo.resultado / (ag.alcance / 1000)) : 0;
+
+      h += '<h2>' + esc(ultimo.rotulo) + ' fechou com ' + num(ultimo.resultado) + ' ' + esc(metrica)
+        + (recorde ? ' — o melhor mês dos últimos ' + hist.length + '.' : '.') + '</h2>'
+        + '<p>No mesmo período seu negócio apareceu para <b>' + num(ag.alcance) + ' pessoas</b>, em '
+        + num(ag.posts) + ' publicações, que geraram ' + num(ag.interacoes) + ' interações.'
+        + (porMil ? ' Isso dá ' + porMil.toFixed(1).replace(".", ",") + ' ' + esc(metrica)
+            + ' a cada mil pessoas alcançadas.' : '')
+        + variacaoFrase(ag, an) + '</p>';
+    } else {
+      h += '<h2>Seu negócio apareceu para ' + num(ag.alcance) + ' pessoas nos últimos '
+        + (d.periodo || 60) + ' dias.</h2>'
+        + '<p>Foram ' + num(ag.posts) + ' publicações, que geraram ' + num(ag.interacoes) + ' interações.'
+        + variacaoFrase(ag, an) + '</p>';
+    }
+    h += '</div>';
+
+    /* números */
+    h += '<div class="kpis">';
+    if (ultimo && ultimo.resultado){
+      h += kpi(esc(metrica) + " em " + esc(ultimo.rotulo), num(ultimo.resultado), "o que virou negócio", null);
+    }
+    h += kpi("Pessoas alcançadas", curto(ag.alcance), "quantas viram seu conteúdo", variacao(ag.alcance, an.alcance));
+    h += kpi("Interações", curto(ag.interacoes), "quantas reagiram de alguma forma", variacao(ag.interacoes, an.interacoes));
+    h += kpi("Cliques no seu link", num(ag.cliques), "foram para o WhatsApp ou site", null);
+    h += '</div>';
+
+    /* histórico mês a mês */
+    if (hist.length >= 3){
+      h += '<div class="g2">'
+        + '<div class="card"><div class="card-h"><h3>Quanto seu negócio apareceu</h3><span class="sub">por mês</span></div>'
+        + '<div class="card-b">' + barras(hist, "alcance", "", curto) + '</div></div>'
+        + '<div class="card"><div class="card-h"><h3>Quantos ' + esc(metrica) + '</h3><span class="sub">por mês</span></div>'
+        + '<div class="card-b">' + barras(hist, "resultado", "b2", num) + '</div></div>'
+        + '</div>';
+    }
+
+    /* o conteúdo campeão */
+    if (melhores.length){
+      var t = melhores[0];
+      h += '<div class="card"><div class="card-h"><h3>O conteúdo que mais funcionou</h3></div><div class="card-b">'
+        + '<p class="top-t">' + (t.url
+            ? '<a href="' + esc(t.url) + '" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:underline; text-decoration-color:var(--facho); text-underline-offset:5px; text-decoration-thickness:2px">&ldquo;' + esc(t.titulo) + '&rdquo;</a>'
+            : '&ldquo;' + esc(t.titulo) + '&rdquo;') + '</p>'
+        + '<p class="top-d">Publicado no ' + esc(t.plataforma) + ' em formato ' + esc(t.formato)
+        + ', às ' + t.hora + 'h. Alcançou <b>' + num(t.alcance) + ' pessoas</b>'
+        + (t.salvos ? ' e foi salvo ' + num(t.salvos) + ' vezes' : '') + '.</p>'
+        + '</div></div>';
+
+      if (melhores.length > 1){
+        h += '<div class="card"><div class="card-h"><h3>As publicações que mais entregaram</h3>'
+          + '<span class="sub">pessoas alcançadas</span></div><div class="card-b"><ul class="lista">'
+          + melhores.map(function(p, i){
+              return '<li><span class="pos">' + (i + 1) + '</span>'
+                + '<span class="tit">' + esc(p.titulo)
+                + '<small>' + esc(p.formato) + ' · ' + esc(p.plataforma) + ' · há ' + p.dias + ' dias</small></span>'
+                + '<span class="num">' + num(p.alcance) + '</span></li>';
+            }).join("")
+          + '</ul></div></div>';
+      }
+    }
+
+    /* próximo ciclo */
+    var dest = d.destaques || [];
+    if (dest.length){
+      h += '<div class="card"><div class="card-h"><h3>O que vamos fazer no próximo ciclo</h3></div>'
+        + dest.map(function(i){
+            return '<div class="ins"><span class="ic">&rarr;</span><div>'
+              + '<span class="t">' + esc(i.t) + '</span>'
+              + '<span class="d">' + esc(i.a || i.d) + '</span></div></div>';
+          }).join("")
+        + '</div>';
+    }
+
+    h += '<div class="rodape"><span>Relatório de ' + esc(d.agencia || "") + ' · '
+      + new Date().toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" }) + '</span>'
+      + (d.marca ? '' : '<span>feito com Farol</span>') + '</div>';
+
+    raiz.innerHTML = h;
+
+    var bt = document.getElementById("btPdf");
+    if (bt) bt.addEventListener("click", function(){ window.print(); });
+  }
+
+  function kpi(nome, valor, desc, varia){
+    return '<div class="kpi"><span class="n">' + nome + '</span>'
+      + '<span class="v">' + valor + '</span>'
+      + (varia || '<span class="d">' + desc + '</span>') + '</div>';
+  }
+
+  /** Só mostra variação quando existe base de comparação. Comparar com zero
+   *  produz "cresceu 100%" sem significado nenhum. */
+  function variacao(agora, antes){
+    if (!antes) return null;
+    var d = (agora - antes) / antes;
+    if (Math.abs(d) < 0.03) return '<span class="var">estável</span>';
+    return '<span class="var ' + (d > 0 ? "sobe" : "desce") + '">'
+      + (d > 0 ? "▲ " : "▼ ") + pc(d) + ' vs. período anterior</span>';
+  }
+  function variacaoFrase(ag, an){
+    if (!an || !an.alcance) return "";
+    var d = (ag.alcance - an.alcance) / an.alcance;
+    if (Math.abs(d) < 0.03) return " O alcance ficou estável em relação ao período anterior.";
+    return " O alcance " + (d > 0 ? "cresceu " : "caiu ") + pc(d) + " em relação ao período anterior.";
+  }
+
+  /* ---------------- carregar ---------------- */
+  var t = token();
+  if (!t){
+    aviso("Link incompleto", "Peça para a sua agência enviar o endereço do relatório outra vez.");
+    return;
+  }
+
+  /* Mesmo motivo do app: se a reescrita do vercel.json não estiver valendo,
+     o endereço bonito não existe e a função responde em /api/index. */
+  function buscar(){
+    var bonito = "/api/relatorio/" + encodeURIComponent(t);
+    var direto = "/api/index?__rota=relatorio/" + encodeURIComponent(t);
+    function pegar(u){
+      return fetch(u, { credentials: "omit" }).then(function(r){
+        return r.json().catch(function(){ return {}; })
+          .then(function(d){ return { ok: r.ok, status: r.status, d: d }; });
+      });
+    }
+    return pegar(bonito).then(function(r){
+      return r.status === 404 ? pegar(direto) : r;
+    });
+  }
+
+  buscar()
+    .then(function(r){
+      if (r.ok) return desenhar(r.d);
+      if (r.status === 404)
+        return aviso("Relatório não encontrado",
+          "Este link não vale mais, ou foi digitado com alguma letra a menos. Peça um novo para a sua agência.");
+      if (r.status === 402)
+        return aviso("Relatório indisponível no momento",
+          "Fale com a sua agência — o acesso a esta página depende do plano dela.");
+      aviso("Não consegui carregar", r.d.erro || "Tente de novo daqui a pouco.");
+    })
+    .catch(function(){
+      aviso("Sem conexão", "Confira sua internet e atualize a página.");
+    });
+})();
+</script>
+</body>
+</html>
